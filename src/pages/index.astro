@@ -9,10 +9,9 @@ interface Frontmatter {
 }
 
 let blogs = await Astro.glob<Frontmatter>("./blog/*.{md, mdx}");
-blogs = blogs.sort((a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf());
+blogs = blogs.sort((a, b) => new Date(b.frontmatter.pubDate).valueOf() - new Date(a.frontmatter.pubDate).valueOf());
 const latestBlogs = blogs.slice(0, 5);
 
-latestBlogs.sort((a, b) => new Date(b.frontmatter.pubDate).valueOf() - new Date(a.frontmatter.pubDate).valueOf());
 ---
 
 <Layout>
