@@ -1,0 +1,72 @@
+---
+import Header from '../components/Header.astro';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  heroImage?: string;
+  imageAlt?: string;
+}
+
+const defaultMeta = {
+  title: "Erdal Toprak",
+  description: "IA/ML | Privacy | Software ecosystems",
+  image: "https://erdaltoprak.com/assets/other/og.jpg",
+  imageAlt: "Favicon",
+};
+
+const { title = defaultMeta.title, description = defaultMeta.description, heroImage = defaultMeta.image, imageAlt = defaultMeta.imageAlt } = Astro.props as Props;
+const canonicalURL = new URL(Astro.url).href;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/x-icon" href="/assets/fav/favicon.ico" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/assets/fav/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/assets/fav/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/assets/fav/favicon-16x16.png">
+		<link rel="manifest" href="/assets/fav/site.webmanifest">
+		<link rel="mask-icon" href="/assets/fav/safari-pinned-tab.svg" color="#54595b">
+		<meta name="msapplication-TileColor" content="#da532c">
+		<title>{title}</title>
+		<meta name="color-scheme" content="dark" />
+		<meta name="theme-color" content="#18181b">
+		<link rel="sitemap" href="/assets/fav/sitemap-index.xml" />
+		<link rel="canonical" href={canonicalURL} />
+		<meta name="title" content={title} />
+		<meta name="description" content={description} />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={heroImage} />
+		<meta property="og:image:alt" content={imageAlt} />
+		<meta property="og:site_name" content="https://erdaltoprak.com" />
+		<meta property="og:locale" content="en_US" />
+		<meta property="twitter:card" content="summary" />
+		<meta property="twitter:url" content={canonicalURL} />
+		<meta name="twitter:site" content="@erdalxtoprak" />
+		<meta name="twitter:creator" content="@erdalxtoprak" />
+		<meta property="twitter:title" content={title} />
+		<meta property="twitter:description" content={description} />
+		<meta property="twitter:image" content={heroImage} />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="robots" content="follow, index" />
+		<meta name="author" content={title} />
+		<link rel=alternate type=application/rss+xml href=/rss.xml title="Erdal Toprak">
+	  </head>
+	<body class="bg-zinc-900 text-lg sm:text-xl">
+		<main class="m-auto p-8 max-w-4xl md:px-20">
+			<Header />
+			<section
+			class="prose sm:prose-lg text-zinc-200 prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-invert prose-a:underline-offset-2">
+			<article>
+			  <slot />
+			</article>
+		  </section>
+		</main>
+	</body>
+</html>

@@ -1,0 +1,80 @@
+---
+import Header from "@components/Header.astro";
+import Utterances from "@components/Utterances.astro";
+let { pubDate } = Astro.props.content;
+const { frontmatter } = Astro.props;
+const canonicalURL = new URL(Astro.url).href;
+
+const ogImage = "https://erdaltoprak.com/assets/other/og-ai-3.jpg"
+
+const thisDate = new Date(pubDate).toLocaleDateString("en-CA", {
+  month: "long",
+  year: "numeric"
+});
+pubDate = pubDate.split("T")[0];
+
+---
+<!DOCTYPE html>
+<html lang="en-US" class="scroll-smooth">
+  <head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/x-icon" href="/assets/fav/favicon.ico" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/assets/fav/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/assets/fav/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/assets/fav/favicon-16x16.png">
+		<link rel="manifest" href="/assets/fav/site.webmanifest">
+		<link rel="mask-icon" href="/assets/fav/safari-pinned-tab.svg" color="#54595b">
+		<meta name="msapplication-TileColor" content="#da532c">
+    <title>{frontmatter.title} | Erdal Toprak</title>
+    <link rel="sitemap" href="/assets/fav/sitemap-index.xml" />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="title" content={frontmatter.title} />
+    <meta name="description" content={frontmatter.description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={frontmatter.title} />
+    <meta property="og:description" content={frontmatter.description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content="https://erdaltoprak.com" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="twitter:card" content="summary" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta name="twitter:site" content="@erdalxtoprakv" />
+    <meta name="twitter:creator" content="@erdalxtoprak" />
+    <meta property="twitter:title" content={frontmatter.title} />
+    <meta property="twitter:description" content={frontmatter.description} />
+    <meta property="twitter:image" content={ogImage} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="robots" content="follow, index" />
+    <meta name="author" content="Erdal Toprak" />
+    <meta name="color-scheme" content="dark" />
+		<meta name="theme-color" content="#18181b">
+    <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="Erdal Toprak">
+  </head>
+  <body class="bg-zinc-900 text-white text-lg sm:text-xl">
+    <main class="m-auto p-8 max-w-4xl md:px-20">
+      <Header />
+      <header>
+        <h1 class="mb-2 md:text-5xl text-3xl font-semibold tracking-tight">{frontmatter.title}</h1>
+        <time class="flex flex-row space-x-1 text-base text-gray-300">
+          <time datetime={frontmatter.pubDate} class="mb-0 sm:mb-0">
+            {thisDate}
+          </time>
+        </time>
+      </header>
+      <section
+        class="prose sm:prose-lg text-zinc-200 prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-invert prose-a:underline-offset-2"
+      >
+        <article>
+          <slot />
+          <Utterances />
+        </article>
+      </section>
+      <footer class="flex flex-row justify-between items-center mt-10 text-base text-zinc-400">
+        <a href="/blog" class="hover:underline prose-a:underline-offset-2 text-blue-400">Back to posts</a>
+        <a href="#" class="hover:underline prose-a:underline-offset-2 text-blue-400">Back to top</a>
+      </footer>
+    </main>
+  </body>
+</html>

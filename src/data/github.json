@@ -1,0 +1,26 @@
+[
+    {
+      "title": "erdaltoprak.com",
+      "description": "My personal website.",
+      "url": "https://github.com/erdaltoprak/erdaltoprak.com",
+      "demo": "",
+      "post": "",
+      "tags": [
+        "Astro",
+        "TypeScript",
+        "TailwindCSS",
+        "Markdown"
+      ]
+    },
+    {
+      "title": "nostrID",
+      "description": "A Nostr ID Management App on iOS.",
+      "url": "https://github.com/erdaltoprak/nostrid",
+      "demo": "https://erdaltoprak.github.io/nostrid/",
+      "post": "",
+      "tags": [
+        "Nostr",
+        "SwiftUI"
+      ]
+    }
+]

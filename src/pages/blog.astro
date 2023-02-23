@@ -1,0 +1,50 @@
+---
+import Layout from "../layouts/Layout.astro";
+import BlogCard from "@components/BlogCardMain.astro";
+
+interface Frontmatter {
+  title: string;
+  pubDate: string;
+}
+
+let blogs = await Astro.glob<Frontmatter>("./blog/*.{md,mdx}");
+blogs = blogs.sort((a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf());
+
+const metadata = {
+  title: "Erdal Toprak",
+  description: "IA/ML | Privacy | Software ecosystems",
+};
+
+// Group blog posts by year and sort them by date
+const blogPostsByYear = {};
+blogs.forEach((post) => {
+  const year = new Date(post.frontmatter.pubDate).getFullYear();
+  if (!blogPostsByYear[year]) {
+    blogPostsByYear[year] = [];
+  }
+  blogPostsByYear[year].push(post);
+});
+Object.values(blogPostsByYear).forEach(posts =>
+  posts.sort((a, b) => new Date(b.frontmatter.pubDate).valueOf() - new Date(a.frontmatter.pubDate).valueOf())
+);
+
+const yearPostTuples = Object.entries(blogPostsByYear).sort((a, b) => b[0] - a[0]);
+---
+
+<Layout>
+  <section>
+    <h1 class="md:text-4xl font-semibold tracking-tight">Blog</h1>
+  </section>
+  <section>
+      {yearPostTuples.map(([year, posts]) => (
+        <div class="">
+          <h3 class="mb-5">{year}</h3>
+          <ul class="not-prose p-0">
+            {posts.map((post) => (
+              <BlogCard title={post.frontmatter.title} pubDate={post.frontmatter.pubDate} url={post.url} />
+            ))}
+          </ul>
+        </div>
+      ))}
+    </section>  
+</Layout>

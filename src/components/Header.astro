@@ -1,0 +1,21 @@
+---
+import NavLink from "@components/Navigation.astro";
+const navbar = [
+  { name: "Home", href: "/" },
+  { name: "Blog", href: "/blog/" },
+  { name: "Projects", href: "/projects/" },
+  { name: "About", href: "/about/" },
+];
+---
+
+<header class="flex flex-row justify-between text-zinc-300 text-lg mb-14 overflow-x-hidden">
+  {
+    (
+      <nav class="flex items-center justify-start max-w-min rounded-full bg-zinc-800/60 mx-auto overflow-x-hidden scrollbar-hide sm:overflow-x-hidden scrollbar-hide">
+        {navbar.map((navbar) => (
+          <NavLink href={navbar.href} name={navbar.name} />
+        ))}
+      </nav>
+    )
+  }
+</header>

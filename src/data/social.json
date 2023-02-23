@@ -1,0 +1,22 @@
+[
+    {
+      "url": "https://twitter.com/erdalxtoprak",
+      "icon": "mdi:twitter",
+      "name": "Twitter"
+    },
+    {
+      "url": "https://github.com/erdaltoprak",
+      "icon": "mdi:github",
+      "name": "GitHub"
+    },
+    {
+      "url": "https://www.linkedin.com/in/erdaltoprak",
+      "icon": "mdi:linkedin",
+      "name": "LinkedIn"
+    },
+    {
+      "url": "mailto:awardee.scopes.0v@icloud.com",
+      "icon": "dashicons:email",
+      "name": "Email"
+    }
+]

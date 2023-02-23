@@ -1,0 +1,69 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Image, Picture } from "@astrojs/image/components";
+import BlogCard from "@components/BlogCardShort.astro";
+
+interface Frontmatter {
+    title: string;
+    pubDate: string;
+}
+
+let blogs = await Astro.glob<Frontmatter>("./blog/*.{md, mdx}");
+blogs = blogs.sort((a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf());
+const latestBlogs = blogs.slice(0, 5);
+
+latestBlogs.sort((a, b) => new Date(b.frontmatter.pubDate).valueOf() - new Date(a.frontmatter.pubDate).valueOf());
+---
+
+<Layout>
+    <section>
+      <header>
+        <div class="flex mb-5">
+          <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight">
+            Hi 👋🏻, I'm Erdal!
+          </h1>
+          <Picture
+          src={"/assets/other/profile.png"}
+          class="sm:hidden p-0 m-0 not-prose absolute top-16"
+          alt="Erdal's memoji"
+          aspectRatio="1:1"
+          widths={[300]}
+          loading="eager"
+          sizes="150px"
+          />
+        </div>
+      </header>
+      <div class="flex items-center">
+        <p class="text-xl text-zinc-300">
+          Through my journey focusing on AI/ML, Privacy and Software Ecosystems, I launched this website to share my knowledge and document some of my projects.
+        </p>
+        <Picture
+          src={"/assets/other/profile.png"}
+          class="hidden sm:flex p-0 m-0 not-prose"
+          alt="Erdal's memoji"
+          aspectRatio="1:1"
+          widths={[500]}
+          loading="eager"
+          sizes="550px"
+        />
+      </div>
+    </section>
+      
+
+    <section class="mt-10">
+        <h2 class="m-0 mb-5 font-semibold tracking-tight w-full border-b border-gray-600">
+            Latest Posts
+        </h2>
+        <ul class="p-0 not-prose">
+            {
+                latestBlogs.map((post) => (
+                    <BlogCard
+                        title={post.frontmatter.title}
+                        pubDate={post.frontmatter.pubDate}
+                        url={post.url}
+                    />
+                ))
+            }
+        </ul>
+    </section>
+</Layout>
