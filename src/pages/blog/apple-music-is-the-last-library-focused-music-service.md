@@ -34,4 +34,4 @@ This set of features aren't groundbreaking by any previous standards, yet in 202
 
 I'll conclude by encouraging everyone to always consider the local first, self managed solutions, this could range from backing up a file on your computer, accessing your connected light switch to organizing your music library.
 
-Thank you for reading my thoughts on this subject, this is a departure from my previous, more technical posts, that I would like to write at times. You can also read my previous posts on [Cloudflare Argo and Access on a Raspberry Pi](https://erdaltoprak.com/blog/setting-up-cloudflare-argo-and-access-on-a-raspberry-pi) and [Setting up macOS for development](https://erdaltoprak.com/blog/setting-up-macos-for-development).
+Thank you for reading my thoughts on this subject, this is a departure from my previous, more technical posts, that I would like to write at times. You can also read my previous posts on [Cloudflare Argo and Access on a Raspberry Pi](https://erdaltoprak.com/blog/setting-up-cloudflare-argo-access-on-a-raspberry-pi) and [Setting up macOS for development](https://erdaltoprak.com/blog/setting-up-macos-for-development).
