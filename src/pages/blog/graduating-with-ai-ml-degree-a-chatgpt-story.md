@@ -2,7 +2,7 @@
 layout: ../../layouts/LayoutBlog.astro
 title: "Graduating with an AI/ML degree : A ChatGPT story"
 pubDate: 2022-12-12
-description: First blog post
+description: "In early October, I finally graduated with an AI/ML degree from the University of Nice Côte d'Azur. Since all the hype is around language models, I thought it would be fun to write a story about my graduation blog post using the ChatGPT model."
 author: Erdal Toprak
 ---
 

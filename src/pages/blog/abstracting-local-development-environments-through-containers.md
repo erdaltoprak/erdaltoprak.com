@@ -2,7 +2,7 @@
 layout: ../../layouts/LayoutBlog.astro
 title: Abstracting local development environments through containers
 pubDate: 2022-04-20
-description: Abstracting local development environments through containers
+description: "Abstracting local development environments through containers"
 author: Erdal Toprak
 ---
 

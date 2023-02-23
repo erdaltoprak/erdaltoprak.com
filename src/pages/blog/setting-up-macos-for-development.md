@@ -2,7 +2,7 @@
 layout: ../../layouts/LayoutBlog.astro
 title: Setting up macOS for development
 pubDate: 2021-10-25
-description: Setting up macOS for development
+description: "Setting up macOS for development"
 author: Erdal Toprak
 ---
 

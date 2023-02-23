@@ -2,6 +2,7 @@
 layout: ../../layouts/LayoutBlog.astro
 title: iCloud custom domain guide
 pubDate: 2021-09-09
+description: "iCloud custom domain guide"
 author: Erdal Toprak
 ---
 

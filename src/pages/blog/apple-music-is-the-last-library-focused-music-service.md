@@ -2,7 +2,7 @@
 layout: ../../layouts/LayoutBlog.astro
 title: Apple Music is the last library focused music service
 pubDate: 2021-11-30
-description: Apple Music is the last library focused music service
+description: "Apple Music is the last library focused music service"
 author: Erdal Toprak
 ---
 

@@ -2,7 +2,7 @@
 layout: ../../layouts/LayoutBlog.astro
 title: Setting up Cloudflare Argo & Access on a Raspberry Pi
 pubDate: 2021-09-29
-description: Setting up Cloudflare Argo & Access on a Raspberry Pi
+description: "Setting up Cloudflare Argo & Access on a Raspberry Pi"
 author: Erdal Toprak
 ---
 
