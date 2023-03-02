@@ -13,10 +13,10 @@
       ]
     },
     {
-      "title": "nostrID",
-      "description": "A Nostr ID Management App on iOS.",
-      "url": "https://github.com/erdaltoprak/nostrid",
-      "demo": "https://erdaltoprak.github.io/nostrid/",
+      "title": "Tamga",
+      "description": "An offline first nostr contact & profile manager for iOS!",
+      "url": "https://github.com/erdaltoprak/tamga",
+      "demo": "https://erdaltoprak.github.io/tamga/",
       "post": "",
       "tags": [
         "Nostr",
