@@ -6,7 +6,7 @@ description: "Setting up Cloudflare Argo & Access on a Raspberry Pi"
 author: Erdal Toprak
 ---
 
-![Banner](/assets/blog/setting-up-cloudflare-argo-access-on-a-raspberry-pi/rpi-banner.jpg)
+![Banner](/assets/blog/setting-up-cloudflare-argo-access-on-a-raspberry-pi/rpi-banner.jpeg)
 
 A few nights ago I was casually browsing on [/r/SelfHosted](https://www.reddit.com/r/selfhosted/) when I came across a post mentioning how insecure some of the home servers are regarding to their WAN access.
 

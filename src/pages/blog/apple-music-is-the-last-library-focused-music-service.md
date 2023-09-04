@@ -6,7 +6,7 @@ description: "Apple Music is the last library focused music service"
 author: Erdal Toprak
 ---
 
-![Banner](/assets/blog/apple-music-is-the-last-library-focused-music-service/banner.jpg)
+![Banner](/assets/blog/apple-music-is-the-last-library-focused-music-service/banner.jpeg)
 
  
 Back in the days my parents used to listen to cassette tapes and they had this huge custom cassette shelf that my father built. The organization was simple but It still made sense since each cassette was either a compilation of several artists or an album. You could easily find your way through with the labels and the only issue was the integrity of the tapes after several years or the physical space that you needed in the car for a week-end trip.

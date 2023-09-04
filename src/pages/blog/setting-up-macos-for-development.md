@@ -6,7 +6,7 @@ description: "Setting up macOS for development"
 author: Erdal Toprak
 ---
 
-![Banner](/assets/blog/setting-up-macos-for-development/banner.jpg)
+![Banner](/assets/blog/setting-up-macos-for-development/banner.jpeg)
 
 > Update : As of the 20/04/2022, I'm no longer installing most my development environment in the same way, I've made[ this post](https://erdaltoprak.com/blog/abstracting-local-development-environments-through-containers) explaining my transition to development containers.
 

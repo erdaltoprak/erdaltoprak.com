@@ -6,7 +6,7 @@ description: "Abstracting local development environments through containers"
 author: Erdal Toprak
 ---
 
-![Banner](/assets/blog/abstracting-local-development-environments-through-containers/banner.jpg)
+![Banner](/assets/blog/abstracting-local-development-environments-through-containers/banner.jpeg)
   
 Every time I set up my devices, I like to take the time to use the sensible defaults of the operating system and then evaluate my personal needs of customization. On Mac devices, the default apps are quite good in terms of long term support and integration across devices, so installing a complete development environment often causes some disruption in the everyday workflow experience.
   
