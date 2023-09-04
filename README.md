@@ -1,6 +1,6 @@
 # erdaltoprak.com
 
-This website is built with [Astro](https://astro.build/). I've been inspired by the [astro tutorial](https://github.com/withastro/blog-tutorial-demo).
+This website is built with [Astro](https://astro.build/). I've been inspired by the [astro tutorial](https://github.com/withastro/blog-tutorial-demo). 
 
 
 ## Project Structure
