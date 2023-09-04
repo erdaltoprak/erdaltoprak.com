@@ -38,7 +38,7 @@ function addIssueToContext(ctx, issueData) {
             ctx.common.contextualErrorMap,
             ctx.schemaErrorMap,
             (0, errors_1.getErrorMap)(),
-            en_1.default, // then global default map
+            en_1.default,
         ].filter((x) => !!x),
     });
     ctx.common.issues.push(issue);

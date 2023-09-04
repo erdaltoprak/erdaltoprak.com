@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { Image, Picture } from "@astrojs/image/components";
+import { Image } from 'astro:assets'
+// import { Image, Picture } from "@astrojs/image/components";
 import BlogCard from "@components/BlogCardShort.astro";
 
 interface Frontmatter {
@@ -21,30 +22,28 @@ const latestBlogs = blogs.slice(0, 5);
           <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight">
             Hi 👋🏻, I'm Erdal!
           </h1>
-          <Picture
-          src={"/assets/other/profile.png"}
-          class="sm:hidden p-0 m-0 not-prose absolute top-16"
-          alt="Erdal's memoji"
-          aspectRatio="1:1"
-          widths={[300]}
-          loading="eager"
-          sizes="150px"
-          />
+          <picture>
+            <img 
+                src="/assets/other/profile.png" 
+                alt="Erdal's memoji" 
+                class="sm:hidden p-0 m-0 not-prose absolute top-16" 
+                width="150" 
+                loading="eager" />
+          </picture>
         </div>
       </header>
       <div class="flex items-center">
         <p class="text-xl text-zinc-300">
           Through my journey focusing on AI/ML, Privacy and Software Ecosystems, I launched this website to share my knowledge and document some of my projects.
         </p>
-        <Picture
-          src={"/assets/other/profile.png"}
-          class="hidden sm:flex p-0 m-0 not-prose"
-          alt="Erdal's memoji"
-          aspectRatio="1:1"
-          widths={[500]}
-          loading="eager"
-          sizes="550px"
-        />
+        <picture>          <img 
+            src="/assets/other/profile.png" 
+            alt="Erdal's memoji" 
+            class="hidden sm:flex p-0 m-0 not-prose" 
+            width="500" 
+            loading="eager" 
+            sizes="(min-width: 640px) 550px, 500px" />
+        </picture>
       </div>
     </section>
       

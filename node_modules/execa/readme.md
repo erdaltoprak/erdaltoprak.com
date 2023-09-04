@@ -1,24 +1,60 @@
-<img src="media/logo.svg" width="400">
+<picture>
+	<source media="(prefers-color-scheme: dark)" srcset="media/logo_dark.svg">
+	<img alt="execa logo" src="media/logo.svg" width="400">
+</picture>
 <br>
 
 [![Coverage Status](https://codecov.io/gh/sindresorhus/execa/branch/main/graph/badge.svg)](https://codecov.io/gh/sindresorhus/execa)
 
 > Process execution for humans
 
+<br>
+
+---
+
+<div align="center">
+	<p>
+		<p>
+			<sup>
+				<a href="https://github.com/sponsors/sindresorhus">Sindre's open source work is supported by the community</a>
+			</sup>
+		</p>
+		<sup>Special thanks to:</sup>
+		<br>
+		<br>
+		<a href="https://transloadit.com?utm_source=sindresorhus&utm_medium=referral&utm_campaign=sponsorship&utm_content=execa">
+			<picture>
+				<source width="360" media="(prefers-color-scheme: dark)" srcset="https://sindresorhus.com/assets/thanks/transloadit-logo-dark.svg">
+				<source width="360" media="(prefers-color-scheme: light)" srcset="https://sindresorhus.com/assets/thanks/transloadit-logo.svg">
+				<img width="360" src="https://sindresorhus.com/assets/thanks/transloadit-logo.svg" alt="Transloadit logo">
+			</picture>
+		</a>
+		<br>
+		<br>
+	</p>
+</div>
+
+---
+
+<br>
+
 ## Why
 
 This package improves [`child_process`](https://nodejs.org/api/child_process.html) methods with:
 
-- Promise interface.
+- [Promise interface](#execacommandcommand-options).
+- [Scripts interface](#scripts-interface), like `zx`.
+- Improved [Windows support](https://github.com/IndigoUnited/node-cross-spawn#why), including [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) binaries.
+- Executes [locally installed binaries](#preferlocal) without `npx`.
+- [Cleans up](#cleanup) child processes when the parent process ends.
+- [Graceful termination](#optionsforcekillaftertimeout).
+- Get [interleaved output](#all) from `stdout` and `stderr` similar to what is printed on the terminal.
 - [Strips the final newline](#stripfinalnewline) from the output so you don't have to do `stdout.trim()`.
-- Supports [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) binaries cross-platform.
-- [Improved Windows support.](https://github.com/IndigoUnited/node-cross-spawn#why)
-- Higher max buffer. 100 MB instead of 200 KB.
-- [Executes locally installed binaries by name.](#preferlocal)
-- [Cleans up spawned processes when the parent process dies.](#cleanup)
-- [Get interleaved output](#all) from `stdout` and `stderr` similar to what is printed on the terminal. [*(Async only)*](#execasyncfile-arguments-options)
-- [Can specify file and arguments as a single string without a shell](#execacommandcommand-options)
+- Convenience methods to pipe processes' [input](#input) and [output](#redirect-output-to-a-file).
+- Can specify file and arguments [as a single string](#execacommandcommand-options) without a shell.
+- [Verbose mode](#verbose-mode) for debugging.
 - More descriptive errors.
+- Higher max buffer: 100 MB instead of 1 MB.
 
 ## Install
 
@@ -28,6 +64,8 @@ npm install execa
 
 ## Usage
 
+### Promise interface
+
 ```js
 import {execa} from 'execa';
 
@@ -36,12 +74,115 @@ console.log(stdout);
 //=> 'unicorns'
 ```
 
-### Pipe the child process stdout to the parent
+### Scripts interface
+
+For more information about Execa scripts, please see [this page](docs/scripts.md).
+
+#### Basic
+
+```js
+import {$} from 'execa';
+
+const branch = await $`git branch --show-current`;
+await $`dep deploy --branch=${branch}`;
+```
+
+#### Multiple arguments
+
+```js
+import {$} from 'execa';
+
+const args = ['unicorns', '&', 'rainbows!'];
+const {stdout} = await $`echo ${args}`;
+console.log(stdout);
+//=> 'unicorns & rainbows!'
+```
+
+#### With options
+
+```js
+import {$} from 'execa';
+
+await $({stdio: 'inherit'})`echo unicorns`;
+//=> 'unicorns'
+```
+
+#### Shared options
+
+```js
+import {$} from 'execa';
+
+const $$ = $({stdio: 'inherit'});
+
+await $$`echo unicorns`;
+//=> 'unicorns'
+
+await $$`echo rainbows`;
+//=> 'rainbows'
+```
+
+#### Verbose mode
+
+```sh
+> node file.js
+unicorns
+rainbows
+
+> NODE_DEBUG=execa node file.js
+[16:50:03.305] echo unicorns
+unicorns
+[16:50:03.308] echo rainbows
+rainbows
+```
+
+### Input/output
+
+#### Redirect output to a file
 
 ```js
 import {execa} from 'execa';
 
-execa('echo', ['unicorns']).stdout.pipe(process.stdout);
+// Similar to `echo unicorns > stdout.txt` in Bash
+await execa('echo', ['unicorns']).pipeStdout('stdout.txt');
+
+// Similar to `echo unicorns 2> stdout.txt` in Bash
+await execa('echo', ['unicorns']).pipeStderr('stderr.txt');
+
+// Similar to `echo unicorns &> stdout.txt` in Bash
+await execa('echo', ['unicorns'], {all: true}).pipeAll('all.txt');
+```
+
+#### Redirect input from a file
+
+```js
+import {execa} from 'execa';
+
+// Similar to `cat < stdin.txt` in Bash
+const {stdout} = await execa('cat', {inputFile: 'stdin.txt'});
+console.log(stdout);
+//=> 'unicorns'
+```
+
+#### Save and pipe output from a child process
+
+```js
+import {execa} from 'execa';
+
+const {stdout} = await execa('echo', ['unicorns']).pipeStdout(process.stdout);
+// Prints `unicorns`
+console.log(stdout);
+// Also returns 'unicorns'
+```
+
+#### Pipe multiple processes
+
+```js
+import {execa} from 'execa';
+
+// Similar to `echo unicorns | cat` in Bash
+const {stdout} = await execa('echo', ['unicorns']).pipeStdout(execa('cat'));
+console.log(stdout);
+//=> 'unicorns'
 ```
 
 ### Handling Errors
@@ -68,7 +209,6 @@ try {
 		escapedCommand: 'unknown command',
 		stdout: '',
 		stderr: '',
-		all: '',
 		failed: true,
 		timedOut: false,
 		isCanceled: false,
@@ -78,60 +218,7 @@ try {
 }
 ```
 
-### Cancelling a spawned process
-
-```js
-import {execa} from 'execa';
-
-const abortController = new AbortController();
-const subprocess = execa('node', [], {signal: abortController.signal});
-
-setTimeout(() => {
-	abortController.abort();
-}, 1000);
-
-try {
-	await subprocess;
-} catch (error) {
-	console.log(subprocess.killed); // true
-	console.log(error.isCanceled); // true
-}
-```
-
-### Catching an error with the sync method
-
-```js
-import {execaSync} from 'execa';
-
-try {
-	execaSync('unknown', ['command']);
-} catch (error) {
-	console.log(error);
-	/*
-	{
-		message: 'Command failed with ENOENT: unknown command spawnSync unknown ENOENT',
-		errno: -2,
-		code: 'ENOENT',
-		syscall: 'spawnSync unknown',
-		path: 'unknown',
-		spawnargs: ['command'],
-		originalMessage: 'spawnSync unknown ENOENT',
-		shortMessage: 'Command failed with ENOENT: unknown command spawnSync unknown ENOENT',
-		command: 'unknown command',
-		escapedCommand: 'unknown command',
-		stdout: '',
-		stderr: '',
-		all: '',
-		failed: true,
-		timedOut: false,
-		isCanceled: false,
-		killed: false
-	}
-	*/
-}
-```
-
-### Kill a process
+### Graceful termination
 
 Using SIGTERM, and after 2 seconds, kill it with SIGKILL.
 
@@ -147,21 +234,90 @@ setTimeout(() => {
 
 ## API
 
-### execa(file, arguments, options?)
+### Methods
 
-Execute a file. Think of this as a mix of [`child_process.execFile()`](https://nodejs.org/api/child_process.html#child_process_child_process_execfile_file_args_options_callback) and [`child_process.spawn()`](https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options).
+#### execa(file, arguments?, options?)
 
-No escaping/quoting is needed.
+Executes a command using `file ...arguments`. `arguments` are specified as an array of strings. Returns a [`childProcess`](#childprocess).
 
-Unless the [`shell`](#shell) option is used, no shell interpreter (Bash, `cmd.exe`, etc.) is used, so shell features such as variables substitution (`echo $PATH`) are not allowed.
+Arguments are [automatically escaped](#shell-syntax). They can contain any character, including spaces.
 
-Returns a [`child_process` instance](https://nodejs.org/api/child_process.html#child_process_class_childprocess) which:
-  - is also a `Promise` resolving or rejecting with a [`childProcessResult`](#childProcessResult).
-  - exposes the following additional methods and properties.
+This is the preferred method when executing single commands.
+
+#### execaNode(scriptPath, arguments?, options?)
+
+Executes a Node.js file using `node scriptPath ...arguments`. `arguments` are specified as an array of strings. Returns a [`childProcess`](#childprocess).
+
+Arguments are [automatically escaped](#shell-syntax). They can contain any character, including spaces.
+
+This is the preferred method when executing Node.js files.
+
+Like [`child_process#fork()`](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options):
+  - the current Node version and options are used. This can be overridden using the [`nodePath`](#nodepath-for-node-only) and [`nodeOptions`](#nodeoptions-for-node-only) options.
+  - the [`shell`](#shell) option cannot be used
+  - an extra channel [`ipc`](https://nodejs.org/api/child_process.html#child_process_options_stdio) is passed to [`stdio`](#stdio)
+
+#### $\`command\`
+
+Executes a command. The `command` string includes both the `file` and its `arguments`. Returns a [`childProcess`](#childprocess).
+
+Arguments are [automatically escaped](#shell-syntax). They can contain any character, but spaces must use `${}` like `` $`echo ${'has space'}` ``.
+
+This is the preferred method when executing multiple commands in a script file.
+
+The `command` string can inject any `${value}` with the following types: string, number, [`childProcess`](#childprocess) or an array of those types. For example: `` $`echo one ${'two'} ${3} ${['four', 'five']}` ``. For `${childProcess}`, the process's `stdout` is used.
+
+For more information, please see [this section](#scripts-interface) and [this page](docs/scripts.md).
+
+#### $(options)
+
+Returns a new instance of [`$`](#command) but with different default `options`. Consecutive calls are merged to previous ones.
+
+This can be used to either:
+  - Set options for a specific command: `` $(options)`command` ``
+  - Share options for multiple commands: `` const $$ = $(options); $$`command`; $$`otherCommand`; ``
+
+#### execaCommand(command, options?)
+
+Executes a command. The `command` string includes both the `file` and its `arguments`. Returns a [`childProcess`](#childprocess).
+
+Arguments are [automatically escaped](#shell-syntax). They can contain any character, but spaces must be escaped with a backslash like `execaCommand('echo has\\ space')`.
+
+This is the preferred method when executing a user-supplied `command` string, such as in a REPL.
+
+### execaSync(file, arguments?, options?)
+
+Same as [`execa()`](#execacommandcommand-options) but synchronous.
+
+Returns or throws a [`childProcessResult`](#childProcessResult).
+
+### $.sync\`command\`
+
+Same as [$\`command\`](#command) but synchronous.
+
+Returns or throws a [`childProcessResult`](#childProcessResult).
+
+### execaCommandSync(command, options?)
+
+Same as [`execaCommand()`](#execacommand-command-options) but synchronous.
+
+Returns or throws a [`childProcessResult`](#childProcessResult).
+
+### Shell syntax
+
+For all the [methods above](#methods), no shell interpreter (Bash, cmd.exe, etc.) is used unless the [`shell` option](#shell) is set. This means shell-specific characters and expressions (`$variable`, `&&`, `||`, `;`, `|`, etc.) have no special meaning and do not need to be escaped.
+
+### childProcess
+
+The return value of all [asynchronous methods](#methods) is both:
+  - a `Promise` resolving or rejecting with a [`childProcessResult`](#childProcessResult).
+  - a [`child_process` instance](https://nodejs.org/api/child_process.html#child_process_class_childprocess) with the following additional methods and properties.
 
 #### kill(signal?, options?)
 
 Same as the original [`child_process#kill()`](https://nodejs.org/api/child_process.html#child_process_subprocess_kill_signal) except: if `signal` is `SIGTERM` (the default value) and the child process is not terminated after 5 seconds, force it by sending `SIGKILL`.
+
+Note that this graceful termination does not work on Windows, because Windows [doesn't support signals](https://nodejs.org/api/process.html#process_signal_events) (`SIGKILL` and `SIGTERM` has the same effect of force-killing the process immediately.) If you want to achieve graceful termination on Windows, you have to use other means, such as [`taskkill`](https://github.com/sindresorhus/taskkill).
 
 ##### options.forceKillAfterTimeout
 
@@ -182,34 +338,28 @@ This is `undefined` if either:
   - the [`all` option](#all-2) is `false` (the default value)
   - both [`stdout`](#stdout-1) and [`stderr`](#stderr-1) options are set to [`'inherit'`, `'ipc'`, `Stream` or `integer`](https://nodejs.org/dist/latest-v6.x/docs/api/child_process.html#child_process_options_stdio)
 
-### execaSync(file, arguments?, options?)
+#### pipeStdout(target)
 
-Execute a file synchronously.
+[Pipe](https://nodejs.org/api/stream.html#readablepipedestination-options) the child process's `stdout` to `target`, which can be:
+  - Another [`execa()` return value](#pipe-multiple-processes)
+  - A [writable stream](#save-and-pipe-output-from-a-child-process)
+  - A [file path string](#redirect-output-to-a-file)
 
-Returns or throws a [`childProcessResult`](#childProcessResult).
+If the `target` is another [`execa()` return value](#execacommandcommand-options), it is returned. Otherwise, the original `execa()` return value is returned. This allows chaining `pipeStdout()` then `await`ing the [final result](#childprocessresult).
 
-### execaCommand(command, options?)
+The [`stdout` option](#stdout-1) must be kept as `pipe`, its default value.
 
-Same as [`execa()`](#execafile-arguments-options) except both file and arguments are specified in a single `command` string. For example, `execa('echo', ['unicorns'])` is the same as `execaCommand('echo unicorns')`.
+#### pipeStderr(target)
 
-If the file or an argument contains spaces, they must be escaped with backslashes. This matters especially if `command` is not a constant but a variable, for example with `__dirname` or `process.cwd()`. Except for spaces, no escaping/quoting is needed.
+Like [`pipeStdout()`](#pipestdouttarget) but piping the child process's `stderr` instead.
 
-The [`shell` option](#shell) must be used if the `command` uses shell-specific features (for example, `&&` or `||`), as opposed to being a simple `file` followed by its `arguments`.
+The [`stderr` option](#stderr-1) must be kept as `pipe`, its default value.
 
-### execaCommandSync(command, options?)
+#### pipeAll(target)
 
-Same as [`execaCommand()`](#execacommand-command-options) but synchronous.
+Combines both [`pipeStdout()`](#pipestdouttarget) and [`pipeStderr()`](#pipestderrtarget).
 
-Returns or throws a [`childProcessResult`](#childProcessResult).
-
-### execaNode(scriptPath, arguments?, options?)
-
-Execute a Node.js script as a child process.
-
-Same as `execa('node', [scriptPath, ...arguments], options)` except (like [`child_process#fork()`](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options)):
-  - the current Node version and options are used. This can be overridden using the [`nodePath`](#nodepath-for-node-only) and [`nodeOptions`](#nodeoptions-for-node-only) options.
-  - the [`shell`](#shell) option cannot be used
-  - an extra channel [`ipc`](https://nodejs.org/api/child_process.html#child_process_options_stdio) is passed to [`stdio`](#stdio)
+Either the [`stdout` option](#stdout-1) or the [`stderr` option](#stderr-1) must be kept as `pipe`, their default value. Also, the [`all` option](#all-2) must be set to `true`.
 
 ### childProcessResult
 
@@ -236,7 +386,7 @@ This is not escaped and should not be executed directly as a process, including 
 
 Type: `string`
 
-Same as [`command`](#command) but escaped.
+Same as [`command`](#command-1) but escaped.
 
 This is meant to be copy and pasted into a shell, for debugging purposes.
 Since the escaping is fairly basic, this should not be executed directly as a process, including using [`execa()`](#execafile-arguments-options) or [`execaCommand()`](#execacommandcommand-options).
@@ -311,6 +461,12 @@ A human-friendly description of the signal that was used to terminate the proces
 
 If a signal terminated the process, this property is defined and included in the error message. Otherwise it is `undefined`. It is also `undefined` when the signal is very uncommon which should seldomly happen.
 
+#### cwd
+
+Type: `string`
+
+The `cwd` of the command if provided in the [command options](#cwd-1). Otherwise it is `process.cwd()`.
+
 #### message
 
 Type: `string`
@@ -349,7 +505,7 @@ Kill the spawned process when the parent process exits unless either:
 #### preferLocal
 
 Type: `boolean`\
-Default: `false`
+Default: `true` with [`$`](#command), `false` otherwise
 
 Prefer locally installed binaries when looking for a binary to execute.\
 If you `$ npm install foo`, you can then `execa('foo')`.
@@ -360,8 +516,6 @@ Type: `string | URL`\
 Default: `process.cwd()`
 
 Preferred path to find locally installed binaries in (use with `preferLocal`).
-
-Using a `URL` is only supported in Node.js `14.18.0`, `16.14.0` or above.
 
 #### execPath
 
@@ -392,10 +546,20 @@ Type: `string | Buffer | stream.Readable`
 Write some input to the `stdin` of your binary.\
 Streams are not allowed when using the synchronous methods.
 
+If the input is a file, use the [`inputFile` option](#inputfile) instead.
+
+#### inputFile
+
+Type: `string`
+
+Use a file as input to the the `stdin` of your binary.
+
+If the input is not a file, use the [`input` option](#input) instead.
+
 #### stdin
 
 Type: `string | number | Stream | undefined`\
-Default: `pipe`
+Default: `inherit` with [`$`](#command), `pipe` otherwise
 
 Same options as [`stdio`](https://nodejs.org/dist/latest-v6.x/docs/api/child_process.html#child_process_options_stdio).
 
@@ -452,8 +616,6 @@ Default: `process.cwd()`
 
 Current working directory of the child process.
 
-Using a `URL` is only supported in Node.js `14.18.0`, `16.14.0` or above.
-
 #### env
 
 Type: `object`\
@@ -482,8 +644,6 @@ Default: `'json'`
 Specify the kind of serialization used for sending messages between processes when using the [`stdio: 'ipc'`](#stdio) option or [`execaNode()`](#execanodescriptpath-arguments-options):
 	- `json`: Uses `JSON.stringify()` and `JSON.parse()`.
 	- `advanced`: Uses [`v8.serialize()`](https://nodejs.org/api/v8.html#v8_v8_serialize_value)
-
-Requires Node.js `13.2.0` or later.
 
 [More info.](https://nodejs.org/api/child_process.html#child_process_advanced_serialization)
 
@@ -522,7 +682,7 @@ We recommend against using this option since it is:
 Type: `string | null`\
 Default: `utf8`
 
-Specify the character encoding used to decode the `stdout` and `stderr` output. If set to `null`, then `stdout` and `stderr` will be a `Buffer` instead of a string.
+Specify the character encoding used to decode the `stdout` and `stderr` output. If set to `'buffer'` or `null`, then `stdout` and `stderr` will be a `Buffer` instead of a string.
 
 #### timeout
 
@@ -551,9 +711,7 @@ Type: [`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSign
 
 You can abort the spawned process using [`AbortController`](https://developer.mozilla.org/en-US/docs/Web/API/AbortController).
 
-When `AbortController.abort()` is called, [`.isCanceled`](#iscanceled) becomes `false`.
-
-*Requires Node.js 16 or later.*
+When `AbortController.abort()` is called, [`.isCanceled`](#iscanceled) becomes `true`.
 
 #### windowsVerbatimArguments
 
@@ -568,6 +726,15 @@ Type: `boolean`\
 Default: `true`
 
 On Windows, do not create a new console window. Please note this also prevents `CTRL-C` [from working](https://github.com/nodejs/node/issues/29837) on Windows.
+
+#### verbose
+
+Type: `boolean`\
+Default: `false`
+
+[Print each command](#verbose-mode) on `stderr` before executing it.
+
+This can also be enabled by setting the `NODE_DEBUG=execa` environment variable in the current process.
 
 #### nodePath *(For `.node()` only)*
 
@@ -600,45 +767,33 @@ const run = async () => {
 console.log(await pRetry(run, {retries: 5}));
 ```
 
-### Save and pipe output from a child process
-
-Let's say you want to show the output of a child process in real-time while also saving it to a variable.
+### Cancelling a spawned process
 
 ```js
 import {execa} from 'execa';
 
-const subprocess = execa('echo', ['foo']);
-subprocess.stdout.pipe(process.stdout);
+const abortController = new AbortController();
+const subprocess = execa('node', [], {signal: abortController.signal});
 
-const {stdout} = await subprocess;
-console.log('child output:', stdout);
-```
+setTimeout(() => {
+	abortController.abort();
+}, 1000);
 
-### Redirect output to a file
-
-```js
-import {execa} from 'execa';
-
-const subprocess = execa('echo', ['foo'])
-subprocess.stdout.pipe(fs.createWriteStream('stdout.txt'))
-```
-
-### Redirect input from a file
-
-```js
-import {execa} from 'execa';
-
-const subprocess = execa('cat')
-fs.createReadStream('stdin.txt').pipe(subprocess.stdin)
+try {
+	await subprocess;
+} catch (error) {
+	console.log(subprocess.killed); // true
+	console.log(error.isCanceled); // true
+}
 ```
 
 ### Execute the current package's binary
 
 ```js
-import {getBinPathSync} from 'get-bin-path';
+import {getBinPath} from 'get-bin-path';
 
-const binPath = getBinPathSync();
-const subprocess = execa(binPath);
+const binPath = await getBinPath();
+await execa(binPath);
 ```
 
 `execa` can be combined with [`get-bin-path`](https://github.com/ehmicky/get-bin-path) to test the current package's binary. As opposed to hard-coding the path to the binary, this validates that the `package.json` `bin` field is correctly set up.

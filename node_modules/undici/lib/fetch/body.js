@@ -105,7 +105,7 @@ function extractBody (object, keepalive = false) {
     // Set source to a copy of the bytes held by object.
     source = new Uint8Array(object.buffer.slice(object.byteOffset, object.byteOffset + object.byteLength))
   } else if (util.isFormDataLike(object)) {
-    const boundary = `----formdata-undici-${Math.random()}`.replace('.', '').slice(0, 32)
+    const boundary = `----formdata-undici-0${`${Math.floor(Math.random() * 1e11)}`.padStart(11, '0')}`
     const prefix = `--${boundary}\r\nContent-Disposition: form-data`
 
     /*! formdata-polyfill. MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> */
@@ -123,6 +123,7 @@ function extractBody (object, keepalive = false) {
     const blobParts = []
     const rn = new Uint8Array([13, 10]) // '\r\n'
     length = 0
+    let hasUnknownSizeValue = false
 
     for (const [name, value] of object) {
       if (typeof value === 'string') {
@@ -138,13 +139,20 @@ function extractBody (object, keepalive = false) {
             value.type || 'application/octet-stream'
           }\r\n\r\n`)
         blobParts.push(chunk, value, rn)
-        length += chunk.byteLength + value.size + rn.byteLength
+        if (typeof value.size === 'number') {
+          length += chunk.byteLength + value.size + rn.byteLength
+        } else {
+          hasUnknownSizeValue = true
+        }
       }
     }
 
     const chunk = enc.encode(`--${boundary}--`)
     blobParts.push(chunk)
     length += chunk.byteLength
+    if (hasUnknownSizeValue) {
+      length = null
+    }
 
     // Set source to object.
     source = object

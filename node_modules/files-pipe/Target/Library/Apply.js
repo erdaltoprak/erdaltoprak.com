@@ -1,0 +1,1 @@
+var r=async(t,a)=>{if(t instanceof Function){if(a instanceof Map){const n=new Map;for(const[o,e]of a)n.set(await t(o),await t(e));return n}if(a instanceof Set){const n=new Set;for(const o of a)n.add(await t(o));return n}if(a instanceof Array){const n=new Array;for(const o of a)n.push(await t(o));return n}return await t(a)}};export{r as default};

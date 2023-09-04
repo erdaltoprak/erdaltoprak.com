@@ -1,9 +1,16 @@
 let browserslist = require('browserslist')
-let agents = require('caniuse-lite').agents
+let { agents } = require('caniuse-lite/dist/unpacker/agents')
 
 let utils = require('./utils')
 
 class Browsers {
+  constructor(data, requirements, options, browserslistOpts) {
+    this.data = data
+    this.options = options || {}
+    this.browserslistOpts = browserslistOpts || {}
+    this.selected = this.parse(requirements)
+  }
+
   /**
    * Return all prefixes for default browser data
    */
@@ -35,11 +42,11 @@ class Browsers {
     return this.prefixesRegexp.test(value)
   }
 
-  constructor(data, requirements, options, browserslistOpts) {
-    this.data = data
-    this.options = options || {}
-    this.browserslistOpts = browserslistOpts || {}
-    this.selected = this.parse(requirements)
+  /**
+   * Is browser is selected by requirements
+   */
+  isSelected(browser) {
+    return this.selected.includes(browser)
   }
 
   /**
@@ -66,13 +73,6 @@ class Browsers {
       prefix = data.prefix
     }
     return `-${prefix}-`
-  }
-
-  /**
-   * Is browser is selected by requirements
-   */
-  isSelected(browser) {
-    return this.selected.includes(browser)
   }
 }
 
