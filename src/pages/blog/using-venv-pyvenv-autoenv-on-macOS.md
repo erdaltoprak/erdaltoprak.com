@@ -9,14 +9,14 @@ author: Erdal Toprak
 ![Banner](/assets/blog/using-venv-pyvenv-autoenv-on-macOS/banner.jpg)
 
 
-At some point you might work on a python project that requires some specific dependencies such as a machine learning project with an exact PyTorch version. It becomes a necessity to structure your workflow in order to avoid conflicts and iterate quickly across projects.
+At some point, you might work on a Python project that requires specific dependencies, such as a machine learning project with an exact PyTorch version. It becomes a necessity to structure your workflow in order to avoid conflicts and iterate quickly across projects.
 
 In this post I will explain the main tools that I use on macOS and show a neat trick in order to switch virtual environments automatically.  
 
 
 ## Why Use Virtual Environments?
 
-The ability to replicate environments not only makes onboarding easier but also minimizes the « works on my machine » issue. To accomplish our goal we will need three tools, pyenv, venv and autoenv.
+The ability to replicate environments not only makes onboarding easier but also minimizes the « works on my machine » issue. To accomplish our goal, we will need three tools: pyenv, venv, and autoenv.
 
 #### Pyenv
 [Pyenv](https://github.com/pyenv/pyenv) is an incredible tool that allows you to switch between multiple versions of Python. You can even search and install Python versions and set local and global versions.
@@ -38,7 +38,7 @@ We first need to install pyenv:
 brew install pyenv 
 ```
 
-Then we need to append the following in the .zshrc:
+Then, we need to append the following lines to our .zshrc file:
 
 ```shell
 if command -v pyenv 1>/dev/null 2>&1; then eval "$(pyenv init -)"; fi
@@ -134,6 +134,6 @@ deactivate
 
 ## Conclusion
 
-You are now ready to start your development, with a clean and isolated environment.
+You are now ready to start your development with a clean and isolated environment!
 
 If you found this guide useful you can also check the previous ones about [Setting up macOS for development](https://erdaltoprak.com/blog/setting-up-macos-for-development/) and [AI Homelab: A guide into hardware to software considerations](https://erdaltoprak.com/blog/ai-homelab-a-guide-into-hardware-to-software-considerations/).
