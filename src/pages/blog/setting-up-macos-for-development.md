@@ -30,22 +30,22 @@ you should now be on the desktop.
 
 [Homebrew](https://brew.sh) is the most popular macOS package manager, we will use it to install all our apps ([except mas ones because it doesn't work anymore](https://github.com/mas-cli/mas/issues/164))
 
-In your terminal let's copy & paste to install Homebrew
+In your terminal let's copy & paste to install Homebrew:
 ```shell
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-Then let's make sure everything is up to date
+Then let's make sure everything is up to date:
 
 ```shell
 brew update && brew upgrade
 ````
 
-You can now install your apps, or search for it on the [Homebrew website](https://brew.sh)
+You can now install your apps, or search for it on the [Homebrew website](https://brew.sh):
 
-Below the "--cask" refers to graphical applications instead of formulae.
 ```shell
 # Note: you can install multiple apps in just one line, but this is a better visualization
+# Below the "--cask" refers to graphical applications instead of formulae.
 # Browsers
 brew install --cask firefox
 brew install --cask firefox-developer-edition
@@ -80,7 +80,7 @@ brew install --cask rectangle
 brew install --cask obsidian
 ```
 
-Here are some formulae, make sure to understand each software that you install before trusting a random internet guide
+Here are some formulae, make sure to understand each software that you install before trusting a random internet guide:
 ```shell
 # Logitech Options software
 brew install homebrew/cask-drivers/logitech-options
@@ -99,14 +99,14 @@ brew install zsh-syntax-highlighting
 brew install zsh-history-substring-search
 ```
 
-We can now configure Python
+We can now configure Python:
 ```shell
 pyenv install 3.9.7
 pyenv global 3.9.7
 echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi' >> ~/.zshrc
 ````
 
-To finish the powerlevel10k and zsh setup we need the following
+To finish the powerlevel10k and zsh setup we need the following:
 ```shell
 # Plugins 
 echo "source $(brew --prefix)/opt/powerlevel10k/powerlevel10k.zsh-theme" >>~/.zshrc
@@ -130,13 +130,13 @@ echo -e "alias edit='code ~/.zshrc'" >>~/.zshrc
 echo -e "alias reload='source ~/.zshrc'" >>~/.zshrc
 ````
 
-We also need to configure git basics properly 
+We also need to configure git basics properly :
 ```shell
 git config --global user.email "YOUR_EMAIL"
 git config --global user.name "YOUR_NAME"
 ```
 
-macOS is better with some tweaks
+macOS is better with some tweaks:
 ```shell
 # Note: There are a lot of settings that you could change, this is just a few of them that I use
 # Always show file extensions
@@ -151,7 +151,7 @@ defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 killAll Finder
 ```
 
-Finally before closing the terminal I setup [powerlevel10k](https://github.com/romkatv/powerlevel10k)
+Finally before closing the terminal I setup [powerlevel10k](https://github.com/romkatv/powerlevel10k):
 ```shell
 # Note: This has already been installed in the fomulae section above, this is just the install
 source ~/.zshrc

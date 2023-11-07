@@ -8,7 +8,12 @@
       }
     },
     {
-      "scope": ["meta.embedded", "source.groovy.embedded", "string meta.image.inline.markdown"],
+      "scope": [
+        "meta.embedded",
+        "source.groovy.embedded",
+        "string meta.image.inline.markdown",
+        "variable.legacy.builtin.python"
+      ],
       "settings": {
         "foreground": "#D4D4D4"
       }
@@ -32,8 +37,7 @@
       }
     },
     {
-      "name": "Comments",
-      "scope": ["comment", "string.quoted.docstring"],
+      "scope": "comment",
       "settings": {
         "foreground": "#6A9955"
       }
@@ -429,6 +433,7 @@
         "source.cpp keyword.operator.new",
         "keyword.operator.delete",
         "keyword.other.using",
+        "keyword.other.directive.using",
         "keyword.other.operator",
         "entity.name.operator"
       ],
@@ -565,6 +570,7 @@
     "tab.lastPinnedBorder": "#ccc3",
     "list.activeSelectionIconForeground": "#FFF",
     "terminal.inactiveSelectionBackground": "#3A3D41",
-    "widget.border": "#303031"
+    "widget.border": "#303031",
+    "actionBar.toggledBackground": "#383a49"
   }
 }

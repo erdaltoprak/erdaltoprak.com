@@ -28,4 +28,4 @@ Once you enter your domain you can immediately add the existing addresses to kee
 
 On the third step you will have [**unique instructions**](https://support.apple.com/en-us/HT212524), so please use the image as a visual guide for how things should look like. Please note that for Cloudflare users that I advise to not proxy the given CNAME. 
 
-Congratulations, once you give the DNS some time to propagate you are all done! You can now set your default address, add addresses to iMessage or Facetime and send & receive emails from iCloud
+Congratulations, once you give the DNS some time to propagate you are all done! You can now set your default address, add addresses to iMessage or Facetime and send & receive emails from iCloud.

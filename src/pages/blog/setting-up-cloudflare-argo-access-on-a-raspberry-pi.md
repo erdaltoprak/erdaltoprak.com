@@ -44,26 +44,26 @@ To illustrate how easy and magical it is, I will deploy from start to finish thr
 Get your [Raspberry Pi OS Lite image](https://www.raspberrypi.org/software/operating-systems/#raspberry-pi-os-32-bit) and use [balenaEtcher](https://www.balena.io/etcher/) to write it down on your SD card.
 You can add an "ssh" file without any extensions to make your Raspberry Pi headless and accessible from your computer or just plug-it in.
 
-Let's get some updates
+Let's get some updates:
 
 ```shell
 sudo apt update 
 sudo apt upgrade
 ```
 
-We can now install Docker 
+We can now install Docker:
 
 ```shell
 curl -sSL https://get.docker.com | sh
 ```
 
-Add permissions to the current user
+Add permissions to the current user:
 
 ```shell
 sudo usermod -aG docker ${USER}
 ```
 
-Let's also install docker-compose
+Let's also install docker-compose:
 
 ```shell
 sudo apt-get install libffi-dev libssl-dev
@@ -72,7 +72,7 @@ sudo apt-get install -y python3 python3-pip
 sudo pip3 install docker-compose
 ```
 
-You can enable the docker service 
+You can enable the docker service:
 
 ```shell
 sudo systemctl enable docker
@@ -86,7 +86,7 @@ Let's deploy our docker containers, but before that a bit of explanation about t
 
 All these containers are just here to illustrate this practical example and are not necessary for the Cloudflare side of things.
 
-Let's start with Portainer
+Let's start with Portainer:
 ```shell
 docker run -d -p 8000:8000 -p 9443:9443 --name portainer \
     --restart=always \
@@ -99,7 +99,7 @@ You can go to http://[your-machine-ip]:9443 and finish the Portainer setup on yo
 If you did everything right, your Portainer dashboard should look like this (without the two other containers at this moment):
 ![Portainer](/assets/blog/setting-up-cloudflare-argo-access-on-a-raspberry-pi/portainer-working-state.jpg)
 
-Now we can docker compose gluetun and librespeed in one file, please note that I'm using PIA vpn but you can use something else and even skip if needed. This is  just an example of how to route a container through another.
+Now we can docker compose gluetun and librespeed in one file, please note that I'm using PIA vpn but you can use something else and even skip if needed. This is just an example of how to route a container through another one:
 ```shell
 mkdir gluetunAndLibrespeed
 cd gluetunAndLibrespeed
@@ -145,7 +145,7 @@ services:
     restart: unless-stopped
 ```
 
-To get this started, make sure to still be in the folder
+To get this started, make sure to still be in the folder:
 ```shell
 docker-compose up -d
 ```
@@ -164,7 +164,7 @@ I suggest you spend some time on the Teams dashboard to configure a default poli
 
 Once you are ready to add your first application, just give it a name, then a subdomain (like librespeed.[YOUR_DOMAIN].tld), choose your domain in the list, then click next to add the policy configuration that you feel comfortable with and you're pretty much done for the web configuration.
 
-We can use the tunnel as a service, docker container or standalone like we are doing right now. I'm following (and you should too) the [great documentation provided by Cloudflare](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/run-as-service).
+We can use the tunnel as a service, docker container or standalone like we are doing right now. I'm following (and you should too) the [great documentation provided by Cloudflare](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/run-tunnel/run-as-service):
 
 ```shell
 cd
@@ -175,14 +175,14 @@ sudo chmod +x /usr/local/bin/cloudflared
 cloudflared -v
 ```
 
-Let's authenticate
+Let's authenticate:
 
 ```shell
 cloudflared tunnel login
 ```
 
 Once this is done, you should have choosen a hostname (like "pi") and we will use that for the creation of our tunnels.
-If I want to expose my librespeed container, I will create the tunnel
+If I want to expose my librespeed container, I will create the tunnel:
 
 ```shell
 cloudflared tunnel create pi librespeed.[YOUR_DOMAIN].tld

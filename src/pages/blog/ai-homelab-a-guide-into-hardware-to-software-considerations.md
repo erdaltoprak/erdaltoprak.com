@@ -164,57 +164,6 @@ Here are the two links that you need to get started:
 
 If you need even more isolation with multiple CUDA versions for your project you should check out [NVIDIA NGC](https://catalog.ngc.nvidia.com/?filters=&orderBy=weightPopularDESC&query=), a repository of containerized applications for multiple use cases like [deep learning](https://catalog.ngc.nvidia.com/orgs/nvidia/collections/nvidia_dlfw). 
 
-#### Python, Venv & Autoenv 
-
-Once everything is up and running on the VM, you should isolate each project with its own dependencies. Personally, I use the following workflow:
-- Install python versions with [pyenv](https://github.com/pyenv/pyenv)
-- Create [venv](https://docs.python.org/3/library/venv.html) for a given project 
-- Clone / create the repo inside the folder 
-- Add [Autoenv](https://github.com/hyperupcall/autoenv) files, if you're unfamiliar with Autoenv, here's a brief overview:
-> If a directory contains a `.env` file, it will automatically be executed when you `cd` into it. When enabled (set `AUTOENV_ENABLE_LEAVE` to a non-empty string), if a directory contains a `.env.leave` file, it will automatically be executed when you leave it.
-
- Here are my handy .env and .env.leave scripts and also an image of how it looks in the terminal
-```bash
-# .env file for autoenv
-venv_dir="venv"
-currentvenv=""
-
-# Function to traverse up the directory structure to find the parent directory containing venv_folder
-get_project_root() {
-    local current_dir="$PWD"
-    while [[ "$current_dir" != "" && ! -d "$current_dir/$venv_dir" ]]; do
-        current_dir=${current_dir%/*}
-    done
-    echo "$current_dir"
-}
-
-root_dir=$(get_project_root)
-
-if [[ -z "$root_dir" || ! -d "$root_dir/$venv_dir" ]]; then
-    echo "Unable to find the virtual environment folder."
-    return
-fi
-
-if [[ $VIRTUAL_ENV != "" ]]; then
-    # Strip out the path and just leave the env name
-    currentvenv="${VIRTUAL_ENV##*/}"
-fi
-
-if [[ "$currentvenv" != "$venv_dir" ]]; then
-    python_version=$(python --version 2>&1)
-    echo "Switching to environment: $venv_dir | $python_version"
-    # Source the activation script
-    source "$root_dir/$venv_dir/bin/activate"
-fi
-```
-
-```bash
-# .env.leave for autoenv
-deactivate
-```
-
-![Autoenv](/assets/blog/ai-homelab-guide-into-hardware-to-software/autoenv.jpg)
-
 #### Remote access 
 
 While you could definetely deploy a [Cloudflare tunnel like I showed in a previous post](https://erdaltoprak.com/blog/setting-up-cloudflare-argo-access-on-a-raspberry-pi/) I decided to use [Tailscale](https://tailscale.com) with the[ "Allow local network access" ](https://tailscale.com/kb/1103/exit-nodes/#:~:text=Open%20the%20Tailscale%20menu%20and,select%20Allow%20local%20network%20access.)option in order to use the ```192.168.X.X```URL across all my devices without bothering to put more network infrastructure behind anything!
@@ -223,4 +172,4 @@ While you could definetely deploy a [Cloudflare tunnel like I showed in a previo
 
 Throughout my AI journey, I noticed I was frequently toggling between apps/projects rather than genuinely engaging with them. It felt as though I wasn't experimenting on my own terms. This realization drove me to create my own AI Homelab, which also doubles as a NAS. The initial decisions surrounding the right hardware and maximizing software utility can be intricate, influenced by factors like budget, personal preferences, and tolerance for noise and heat. Nonetheless, there's a unique satisfaction in experimenting on a machine that truly belongs to you.
 
-If you found this guide useful you can also check the previous ones about [Setting up macOS for development](https://erdaltoprak.com/blog/setting-up-macos-for-development/) and [Abstracting local development environments through containers](https://erdaltoprak.com/blog/abstracting-local-development-environments-through-containers/)
+If you found this guide useful you can also check the previous ones about [Setting up macOS for development](https://erdaltoprak.com/blog/setting-up-macos-for-development/) and [Abstracting local development environments through containers](https://erdaltoprak.com/blog/abstracting-local-development-environments-through-containers/).

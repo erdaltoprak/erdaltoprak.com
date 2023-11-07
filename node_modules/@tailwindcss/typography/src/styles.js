@@ -7,6 +7,14 @@ const round = (num) =>
     .replace(/\.0$/, '')
 const rem = (px) => `${round(px / 16)}rem`
 const em = (px, base) => `${round(px / base)}em`
+const hexToRgb = (hex) => {
+  hex = hex.replace('#', '')
+  hex = hex.length === 3 ? hex.replace(/./g, '$&$&') : hex
+  const r = parseInt(hex.substring(0, 2), 16)
+  const g = parseInt(hex.substring(2, 4), 16)
+  const b = parseInt(hex.substring(4, 6), 16)
+  return `${r} ${g} ${b}`
+}
 
 let defaultModifiers = {
   sm: {
@@ -56,22 +64,25 @@ let defaultModifiers = {
           marginTop: em(24, 14),
           marginBottom: em(24, 14),
         },
+        picture: {
+          marginTop: em(24, 14),
+          marginBottom: em(24, 14),
+        },
+        'picture > img': {
+          marginTop: '0',
+          marginBottom: '0',
+        },
         video: {
           marginTop: em(24, 14),
           marginBottom: em(24, 14),
         },
-        figure: {
-          marginTop: em(24, 14),
-          marginBottom: em(24, 14),
-        },
-        'figure > *': {
-          marginTop: '0',
-          marginBottom: '0',
-        },
-        figcaption: {
+        kbd: {
           fontSize: em(12, 14),
-          lineHeight: round(16 / 12),
-          marginTop: em(8, 12),
+          borderRadius: rem(5),
+          paddingTop: em(2, 14),
+          paddingRight: em(5, 14),
+          paddingBottom: em(2, 14),
+          paddingLeft: em(5, 14),
         },
         code: {
           fontSize: em(12, 14),
@@ -133,6 +144,17 @@ let defaultModifiers = {
           marginTop: em(8, 14),
           marginBottom: em(8, 14),
         },
+        dl: {
+          marginTop: em(16, 14),
+          marginBottom: em(16, 14),
+        },
+        dt: {
+          marginTop: em(16, 14),
+        },
+        dd: {
+          marginTop: em(4, 14),
+          paddingLeft: em(22, 14),
+        },
         hr: {
           marginTop: em(40, 14),
           marginBottom: em(40, 14),
@@ -175,6 +197,19 @@ let defaultModifiers = {
         },
         'tbody td:last-child, tfoot td:last-child': {
           paddingRight: '0',
+        },
+        figure: {
+          marginTop: em(24, 14),
+          marginBottom: em(24, 14),
+        },
+        'figure > *': {
+          marginTop: '0',
+          marginBottom: '0',
+        },
+        figcaption: {
+          fontSize: em(12, 14),
+          lineHeight: round(16 / 12),
+          marginTop: em(8, 12),
         },
       },
       {
@@ -234,22 +269,25 @@ let defaultModifiers = {
           marginTop: em(32, 16),
           marginBottom: em(32, 16),
         },
+        picture: {
+          marginTop: em(32, 16),
+          marginBottom: em(32, 16),
+        },
+        'picture > img': {
+          marginTop: '0',
+          marginBottom: '0',
+        },
         video: {
           marginTop: em(32, 16),
           marginBottom: em(32, 16),
         },
-        figure: {
-          marginTop: em(32, 16),
-          marginBottom: em(32, 16),
-        },
-        'figure > *': {
-          marginTop: '0',
-          marginBottom: '0',
-        },
-        figcaption: {
+        kbd: {
           fontSize: em(14, 16),
-          lineHeight: round(20 / 14),
-          marginTop: em(12, 14),
+          borderRadius: rem(5),
+          paddingTop: em(3, 16),
+          paddingRight: em(6, 16),
+          paddingBottom: em(3, 16),
+          paddingLeft: em(6, 16),
         },
         code: {
           fontSize: em(14, 16),
@@ -311,6 +349,17 @@ let defaultModifiers = {
           marginTop: em(12, 16),
           marginBottom: em(12, 16),
         },
+        dl: {
+          marginTop: em(20, 16),
+          marginBottom: em(20, 16),
+        },
+        dt: {
+          marginTop: em(20, 16),
+        },
+        dd: {
+          marginTop: em(8, 16),
+          paddingLeft: em(26, 16),
+        },
         hr: {
           marginTop: em(48, 16),
           marginBottom: em(48, 16),
@@ -353,6 +402,19 @@ let defaultModifiers = {
         },
         'tbody td:last-child, tfoot td:last-child': {
           paddingRight: '0',
+        },
+        figure: {
+          marginTop: em(32, 16),
+          marginBottom: em(32, 16),
+        },
+        'figure > *': {
+          marginTop: '0',
+          marginBottom: '0',
+        },
+        figcaption: {
+          fontSize: em(14, 16),
+          lineHeight: round(20 / 14),
+          marginTop: em(12, 14),
         },
       },
       {
@@ -412,22 +474,25 @@ let defaultModifiers = {
           marginTop: em(32, 18),
           marginBottom: em(32, 18),
         },
+        picture: {
+          marginTop: em(32, 18),
+          marginBottom: em(32, 18),
+        },
+        'picture > img': {
+          marginTop: '0',
+          marginBottom: '0',
+        },
         video: {
           marginTop: em(32, 18),
           marginBottom: em(32, 18),
         },
-        figure: {
-          marginTop: em(32, 18),
-          marginBottom: em(32, 18),
-        },
-        'figure > *': {
-          marginTop: '0',
-          marginBottom: '0',
-        },
-        figcaption: {
+        kbd: {
           fontSize: em(16, 18),
-          lineHeight: round(24 / 16),
-          marginTop: em(16, 16),
+          borderRadius: rem(5),
+          paddingTop: em(4, 18),
+          paddingRight: em(8, 18),
+          paddingBottom: em(4, 18),
+          paddingLeft: em(8, 18),
         },
         code: {
           fontSize: em(16, 18),
@@ -489,6 +554,17 @@ let defaultModifiers = {
           marginTop: em(16, 18),
           marginBottom: em(16, 18),
         },
+        dl: {
+          marginTop: em(24, 18),
+          marginBottom: em(24, 18),
+        },
+        dt: {
+          marginTop: em(24, 18),
+        },
+        dd: {
+          marginTop: em(12, 18),
+          paddingLeft: em(28, 18),
+        },
         hr: {
           marginTop: em(56, 18),
           marginBottom: em(56, 18),
@@ -531,6 +607,19 @@ let defaultModifiers = {
         },
         'tbody td:last-child, tfoot td:last-child': {
           paddingRight: '0',
+        },
+        figure: {
+          marginTop: em(32, 18),
+          marginBottom: em(32, 18),
+        },
+        'figure > *': {
+          marginTop: '0',
+          marginBottom: '0',
+        },
+        figcaption: {
+          fontSize: em(16, 18),
+          lineHeight: round(24 / 16),
+          marginTop: em(16, 16),
         },
       },
       {
@@ -590,22 +679,25 @@ let defaultModifiers = {
           marginTop: em(40, 20),
           marginBottom: em(40, 20),
         },
+        picture: {
+          marginTop: em(40, 20),
+          marginBottom: em(40, 20),
+        },
+        'picture > img': {
+          marginTop: '0',
+          marginBottom: '0',
+        },
         video: {
           marginTop: em(40, 20),
           marginBottom: em(40, 20),
         },
-        figure: {
-          marginTop: em(40, 20),
-          marginBottom: em(40, 20),
-        },
-        'figure > *': {
-          marginTop: '0',
-          marginBottom: '0',
-        },
-        figcaption: {
+        kbd: {
           fontSize: em(18, 20),
-          lineHeight: round(28 / 18),
-          marginTop: em(18, 18),
+          borderRadius: rem(5),
+          paddingTop: em(5, 20),
+          paddingRight: em(8, 20),
+          paddingBottom: em(5, 20),
+          paddingLeft: em(8, 20),
         },
         code: {
           fontSize: em(18, 20),
@@ -667,6 +759,17 @@ let defaultModifiers = {
           marginTop: em(16, 20),
           marginBottom: em(16, 20),
         },
+        dl: {
+          marginTop: em(24, 20),
+          marginBottom: em(24, 20),
+        },
+        dt: {
+          marginTop: em(24, 20),
+        },
+        dd: {
+          marginTop: em(12, 20),
+          paddingLeft: em(32, 20),
+        },
         hr: {
           marginTop: em(56, 20),
           marginBottom: em(56, 20),
@@ -709,6 +812,19 @@ let defaultModifiers = {
         },
         'tbody td:last-child, tfoot td:last-child': {
           paddingRight: '0',
+        },
+        figure: {
+          marginTop: em(40, 20),
+          marginBottom: em(40, 20),
+        },
+        'figure > *': {
+          marginTop: '0',
+          marginBottom: '0',
+        },
+        figcaption: {
+          fontSize: em(18, 20),
+          lineHeight: round(28 / 18),
+          marginTop: em(18, 18),
         },
       },
       {
@@ -768,22 +884,25 @@ let defaultModifiers = {
           marginTop: em(48, 24),
           marginBottom: em(48, 24),
         },
+        picture: {
+          marginTop: em(48, 24),
+          marginBottom: em(48, 24),
+        },
+        'picture > img': {
+          marginTop: '0',
+          marginBottom: '0',
+        },
         video: {
           marginTop: em(48, 24),
           marginBottom: em(48, 24),
         },
-        figure: {
-          marginTop: em(48, 24),
-          marginBottom: em(48, 24),
-        },
-        'figure > *': {
-          marginTop: '0',
-          marginBottom: '0',
-        },
-        figcaption: {
+        kbd: {
           fontSize: em(20, 24),
-          lineHeight: round(32 / 20),
-          marginTop: em(20, 20),
+          borderRadius: rem(6),
+          paddingTop: em(6, 24),
+          paddingRight: em(8, 24),
+          paddingBottom: em(6, 24),
+          paddingLeft: em(8, 24),
         },
         code: {
           fontSize: em(20, 24),
@@ -845,6 +964,17 @@ let defaultModifiers = {
           marginTop: em(16, 24),
           marginBottom: em(16, 24),
         },
+        dl: {
+          marginTop: em(32, 24),
+          marginBottom: em(32, 24),
+        },
+        dt: {
+          marginTop: em(32, 24),
+        },
+        dd: {
+          marginTop: em(12, 24),
+          paddingLeft: em(38, 24),
+        },
         hr: {
           marginTop: em(72, 24),
           marginBottom: em(72, 24),
@@ -888,6 +1018,19 @@ let defaultModifiers = {
         'tbody td:last-child, tfoot td:last-child': {
           paddingRight: '0',
         },
+        figure: {
+          marginTop: em(48, 24),
+          marginBottom: em(48, 24),
+        },
+        'figure > *': {
+          marginTop: '0',
+          marginBottom: '0',
+        },
+        figcaption: {
+          fontSize: em(20, 24),
+          lineHeight: round(32 / 20),
+          marginTop: em(20, 20),
+        },
       },
       {
         '> :first-child': {
@@ -898,28 +1041,6 @@ let defaultModifiers = {
         },
       },
     ],
-  },
-
-  // Invert (for dark mode)
-  invert: {
-    css: {
-      '--tw-prose-body': 'var(--tw-prose-invert-body)',
-      '--tw-prose-headings': 'var(--tw-prose-invert-headings)',
-      '--tw-prose-lead': 'var(--tw-prose-invert-lead)',
-      '--tw-prose-links': 'var(--tw-prose-invert-links)',
-      '--tw-prose-bold': 'var(--tw-prose-invert-bold)',
-      '--tw-prose-counters': 'var(--tw-prose-invert-counters)',
-      '--tw-prose-bullets': 'var(--tw-prose-invert-bullets)',
-      '--tw-prose-hr': 'var(--tw-prose-invert-hr)',
-      '--tw-prose-quotes': 'var(--tw-prose-invert-quotes)',
-      '--tw-prose-quote-borders': 'var(--tw-prose-invert-quote-borders)',
-      '--tw-prose-captions': 'var(--tw-prose-invert-captions)',
-      '--tw-prose-code': 'var(--tw-prose-invert-code)',
-      '--tw-prose-pre-code': 'var(--tw-prose-invert-pre-code)',
-      '--tw-prose-pre-bg': 'var(--tw-prose-invert-pre-bg)',
-      '--tw-prose-th-borders': 'var(--tw-prose-invert-th-borders)',
-      '--tw-prose-td-borders': 'var(--tw-prose-invert-td-borders)',
-    },
   },
 
   // Gray color themes
@@ -937,6 +1058,8 @@ let defaultModifiers = {
       '--tw-prose-quotes': colors.slate[900],
       '--tw-prose-quote-borders': colors.slate[200],
       '--tw-prose-captions': colors.slate[500],
+      '--tw-prose-kbd': colors.slate[900],
+      '--tw-prose-kbd-shadows': hexToRgb(colors.slate[900]),
       '--tw-prose-code': colors.slate[900],
       '--tw-prose-pre-code': colors.slate[200],
       '--tw-prose-pre-bg': colors.slate[800],
@@ -953,6 +1076,8 @@ let defaultModifiers = {
       '--tw-prose-invert-quotes': colors.slate[100],
       '--tw-prose-invert-quote-borders': colors.slate[700],
       '--tw-prose-invert-captions': colors.slate[400],
+      '--tw-prose-invert-kbd': colors.white,
+      '--tw-prose-invert-kbd-shadows': hexToRgb(colors.white),
       '--tw-prose-invert-code': colors.white,
       '--tw-prose-invert-pre-code': colors.slate[300],
       '--tw-prose-invert-pre-bg': 'rgb(0 0 0 / 50%)',
@@ -974,6 +1099,8 @@ let defaultModifiers = {
       '--tw-prose-quotes': colors.gray[900],
       '--tw-prose-quote-borders': colors.gray[200],
       '--tw-prose-captions': colors.gray[500],
+      '--tw-prose-kbd': colors.gray[900],
+      '--tw-prose-kbd-shadows': hexToRgb(colors.gray[900]),
       '--tw-prose-code': colors.gray[900],
       '--tw-prose-pre-code': colors.gray[200],
       '--tw-prose-pre-bg': colors.gray[800],
@@ -990,6 +1117,8 @@ let defaultModifiers = {
       '--tw-prose-invert-quotes': colors.gray[100],
       '--tw-prose-invert-quote-borders': colors.gray[700],
       '--tw-prose-invert-captions': colors.gray[400],
+      '--tw-prose-invert-kbd': colors.white,
+      '--tw-prose-invert-kbd-shadows': hexToRgb(colors.white),
       '--tw-prose-invert-code': colors.white,
       '--tw-prose-invert-pre-code': colors.gray[300],
       '--tw-prose-invert-pre-bg': 'rgb(0 0 0 / 50%)',
@@ -1011,6 +1140,8 @@ let defaultModifiers = {
       '--tw-prose-quotes': colors.zinc[900],
       '--tw-prose-quote-borders': colors.zinc[200],
       '--tw-prose-captions': colors.zinc[500],
+      '--tw-prose-kbd': colors.zinc[900],
+      '--tw-prose-kbd-shadows': hexToRgb(colors.zinc[900]),
       '--tw-prose-code': colors.zinc[900],
       '--tw-prose-pre-code': colors.zinc[200],
       '--tw-prose-pre-bg': colors.zinc[800],
@@ -1027,6 +1158,8 @@ let defaultModifiers = {
       '--tw-prose-invert-quotes': colors.zinc[100],
       '--tw-prose-invert-quote-borders': colors.zinc[700],
       '--tw-prose-invert-captions': colors.zinc[400],
+      '--tw-prose-invert-kbd': colors.white,
+      '--tw-prose-invert-kbd-shadows': hexToRgb(colors.white),
       '--tw-prose-invert-code': colors.white,
       '--tw-prose-invert-pre-code': colors.zinc[300],
       '--tw-prose-invert-pre-bg': 'rgb(0 0 0 / 50%)',
@@ -1048,6 +1181,8 @@ let defaultModifiers = {
       '--tw-prose-quotes': colors.neutral[900],
       '--tw-prose-quote-borders': colors.neutral[200],
       '--tw-prose-captions': colors.neutral[500],
+      '--tw-prose-kbd': colors.neutral[900],
+      '--tw-prose-kbd-shadows': hexToRgb(colors.neutral[900]),
       '--tw-prose-code': colors.neutral[900],
       '--tw-prose-pre-code': colors.neutral[200],
       '--tw-prose-pre-bg': colors.neutral[800],
@@ -1064,6 +1199,8 @@ let defaultModifiers = {
       '--tw-prose-invert-quotes': colors.neutral[100],
       '--tw-prose-invert-quote-borders': colors.neutral[700],
       '--tw-prose-invert-captions': colors.neutral[400],
+      '--tw-prose-invert-kbd': colors.white,
+      '--tw-prose-invert-kbd-shadows': hexToRgb(colors.white),
       '--tw-prose-invert-code': colors.white,
       '--tw-prose-invert-pre-code': colors.neutral[300],
       '--tw-prose-invert-pre-bg': 'rgb(0 0 0 / 50%)',
@@ -1085,6 +1222,8 @@ let defaultModifiers = {
       '--tw-prose-quotes': colors.stone[900],
       '--tw-prose-quote-borders': colors.stone[200],
       '--tw-prose-captions': colors.stone[500],
+      '--tw-prose-kbd': colors.stone[900],
+      '--tw-prose-kbd-shadows': hexToRgb(colors.stone[900]),
       '--tw-prose-code': colors.stone[900],
       '--tw-prose-pre-code': colors.stone[200],
       '--tw-prose-pre-bg': colors.stone[800],
@@ -1101,6 +1240,8 @@ let defaultModifiers = {
       '--tw-prose-invert-quotes': colors.stone[100],
       '--tw-prose-invert-quote-borders': colors.stone[700],
       '--tw-prose-invert-captions': colors.stone[400],
+      '--tw-prose-invert-kbd': colors.white,
+      '--tw-prose-invert-kbd-shadows': hexToRgb(colors.white),
       '--tw-prose-invert-code': colors.white,
       '--tw-prose-invert-pre-code': colors.stone[300],
       '--tw-prose-invert-pre-bg': 'rgb(0 0 0 / 50%)',
@@ -1229,6 +1370,30 @@ let defaultModifiers = {
       '--tw-prose-invert-links': colors.rose[500],
     },
   },
+
+  // Invert (for dark mode)
+  invert: {
+    css: {
+      '--tw-prose-body': 'var(--tw-prose-invert-body)',
+      '--tw-prose-headings': 'var(--tw-prose-invert-headings)',
+      '--tw-prose-lead': 'var(--tw-prose-invert-lead)',
+      '--tw-prose-links': 'var(--tw-prose-invert-links)',
+      '--tw-prose-bold': 'var(--tw-prose-invert-bold)',
+      '--tw-prose-counters': 'var(--tw-prose-invert-counters)',
+      '--tw-prose-bullets': 'var(--tw-prose-invert-bullets)',
+      '--tw-prose-hr': 'var(--tw-prose-invert-hr)',
+      '--tw-prose-quotes': 'var(--tw-prose-invert-quotes)',
+      '--tw-prose-quote-borders': 'var(--tw-prose-invert-quote-borders)',
+      '--tw-prose-captions': 'var(--tw-prose-invert-captions)',
+      '--tw-prose-kbd': 'var(--tw-prose-invert-kbd)',
+      '--tw-prose-kbd-shadows': 'var(--tw-prose-invert-kbd-shadows)',
+      '--tw-prose-code': 'var(--tw-prose-invert-code)',
+      '--tw-prose-pre-code': 'var(--tw-prose-invert-pre-code)',
+      '--tw-prose-pre-bg': 'var(--tw-prose-invert-pre-bg)',
+      '--tw-prose-th-borders': 'var(--tw-prose-invert-th-borders)',
+      '--tw-prose-td-borders': 'var(--tw-prose-invert-td-borders)',
+    },
+  },
 }
 
 module.exports = {
@@ -1237,8 +1402,7 @@ module.exports = {
       {
         color: 'var(--tw-prose-body)',
         maxWidth: '65ch',
-        // TODO: Figure out how to not need this, it's a merging issue
-        p: {},
+        p: {}, // Required to maintain correct order when merging
         '[class~="lead"]': {
           color: 'var(--tw-prose-lead)',
         },
@@ -1300,6 +1464,10 @@ module.exports = {
         'ul > li::marker': {
           color: 'var(--tw-prose-bullets)',
         },
+        dt: {
+          color: 'var(--tw-prose-headings)',
+          fontWeight: '600',
+        },
         hr: {
           borderColor: 'var(--tw-prose-hr)',
           borderTopWidth: 1,
@@ -1350,11 +1518,16 @@ module.exports = {
           fontWeight: '700',
           color: 'inherit',
         },
-        // TODO: Figure out how to not need these, it's a merging issue
-        img: {},
-        'figure > *': {},
-        figcaption: {
-          color: 'var(--tw-prose-captions)',
+        img: {}, // Required to maintain correct order when merging
+        picture: {
+          display: 'block',
+        },
+        kbd: {
+          fontWeight: '500',
+          fontFamily: 'inherit',
+          color: 'var(--tw-prose-kbd)',
+          boxShadow:
+            '0 0 0 1px rgb(var(--tw-prose-kbd-shadows) / 10%), 0 3px 0 rgb(var(--tw-prose-kbd-shadows) / 10%)',
         },
         code: {
           color: 'var(--tw-prose-code)',
@@ -1442,6 +1615,10 @@ module.exports = {
         },
         'tfoot td': {
           verticalAlign: 'top',
+        },
+        'figure > *': {}, // Required to maintain correct order when merging
+        figcaption: {
+          color: 'var(--tw-prose-captions)',
         },
       },
       defaultModifiers.gray.css,
