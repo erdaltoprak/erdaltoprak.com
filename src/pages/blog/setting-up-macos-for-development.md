@@ -4,6 +4,7 @@ title: Setting up macOS for development
 pubDate: 2021-10-25
 description: "Setting up macOS for development"
 author: Erdal Toprak
+og: "https://erdaltoprak.com/assets/blog/setting-up-macos-for-development/banner.jpeg"
 ---
 
 ![Banner](/assets/blog/setting-up-macos-for-development/banner.jpeg)

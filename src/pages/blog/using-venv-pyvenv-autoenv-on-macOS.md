@@ -4,6 +4,7 @@ title: "Using venv, pyvenv, autoenv on macOS"
 pubDate: 2023-11-07
 description: "Using venv, pyvenv, autoenv on macOS"
 author: Erdal Toprak
+og: "https://erdaltoprak.com/assets/blog/using-venv-pyvenv-autoenv-on-macOS/banner.jpg"
 ---
 
 ![Banner](/assets/blog/using-venv-pyvenv-autoenv-on-macOS/banner.jpg)

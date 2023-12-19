@@ -4,6 +4,7 @@ title: Abstracting local development environments through containers
 pubDate: 2022-04-20
 description: "Abstracting local development environments through containers"
 author: Erdal Toprak
+og: "https://erdaltoprak.com/assets/blog/abstracting-local-development-environments-through-containers/banner.jpeg"
 ---
 
 ![Banner](/assets/blog/abstracting-local-development-environments-through-containers/banner.jpeg)

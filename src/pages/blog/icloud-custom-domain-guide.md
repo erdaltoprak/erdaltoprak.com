@@ -4,6 +4,7 @@ title: iCloud custom domain guide
 pubDate: 2021-09-09
 description: "iCloud custom domain guide"
 author: Erdal Toprak
+og: "https://erdaltoprak.com/assets/blog/icloud-custom-domain-guide/banner.png"
 ---
 
 ![Banner](/assets/blog/icloud-custom-domain-guide/banner.png)

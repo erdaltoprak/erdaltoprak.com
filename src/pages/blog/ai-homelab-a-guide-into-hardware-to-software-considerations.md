@@ -4,6 +4,7 @@ title: "AI Homelab: A guide into hardware to software considerations"
 pubDate: 2023-09-04
 description: "AI Homelab: A guide into hardware to software considerations"
 author: Erdal Toprak
+og: "https://erdaltoprak.com/assets/blog/ai-homelab-guide-into-hardware-to-software/banner.png"
 ---
 
 ![Banner](/assets/blog/ai-homelab-guide-into-hardware-to-software/banner.png)

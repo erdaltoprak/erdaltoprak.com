@@ -4,6 +4,7 @@ title: Setting up Cloudflare Argo & Access on a Raspberry Pi
 pubDate: 2021-09-29
 description: "Setting up Cloudflare Argo & Access on a Raspberry Pi"
 author: Erdal Toprak
+og: "https://erdaltoprak.com/assets/blog/setting-up-cloudflare-argo-access-on-a-raspberry-pi/rpi-banner.jpeg"
 ---
 
 ![Banner](/assets/blog/setting-up-cloudflare-argo-access-on-a-raspberry-pi/rpi-banner.jpeg)
