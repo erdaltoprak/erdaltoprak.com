@@ -10,23 +10,11 @@ export function get(context) {
     site: context.site,
     items: posts.map((post) => ({
       link: post.url,
-      content: sanitizeHtml(post.compiledContent()),
-      ...post.frontmatter,
+      title: post.frontmatter.title,  // Include the title
+      description: post.frontmatter.description,  // Include the description
+      content: sanitizeHtml(post.compiledContent()),  // Include the entire content
+      pubDate: post.frontmatter.pubDate,  // Include the publication date
     })),
   });
 }
-
-
-
-// import rss, { pagesGlobToRssItems } from '@astrojs/rss';
-
-// export async function get(context) {
-//   return rss({
-//     title: 'Erdal Toprak | Blog',
-//     description: 'IA/ML | Privacy | Software ecosystems',
-//     site: 'https://erdaltoprak.com',
-//     items: await pagesGlobToRssItems(
-//       import.meta.glob('./blog/*.md'),
-//     ),
-//   });
-// }
+ 
