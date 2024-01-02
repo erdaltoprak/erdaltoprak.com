@@ -50,7 +50,7 @@ I went with an ASRock X570 Taichi that has quite a robust support for virtualiza
 
 The first step into the GPU selection should be to read [this excellent article by Tim Dettmers](https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/)
 
-| ![PCIe Lanes](/assets/blog/ai-homelab-guide-into-hardware-to-software/gpu_recommendations.png) | 
+| ![PCIe Lanes](/assets/blog/ai-homelab-guide-into-hardware-to-software/gpu-recommendations.png) | 
 |:--:| 
 | *[GPU Recommendation Chart](https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/#GPU_Recommendations)* |
 
@@ -58,7 +58,7 @@ The hardest part of the GPU selection is actually to find one at MSRP let alone 
 
 As a visual note, I would like to remind you that the RTX 4090 is massive and that the [12VHPWR connector should not be bent into extreme angles ](https://www.youtube.com/watch?v=ig2px7ofKhQ).
 
-| ![RTX 4090 Size](/assets/blog/ai-homelab-guide-into-hardware-to-software/gpu_size.jpg) | 
+| ![RTX 4090 Size](/assets/blog/ai-homelab-guide-into-hardware-to-software/gpu-size.jpg) | 
 |:--:| 
 | *First test fit of the GPU* |
 
