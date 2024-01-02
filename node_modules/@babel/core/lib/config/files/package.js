@@ -11,8 +11,8 @@ function _path() {
   };
   return data;
 }
-var _utils = require("./utils.js");
-var _configError = require("../../errors/config-error.js");
+var _utils = require("./utils");
+var _configError = require("../../errors/config-error");
 const PACKAGE_FILENAME = "package.json";
 const readConfigPackage = (0, _utils.makeStaticFileCache)((filepath, content) => {
   let options;

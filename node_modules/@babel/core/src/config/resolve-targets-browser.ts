@@ -1,4 +1,4 @@
-import type { ValidatedOptions } from "./validation/options.ts";
+import type { ValidatedOptions } from "./validation/options";
 import getTargets, {
   type InputTargets,
 } from "@babel/helper-compilation-targets";

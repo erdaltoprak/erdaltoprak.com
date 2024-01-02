@@ -18,7 +18,7 @@ function _generator() {
   };
   return data;
 }
-var _mergeMap = require("./merge-map.js");
+var _mergeMap = require("./merge-map");
 function generateCode(pluginPasses, file) {
   const {
     opts,

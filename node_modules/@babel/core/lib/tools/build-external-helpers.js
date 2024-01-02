@@ -32,7 +32,7 @@ function _t() {
   };
   return data;
 }
-var _file = require("../transformation/file/file.js");
+var _file = require("../transformation/file/file");
 const {
   arrayExpression,
   assignmentExpression,
