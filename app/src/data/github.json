@@ -1,0 +1,26 @@
+[
+    {
+      "title": "erdaltoprak.com",
+      "description": "My personal website.",
+      "url": "https://github.com/erdaltoprak/erdaltoprak.com",
+      "demo": "",
+      "post": "",
+      "tags": [
+        "Astro",
+        "TypeScript",
+        "TailwindCSS",
+        "Markdown"
+      ]
+    },
+    {
+      "title": "Tamga",
+      "description": "An offline first nostr contact & profile manager for iOS!",
+      "url": "https://github.com/erdaltoprak/tamga",
+      "demo": "https://tamga.pages.dev",
+      "post": "",
+      "tags": [
+        "Nostr",
+        "SwiftUI"
+      ]
+    }
+]

@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  astro-app:
+    build: .
+    ports:
+      - "3000:4321"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      NODE_ENV: development

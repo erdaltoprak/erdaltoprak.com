@@ -1,0 +1,23 @@
+---
+import Layout from "@layouts/Layout.astro";
+import ProjectCard from "@components/ProjectCard.astro";
+import projects from "@other/github.json";
+
+const metadata = {
+  title: "Erdal Toprak",
+  description: "IA/ML | Privacy | Software ecosystems",
+}
+---
+
+<Layout>
+  <section class="not-prose">
+    <h1 class="mb-6 text-3xl md:text-4xl font-semibold tracking-tight">Projects</h1>
+    <!-- <p class="mb-5 text-zinc-300">  
+    </p> -->
+    <section>
+      <ul class="mb-5 grid sm:auto-rows-max gap-5">
+        {projects.map((project) => <ProjectCard title={project.title} description={project.description} url={project.url} demo={project.demo} post={project.post} tags={project.tags} />)}
+      </ul>
+    </section>
+  </section>
+</Layout>

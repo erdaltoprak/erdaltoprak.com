@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SocialCard from "@components/SocialCard.astro";
+import socials from "@other/social.json";
+---
+
+<Layout>
+    <section class="not-prose py-10 md:py-14 text-zinc-300">
+        <h1 class="mb-6 text-3xl md:text-4xl text-white font-semibold">About Me</h1>
+        <p>Hi 👋🏻
+
+            I'm Erdal. I'm 28 years old, based in Nice, France. Through my journey focusing on Data Science, Machine Learning, Privacy and Software Ecosystems, I launched this website to share my knowledge and document some of my projects. </p>
+            
+           <p> I'm available on LinkedIn for more informations but you can also contact me with the other links below</p>
+        {
+          socials && (
+            <ul class="mt-8 flex flex-wrap">
+              {socials.map((social) => (
+                <li>
+                  <SocialCard name={social.name} icon={social.icon} url={social.url} />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </section>
+</Layout>

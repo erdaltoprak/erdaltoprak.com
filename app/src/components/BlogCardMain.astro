@@ -1,0 +1,27 @@
+---
+export interface Props {
+  title: string;
+  pubDate: string;
+  url: string | undefined;
+}
+let { title, description, pubDate, url } = Astro.props;
+const shortDate = new Date(pubDate).toLocaleDateString("fr", {
+  month: "short",
+  day: "numeric"
+});
+url = url + "/";
+---
+
+<li class="sm:grid flex flex-col leading-relaxed rounded-2xl text-zinc-400">
+    <a class="col-span-3 flex flex-col" href={url}>
+      <time datetime={pubDate} class="block sm:hidden text-sm tracking-wide text-zinc-400">{shortDate}</time>
+      <span class="flex items-center justify-between w-full border-b border-gray-600 hover:underline">
+        <p class="text-white">
+          {title}
+        </p>
+        <time datetime={pubDate} class="hidden sm:block text-sm tracking-wide text-zinc-400">
+          {shortDate}
+        </time>
+      </span>      
+    </a>
+</li>

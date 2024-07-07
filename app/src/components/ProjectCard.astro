@@ -1,0 +1,75 @@
+---
+// import { Icon } from "astro-icon";
+
+export interface Props {
+  title: string;
+  description: string;
+  url?: string;
+  demo?: string;
+  post?: string;
+  tags?: string[];
+}
+
+const { title, description, url, demo, post, tags } = Astro.props;
+---
+
+<li class="flex flex-col text-lg bg-zinc-800/30 text-zinc-400 p-6 gap-2 rounded-lg">
+  <a href={url} target="_blank" rel="noopener noreferrer">
+  <header class="flex justify-between items-center">
+    <h2 class="text-xl font-medium text-white mb-3">
+      {title}
+    </h2>
+  </header>
+  {
+    tags && (
+      <ul class="flex gap-2 flex-wrap text-white mb-2">
+        {tags.map((tech) => (
+          <li class="bg-zinc-800 py-0.5 px-2 text-sm rounded-md">{tech}</li>
+        ))}
+      </ul>
+    )
+  }
+  <p class="mb-1">{description}</p>
+</a>
+<div class="flex gap-4">
+    {url && (
+        <div>
+          <a href={url} target="_blank">
+            <button class="flex flex-col text-base border-2 border-zinc-600 bg-zinc-600/30 hover:ring-2 ring-white text-slate-300 p-1 rounded-lg transition">GitHub</button>
+          </a>
+        </div>
+    )}
+    {demo && (
+        <div>
+          <a href={demo} target="_blank">
+            <button class="flex flex-col text-base border-2 border-zinc-600 bg-zinc-600/30 hover:ring-2 ring-white text-slate-300 p-1 rounded-lg transition">Demo</button>
+          </a>
+        </div>
+    )}
+    {post && (
+        <div>
+          <a href={post} target="_blank">
+            <button class="flex flex-col text-base border-2 border-zinc-600 bg-zinc-600/30 hover:ring-2 ring-white text-slate-300 p-1 rounded-lg transition">Blog Post</button>
+          </a>
+        </div>
+    )}
+  </div>
+<!-- <div class="grid sm:grid-cols-10">
+    {url && (
+        <div>
+          <button class="flex flex-col text-base border-2 border-zinc-600 bg-zinc-600/30 hover:ring-2 text-slate-300 p-1 rounded-lg transition">GitHub</button>
+        </div>
+    )}
+    {demo && (
+        <div>
+          <button class="flex flex-col text-base border-2 border-zinc-600 bg-zinc-600/30 hover:ring-2 text-slate-300 p-1 rounded-lg transition">GitHub</button>
+        </div>
+    )}
+    {post && (
+        <div>
+          <button class="flex flex-col text-base border-2 border-zinc-600 bg-zinc-600/30 hover:ring-2 text-slate-300 p-1 rounded-lg transition">GitHub</button>
+        </div>
+    )}
+</div> -->
+
+</li>

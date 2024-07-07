@@ -1,0 +1,28 @@
+---
+import { HTMLAttributes } from "astro/types";
+interface Props extends HTMLAttributes<"a"> {
+  name: string;
+}
+const { name, href, ...props } = Astro.props;
+let isActive: boolean;
+if (href === "/") {
+  isActive = href === Astro.url.pathname;
+} else {
+  isActive = Astro.url.pathname.includes(
+    typeof href === "string" ? href : href.href
+  );
+}
+---
+
+<a
+  class:list={[
+    "text-zinc-300 hover:bg-zinc-800 rounded-full transition inline-block px-3 py-2",
+    { "font-black text-orange-200 visited:text-orange-200 dark:!text-white": isActive },
+    { "font-light": !isActive },
+  ]}
+  href={href}
+  {...props}
+  aria-label={`Go to ${name}`}
+>
+  {name}
+</a>

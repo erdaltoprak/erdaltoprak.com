@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "types": ["@astrojs/image/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@layouts/*": ["src/layouts/*"],
+      "@other/*": ["src/data/*"],
+      "@images/*": ["src/assets/images/*"]
+    }
+  }
+}
