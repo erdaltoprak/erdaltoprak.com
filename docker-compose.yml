@@ -6,7 +6,6 @@ services:
     ports:
       - "3000:4321"
     volumes:
-      - .:/app
-      - /app/node_modules
+      - ./app:/app
     environment:
       NODE_ENV: development

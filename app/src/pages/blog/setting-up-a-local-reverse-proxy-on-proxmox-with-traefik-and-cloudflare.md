@@ -236,6 +236,7 @@ Before running Traefik, it's essential to configure your domain's DNS settings o
 
 In your root folder `/traefik, run the following command to start the Traefik container:
 ```shell
+docker network create proxy
 docker compose up -d --force-recreate
 ```
 

@@ -61,25 +61,27 @@ This project is set up to run in a Docker container for a consistent development
 The `Dockerfile` defines the Docker image and sets up the environment for the Astro project.
 
 ```Dockerfile
-# Dockerfile
-# Use the official Node.js 18.20.3 image.
-FROM node:18.20.3
+# Use the official Node.js image.
+FROM node:20.16.0
 
 # Create and change to the app directory.
 WORKDIR /app
 
+# Copy app directory content to /app.
+COPY app/ ./
+
 # Install dependencies.
-COPY app/package*.json ./
 RUN npm install
 
-# Copy the rest of the application.
-COPY app/ .
+# Add ./node_modules/.bin to PATH
+ENV PATH /app/node_modules/.bin:$PATH
 
-# Expose the port the app runs on
+# Expose the port the app runs on.
 EXPOSE 3000
 
 # Start the project in development mode.
 CMD ["npm", "run", "dev"]
+
 ```
 
 ### docker-compose.yml
@@ -96,7 +98,6 @@ services:
       - "3000:4321"
     volumes:
       - ./app:/app
-      - /app/node_modules
     environment:
       NODE_ENV: development
 ```
