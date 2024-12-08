@@ -1,0 +1,35 @@
+---
+import Layout from '../layouts/Layout.astro';
+import DatasetCard from '../components/DatasetCard.astro';
+import datasets from '../assets/hf_datasets.json';
+import type { HFDataset } from '../types';
+
+// Type assertion and validation
+const validDatasets = (Array.isArray(datasets) ? datasets : []) as HFDataset[];
+---
+
+<Layout>
+  <div>
+    <h1>Datasets</h1>
+    <div>
+      {validDatasets.length > 0 ? (
+        validDatasets.map((dataset: HFDataset) => (
+          <DatasetCard 
+            // @ts-ignore 
+            id={dataset.id || ''}
+            // @ts-ignore
+            title={dataset.title || ''}
+            // @ts-ignore
+            url={dataset.url || ''}
+            // @ts-ignore
+            author={dataset.author || ''}
+            // @ts-ignore
+            lastModified={dataset.lastModified || ''}
+          />
+        ))
+      ) : (
+        <p>No datasets available.</p>
+      )}
+    </div>
+  </div>
+</Layout> 

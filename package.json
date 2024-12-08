@@ -1,0 +1,44 @@
+{
+  "name": "erdal",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "npm run fetch-data && astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "fetch-repos": "node src/assets/fetchGithubRepos.js",
+    "fetch-hf-models": "node src/assets/fetchHfModels.js",
+    "fetch-hf-datasets": "node src/assets/fetchHfDatasets.js",
+    "fetch-hf-collections": "node src/assets/fetchHfCollections.js",
+    "fetch-data": "npm run fetch-repos && npm run fetch-hf-models && npm run fetch-hf-datasets && npm run fetch-hf-collections"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/rss": "^4.0.9",
+    "@astrojs/sitemap": "^3.2.1",
+    "@astrojs/tailwind": "^5.1.3",
+    "@expressive-code/plugin-line-numbers": "^0.38.3",
+    "@iconify-json/ion": "^1.2.1",
+    "astro": "^4.16.16",
+    "astro-collection-search": "^0.0.10",
+    "astro-expressive-code": "^0.38.3",
+    "astro-icon": "^1.1.4",
+    "ion": "link:@iconify-json/@iconify-json/ion",
+    "markdown-it": "^14.1.0",
+    "meteor-icons:share": "link:@iconify-json/meteor-icons:share",
+    "sanitize-html": "^2.13.1",
+    "sharp": "^0.33.5",
+    "tailwindcss": "^3.4.16"
+  },
+  "devDependencies": {
+    "@iconify-json/meteor-icons": "^1.2.0",
+    "@iconify-json/hugeicons": "^1.0.0",
+    "@iconify-json/mdi": "^1.2.1",
+    "@iconify-json/simple-icons": "^1.2.1",
+    "@iconify-json/uil": "^1.2.1",
+    "@iconify-json/ri": "^1.2.1",
+    "@types/markdown-it": "^14.1.2",
+    "@types/sanitize-html": "^2.13.0"
+  }
+}

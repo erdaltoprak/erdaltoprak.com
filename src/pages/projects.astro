@@ -1,0 +1,116 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import collections from '../assets/hf_collections.json';
+import projects from '../assets/github.json' assert { type: "json" };
+import rawModels from '../assets/hf_models.json';
+import rawDatasets from '../assets/hf_datasets.json';
+
+interface HFModel {
+  id: string;
+  author: string;
+  title: string;
+  description: string;
+  url: string;
+  lastModified: string;
+  model_type: string;
+  base_model: string[];
+}
+
+interface HFDataset {
+  id: string;
+  author: string;
+  title: string;
+  url: string;
+  lastModified: string;
+}
+
+const models = rawModels as HFModel[];
+const datasets = rawDatasets as HFDataset[];
+
+// Group projects by author
+const githubByAuthor = projects.reduce((acc, project) => {
+  const author = project.author || 'Unknown';
+  if (!acc[author]) acc[author] = [];
+  acc[author].push(project);
+  return acc;
+}, {} as Record<string, typeof projects>);
+
+const modelsByAuthor = models.reduce((acc, model) => {
+  const author = model.author || 'Unknown';
+  if (!acc[author]) acc[author] = [];
+  acc[author].push(model);
+  return acc;
+}, {} as Record<string, typeof models>);
+
+const datasetsByAuthor = datasets.reduce((acc, dataset) => {
+  const author = dataset.author || 'Unknown';
+  if (!acc[author]) acc[author] = [];
+  acc[author].push(dataset);
+  return acc;
+}, {} as Record<string, typeof datasets>);
+
+// Sort authors alphabetically and ensure consistent order
+const sortedGithubAuthors = Object.entries(githubByAuthor)
+  .sort(([a], [b]) => a.localeCompare(b));
+
+const sortedModelAuthors = Object.entries(modelsByAuthor)
+  .sort(([a], [b]) => a.localeCompare(b));
+
+const sortedDatasetAuthors = Object.entries(datasetsByAuthor)
+  .sort(([a], [b]) => a.localeCompare(b));
+---
+
+<Layout>
+  <section class="not-prose px-4 max-w-7xl mx-auto">
+    <h1 class="mb-6 text-3xl md:text-4xl font-semibold tracking-tight mt-12">Projects</h1>
+    
+    {/* GitHub Projects by Author */}
+    {sortedGithubAuthors.map(([author, authorProjects]) => (
+      authorProjects.length > 0 && (
+        <section class="mb-12">
+          <h2 class="text-2xl md:text-3xl font-medium mb-6 text-zinc-900 dark:text-zinc-100">
+            {author}'s github projects
+          </h2>
+          <ul class="grid gap-6 grid-cols-1 lg:grid-cols-2 w-full">
+            {authorProjects.map(project => (
+              <ProjectCard {...project} />
+            ))}
+          </ul>
+        </section>
+      )
+    ))}
+
+    {/* Hugging Face Models by Author */}
+    {sortedModelAuthors.map(([author, authorModels]) => (
+      authorModels.length > 0 && (
+        <section class="mb-12">
+          <h2 class="text-2xl md:text-3xl font-medium mb-6 text-zinc-900 dark:text-zinc-100">
+            {author}'s huggingface models
+          </h2>
+          <ul class="grid gap-6 grid-cols-1 lg:grid-cols-2 w-full">
+            {authorModels.map(model => (
+              <ProjectCard {...model} />
+            ))}
+          </ul>
+        </section>
+      )
+    ))}
+
+    {/* Hugging Face Datasets by Author */}
+    {sortedDatasetAuthors.map(([author, authorDatasets]) => (
+      authorDatasets.length > 0 && (
+        <section class="mb-12">
+          <h2 class="text-2xl md:text-3xl font-medium mb-6 text-zinc-900 dark:text-zinc-100">
+            {author}'s huggingface datasets
+          </h2>
+          <ul class="grid gap-6 grid-cols-1 lg:grid-cols-2 w-full">
+            {authorDatasets.map(dataset => (
+              <ProjectCard {...dataset} />
+            ))}
+          </ul>
+        </section>
+      )
+    ))}
+  </section>
+</Layout>

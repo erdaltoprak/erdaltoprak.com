@@ -1,0 +1,185 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import memoji from '../assets/memoji.png';
+import { getCollection } from 'astro:content';
+import ProjectCard from '../components/ProjectCard.astro';
+import { formatDate } from '../utils';
+import githubProjects from '../assets/github.json';
+import hfModels from '../assets/hf_models.json';
+import hfDatasets from '../assets/hf_datasets.json';
+import type { HFModel, HFDataset } from '../types';
+
+// Type assertions and validation
+const validModels = (Array.isArray(hfModels) ? hfModels : []) as HFModel[];
+const validDatasets = (Array.isArray(hfDatasets) ? hfDatasets : []) as HFDataset[];
+
+// Get latest blog posts
+const posts = await getCollection('blog');
+const latestPosts = posts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4);
+
+// Get latest items
+const latestModels = validModels
+  .slice(0, 3)
+  .map((model: HFModel) => ({
+    title: model.title || '',
+    description: model.description || '',
+    url: model.url || '',
+    lastModified: model.lastModified || '',
+    author: model.author || '',
+    base_model: model.base_model || []
+  }));
+
+const latestDatasets = validDatasets
+  .slice(0, 3)
+  .map((dataset: HFDataset) => ({
+    title: dataset.title || '',
+    url: dataset.url || '',
+    lastModified: dataset.lastModified || '',
+    author: dataset.author || ''
+  }));
+
+// Combine all projects from different sources
+// @ts-ignore
+const allProjects = [
+  ...githubProjects.map(project => ({
+    ...project,
+    source: 'github'
+  })),
+  ...hfModels.map(model => ({
+    // @ts-ignore 
+    title: model.title,
+    // @ts-ignore
+    description: model.description,
+    // @ts-ignore
+    url: model.url,
+    // @ts-ignore
+    lastModified: model.lastModified,
+    // @ts-ignore
+    author: model.author,
+    // @ts-ignore
+    base_model: model.base_model,
+    source: 'huggingface-model'
+  })),
+  ...hfDatasets.map(dataset => ({
+    // @ts-ignore
+    title: dataset.title,
+    // @ts-ignore
+    url: dataset.url,
+    // @ts-ignore
+    lastModified: dataset.lastModified,
+    // @ts-ignore
+    author: dataset.author,
+    source: 'huggingface-dataset'
+  }))
+]
+.filter(project => project.title && !project.title.includes('.github.io'))
+.sort((a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime())
+.slice(0, 3);
+
+// More detailed logging
+// console.log('Combined projects:', allProjects);
+// console.log('Projects length:', allProjects.length);
+---
+
+<Layout>
+  <!-- Hero Section -->
+  <section class="py-12 md:py-16">
+    <div class="flex items-center gap-6 mb-8">
+      <h1 class="text-4xl md:text-5xl font-bold">
+        Hi 👋🏻, I'm <a href="/about" class="underline decoration-zinc-400 hover:decoration-zinc-700 dark:decoration-zinc-300 dark:hover:decoration-white decoration-2 ">Erdal</a>!
+      </h1>
+    </div>
+    <p class="text-xl md:text-2xl text-zinc-700 dark:text-zinc-300 max-w-2xl">
+      I'm a software engineer passionate about AI, decentralization, privacy and open source.
+      On this site, I share my thoughts, projects, and experiments.
+    </p>
+  </section>
+
+  <!-- Featured Blog Posts -->
+  <section class="py-8">
+    <h2 class="text-2xl md:text-3xl font-semibold mb-6">Latest Writing</h2>
+    <div class="grid gap-6 md:grid-cols-2">
+      {latestPosts.map(post => (
+        <a 
+          href={`/blog/${post.slug}`}
+          class="group p-4 rounded-lg border border-zinc-200 bg-orange-50/30 hover:bg-orange-50/50 dark:hover:bg-zinc-800 dark:bg-zinc-800/30"
+        >
+          <span class="text-sm text-zinc-600 dark:text-zinc-400">
+            {formatDate(post.data.pubDate)}
+          </span>
+          <h3 class="text-xl font-medium mt-2">
+            {post.data.title}
+          </h3>
+          <p class="text-zinc-600 dark:text-zinc-400 line-clamp-2 mt-2">
+            {post.data.description}
+          </p>
+        </a>
+      ))}
+    </div>
+    <a 
+      href="/blog" 
+      class="inline-block mt-6 hover:underline"
+    >
+      View all posts →
+    </a>
+  </section>
+
+  <!-- Featured Projects -->
+  {allProjects.length > 0 && (
+    <section class="py-8">
+      <h2 class="text-2xl md:text-3xl font-semibold mb-6">Latest Projects</h2>
+      <div class="grid gap-6 md:grid-cols-3">
+        {allProjects.map(project => (
+          <ProjectCard {...project} />
+        ))}
+      </div>
+      <a 
+        href="/projects" 
+        class="inline-block mt-6 hover:underline"
+      >
+        View all projects →
+      </a>
+    </section>
+  )}
+
+  <!-- Quick Links
+  <section class="py-8">
+    <h2 class="text-2xl md:text-3xl font-semibold mb-6">Connect</h2>
+    <div class="flex gap-4 text-zinc-600 dark:text-zinc-400">
+      <a 
+        href="/rss.xml" 
+        class="hover:text-orange-600 dark:hover:text-orange-400"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        RSS
+      </a>
+      <span>•</span>
+      <a 
+        href="https://github.com/erdaltoprak" 
+        class="hover:text-orange-600 dark:hover:text-orange-400"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        GitHub
+      </a>
+    </div>
+  </section> -->
+
+  <!-- Latest Models -->
+  <!-- {latestModels.length > 0 && (
+    <section>
+      <h2>Latest Models</h2>
+    </section>
+  )} -->
+  
+  <!-- Latest Datasets -->
+  <!-- {latestDatasets.length > 0 && (
+    <section>
+      <h2>Latest Datasets</h2>
+    </section>
+  )} -->
+</Layout>

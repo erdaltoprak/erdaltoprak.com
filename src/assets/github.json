@@ -1,0 +1,50 @@
+[
+  {
+    "title": "erdaltoprak.com",
+    "description": "👨🏻‍💻 Public repo for edaltoprak.com",
+    "url": "https://github.com/erdaltoprak/erdaltoprak.com",
+    "demo": "https://erdaltoprak.com",
+    "post": "",
+    "lastModified": "2024-11-27T17:38:58Z",
+    "author": "erdaltoprak",
+    "tags": [
+      "astro",
+      "javascript",
+      "markdown",
+      "website"
+    ],
+    "license": "MIT License"
+  },
+  {
+    "title": "tamga",
+    "description": "An offline first nostr contact & profile manager for iOS!",
+    "url": "https://github.com/erdaltoprak/tamga",
+    "demo": "https://tamga.pages.dev",
+    "post": "",
+    "lastModified": "2024-06-28T19:33:16Z",
+    "author": "erdaltoprak",
+    "tags": [
+      "nostr",
+      "swiftui"
+    ],
+    "license": "GNU General Public License v3.0"
+  },
+  {
+    "title": "erdaltoprak",
+    "description": "👨🏻‍💻 Github README",
+    "url": "https://github.com/erdaltoprak/erdaltoprak",
+    "demo": "",
+    "post": "",
+    "lastModified": "2024-06-08T13:47:24Z",
+    "author": "erdaltoprak"
+  },
+  {
+    "title": "blog_comments",
+    "description": "",
+    "url": "https://github.com/erdaltoprak/blog_comments",
+    "demo": "",
+    "post": "",
+    "lastModified": "2021-09-09T17:41:08Z",
+    "author": "erdaltoprak"
+  }
+]

@@ -1,0 +1,56 @@
+---
+import { SITE_TITLE, SITE_DESCRIPTION, OG_IMAGE, SITE_URL } from '../consts';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalURL?: string;
+  type?: 'website' | 'blog';
+  heroImage?: string;
+}
+
+const {
+  title = SITE_TITLE,
+  description = SITE_DESCRIPTION,
+  canonicalURL = Astro.url,
+  type = 'website',
+  heroImage
+} = Astro.props;
+
+const metaTitle = title === SITE_TITLE ? title : `${SITE_TITLE} | ${title}`;
+
+// Just use the default OG_IMAGE for everything for now
+// const ogImage = type === 'blog' && heroImage 
+//   ? heroImage
+//   : OG_IMAGE;
+---
+
+<!-- Global Metadata -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/ico" href="/favicon.ico" />
+<link rel="sitemap" href="/sitemap-index.xml" />
+<meta name="generator" content={Astro.generator} />
+
+<!-- Primary Meta Tags -->
+<title>{metaTitle}</title>
+<meta name="title" content={metaTitle} />
+<meta name="description" content={description} />
+
+<!-- Canonical URL -->
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={metaTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={OG_IMAGE} />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonicalURL} />
+<meta name="twitter:title" content={metaTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={OG_IMAGE} />
+<meta name="twitter:creator" content="@erdalxtoprak" />

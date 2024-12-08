@@ -1,0 +1,14 @@
+# ErdalToprak.com
+
+> This website is Erdal Toprak's personal website. It is built with Astro and deployed on Cloudflare Pages.
+
+## Pages
+
+- [Home](https://erdaltoprak.com)
+- [Blog](https://erdaltoprak.com/blog)
+- [Projects](https://erdaltoprak.com/projects)
+- [About](https://erdaltoprak.com/about)
+
+# Docs
+
+- [Github](https://github.com/erdaltoprak/erdaltoprak.com) : Source code of this website.

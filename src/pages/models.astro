@@ -1,0 +1,41 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ModelCard from '../components/ModelCard.astro';
+import models from '../assets/hf_models.json';
+import type { HFModel } from '../types';
+
+// Type assertion and validation
+const validModels = (Array.isArray(models) ? models : []) as HFModel[];
+---
+
+<Layout>
+  <div>
+    <h1>Models</h1>
+    <div>
+      {validModels.length > 0 ? (
+        validModels.map((model: HFModel) => (
+          <ModelCard 
+            // @ts-ignore
+            id={model.id || ''}
+            // @ts-ignore
+            title={model.title || ''}
+            // @ts-ignore
+            description={model.description || ''}
+            // @ts-ignore
+            url={model.url || ''}
+            // @ts-ignore
+            author={model.author || ''}
+            // @ts-ignore
+            lastModified={model.lastModified || ''} 
+            // @ts-ignore
+            model_type={model.model_type || ''}
+            // @ts-ignore
+            base_model={model.base_model || []}
+          />
+        ))
+      ) : (
+        <p>No models available.</p>
+      )}
+    </div>
+  </div>
+</Layout> 

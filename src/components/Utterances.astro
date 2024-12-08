@@ -1,0 +1,19 @@
+<div id="utterances-container"></div>
+ 
+<script>
+  const script = document.createElement("script");
+  const container = document.querySelector("#utterances-container");
+ 
+  Object.entries({
+    src: "https://utteranc.es/client.js",
+    repo: "erdaltoprak/blog_comments",
+    "issue-term": "pathname",
+    label: "post comments",
+    theme: "photon-dark",
+    crossorigin: "anonymous",
+  }).forEach(([key, value]) => {
+    script.setAttribute(key, value);
+  });
+ 
+  container?.appendChild(script);
+</script>

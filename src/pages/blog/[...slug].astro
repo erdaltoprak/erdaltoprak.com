@@ -1,0 +1,34 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import BlogPost from '../../layouts/LayoutBlog.astro';
+import { Image } from 'astro:assets';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog');
+	return posts.map((post) => ({
+		params: { slug: post.slug },
+		props: post,
+	}));
+}
+
+const post = Astro.props;
+const { Content } = await post.render();
+
+// Get the processed image URL from the heroImage
+const heroImage = post.data.heroImage;
+---
+
+<BlogPost {...post.data} heroImage={heroImage} type="blog">
+	<h1>{post.data.title}</h1>
+	<Content />
+</BlogPost>
+
+<script>
+  // Add target="_blank" to all links after the page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('article a').forEach(link => {
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+    });
+  });
+</script>

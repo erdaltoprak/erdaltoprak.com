@@ -1,0 +1,31 @@
+---
+import { Icon } from 'astro-icon/components'
+---
+
+<button
+    id="search-button"
+    class="flex items-center space-x-1 px-3 py-1.5 rounded-lg hover:bg-orange-50 dark:hover:bg-zinc-800 transition-colors"
+    aria-label="Search"
+>
+    <Icon name="meteor-icons:search" class="w-5 h-5" />
+    <span class="text-sm hidden sm:inline-block">
+        <span class="px-1 py-0.5 rounded border border-zinc-300 dark:border-zinc-700">
+            <span class="text-xs">⌘</span>K
+        </span>
+    </span>
+</button>
+
+<script>
+    // Handle keyboard shortcut
+    document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            // console.log('Search called via keyboard shortcut');
+        }
+    });
+
+    // Handle button click
+    document.getElementById('search-button')?.addEventListener('click', () => {
+        // console.log('Search called via button click');
+    });
+</script> 

@@ -1,0 +1,290 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<div 
+  id="search-overlay"
+  class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50"
+>
+  <div class="max-w-2xl mx-auto mt-20 p-4">
+    <div class="bg-orange-100 dark:bg-zinc-800 rounded-lg shadow-xl">
+      <!-- Search Header -->
+      <div class="relative flex items-center p-3 border-b border-zinc-200 dark:border-zinc-700">
+        <Icon name="meteor-icons:search" class="absolute left-3 w-5 h-5 text-zinc-400 pointer-events-none" />
+        <input
+          type="text"
+          id="search-input"
+          class="w-full pl-10 pr-3 py-1 bg-transparent border-none outline-none focus:ring-0 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400"
+          placeholder="Search posts..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+
+      <!-- Search Results -->
+      <div 
+        id="search-results"
+        class="p-2 max-h-[60vh] overflow-y-auto"
+      >
+        <!-- Results will be populated here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+import { Search, WarmStart } from 'astro-collection-search';
+
+// Initialize search index
+WarmStart();
+
+const overlay = document.getElementById('search-overlay');
+const input = document.getElementById('search-input') as HTMLInputElement;
+const resultsContainer = document.getElementById('search-results');
+let selectedIndex = -1;
+let searchResults: any[] = [];
+
+const quickActions = [
+  { 
+    id: "share",
+    name: "Share this page", 
+    icon: "meteor-icons:share",
+    shortcut: "↵",
+    action: "share" 
+  }
+];
+
+// Show notification toast
+function showNotification(message: string) {
+  const toast = document.createElement('div');
+  toast.className = 'fixed bottom-4 right-4 text-neutral-900 dark:text-zinc-100 bg-orange-50 dark:bg-zinc-700 px-4 py-2 rounded-lg shadow-lg transform transition-all duration-300 z-50';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  // Remove toast after 3 seconds
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+// Share functionality
+async function sharePage() {
+  const shareData = {
+    title: document.querySelector('meta[property="og:title"]')?.getAttribute('content') || document.title,
+    url: window.location.href,
+  };
+  console.log(shareData);
+
+  try {
+    // First check if Web Share API is supported
+    if (navigator.share) {
+      await navigator.share(shareData);
+      return;
+    }
+
+    // Fallback to clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(window.location.href);
+      showNotification('URL copied to clipboard!');
+      return;
+    }
+
+    // Last resort fallback using execCommand
+    const textArea = document.createElement('textarea');
+    textArea.value = window.location.href;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+      document.execCommand('copy');
+      showNotification('URL copied to clipboard!');
+    } catch (err) {
+      console.error('Fallback clipboard copy failed:', err);
+      showNotification('Failed to copy URL. Please copy it manually.');
+    } finally {
+      textArea.remove();
+    }
+  } catch (err) {
+    console.error('Error sharing:', err);
+    showNotification('Failed to share page');
+  }
+}
+
+// Create quick action item HTML
+function createQuickActionItem(action: typeof quickActions[0], index: number) {
+  return `
+    <button 
+      data-action="${action.id}"
+      class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-orange-50 dark:hover:bg-zinc-700 ${index === selectedIndex ? 'bg-orange-50 dark:bg-zinc-700' : ''}"
+    >
+      <div class="flex items-center gap-3 min-w-0 flex-1">
+        <Icon name="${action.icon}" class="w-5 h-5 shrink-0 text-zinc-400" />
+        <span class="text-neutral-900 dark:text-zinc-100 truncate">${action.name}</span>
+      </div>
+      <kbd class="px-2 py-1 text-xs text-zinc-400 bg-orange-100dark:bg-zinc-700 rounded shrink-0 ml-2">
+        ${action.shortcut}
+      </kbd>
+    </button>
+  `;
+}
+
+// Show overlay with default quick actions
+function showOverlay() {
+  overlay?.classList.remove('hidden');
+  input?.focus();
+  document.body.style.overflow = 'hidden';
+  renderQuickActions();
+}
+
+// Render quick actions
+function renderQuickActions() {
+  if (!resultsContainer) return;
+  resultsContainer.innerHTML = quickActions
+    .map((action, index) => createQuickActionItem(action, index))
+    .join('');
+    
+  // Add click handlers
+  resultsContainer.querySelectorAll('button[data-action]').forEach(button => {
+    button.addEventListener('click', (e) => {
+      const action = (e.currentTarget as HTMLButtonElement).dataset.action;
+      if (action === 'share') {
+        sharePage();
+        hideOverlay();
+      }
+    });
+  });
+}
+
+// Handle search input
+async function handleSearch() {
+  const query = input?.value.trim();
+  if (!query) {
+    renderQuickActions();
+    return;
+  }
+
+  searchResults = await Search(query);
+  renderResults();
+}
+
+// Render results
+function renderResults() {
+  if (!searchResults.length) {
+    resultsContainer!.innerHTML = `
+      <div class="p-3 text-center text-zinc-500 dark:text-zinc-400">
+        No results found
+      </div>
+    `;
+    return;
+  }
+
+  resultsContainer!.innerHTML = searchResults
+    .map((result, index) => createResultItem(result, index))
+    .join('');
+}
+
+// Create result item HTML
+function createResultItem(result: any, index: number) {
+  return `
+    <a 
+      href="/blog/${result.file.replace(/\.mdx?$/, '')}"
+      class="block p-3 rounded-lg hover:bg-orange-50 dark:hover:bg-zinc-700 ${index === selectedIndex ? 'bg-orange-50 dark:bg-zinc-700' : ''}"
+    >
+      <h3 class="font-medium text-zinc-900 dark:text-zinc-100">
+        ${result.frontmatter.title || 'Untitled'}
+      </h3>
+      <p class="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2">
+        ${result.frontmatter.description || 'No description'}
+      </p>
+    </a>
+  `;
+}
+
+// Hide overlay
+function hideOverlay() {
+  overlay?.classList.add('hidden');
+  input!.value = '';
+  resultsContainer!.innerHTML = '';
+  document.body.style.overflow = '';
+  selectedIndex = -1;
+  searchResults = [];
+}
+
+// Update handleKeyboard to handle quick action selection
+function handleKeyboard(e: KeyboardEvent) {
+  if (!overlay?.classList.contains('hidden')) {
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        selectedIndex = Math.min(selectedIndex + 1, (searchResults.length || quickActions.length) - 1);
+        input?.value ? renderResults() : renderQuickActions();
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        selectedIndex = Math.max(selectedIndex - 1, -1);
+        input?.value ? renderResults() : renderQuickActions();
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (selectedIndex >= 0) {
+          if (!input?.value && quickActions[selectedIndex]) {
+            if (quickActions[selectedIndex].id === 'share') {
+              sharePage();
+              hideOverlay();
+            }
+          } else if (searchResults[selectedIndex]) {
+            const result = searchResults[selectedIndex];
+            window.location.href = `/blog/${result.file.replace(/\.mdx?$/, '')}`;
+          }
+        } else if (searchResults.length > 0) { // New condition: if there are results but none selected
+          // Navigate to the first result
+          const result = searchResults[0];
+          window.location.href = `/blog/${result.file.replace(/\.mdx?$/, '')}`;
+        } else if (!input?.value) { // If no input and no selection, trigger first quick action
+          sharePage();
+          hideOverlay();
+        }
+        break;
+      case 'Escape':
+        e.preventDefault();
+        hideOverlay();
+        break;
+    }
+  }
+}
+
+// Event Listeners
+document.addEventListener('keydown', (e) => {
+  // Toggle search overlay on Cmd+K / Ctrl+K
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    if (overlay?.classList.contains('hidden')) {
+      showOverlay();
+    } else {
+      hideOverlay();
+    }
+  }
+  // Handle keyboard navigation
+  handleKeyboard(e);
+});
+
+// Close on overlay click
+overlay?.addEventListener('click', (e) => {
+  if (e.target === overlay) {
+    hideOverlay();
+  }
+});
+
+// Handle search input
+input?.addEventListener('input', handleSearch);
+
+// Connect search button to overlay
+document.getElementById('search-button')?.addEventListener('click', () => {
+  showOverlay();
+});
+</script>
