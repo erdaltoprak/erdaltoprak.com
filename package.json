@@ -4,9 +4,10 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "npm run fetch-data && astro check && astro build",
+    "build": "npm run fetch-data && npm run generate-llms-doc && astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "generate-llms-doc": "node src/assets/generateLLMsDoc.js",
     "fetch-repos": "node src/assets/fetchGithubRepos.js",
     "fetch-hf-models": "node src/assets/fetchHfModels.js",
     "fetch-hf-datasets": "node src/assets/fetchHfDatasets.js",
@@ -24,6 +25,8 @@
     "astro-collection-search": "^0.0.10",
     "astro-expressive-code": "^0.38.3",
     "astro-icon": "^1.1.4",
+    "glob": "^11.0.0",
+    "gray-matter": "^4.0.3",
     "ion": "link:@iconify-json/@iconify-json/ion",
     "markdown-it": "^14.1.0",
     "meteor-icons:share": "link:@iconify-json/meteor-icons:share",
@@ -32,12 +35,12 @@
     "tailwindcss": "^3.4.16"
   },
   "devDependencies": {
-    "@iconify-json/meteor-icons": "^1.2.0",
     "@iconify-json/hugeicons": "^1.0.0",
     "@iconify-json/mdi": "^1.2.1",
+    "@iconify-json/meteor-icons": "^1.2.0",
+    "@iconify-json/ri": "^1.2.1",
     "@iconify-json/simple-icons": "^1.2.1",
     "@iconify-json/uil": "^1.2.1",
-    "@iconify-json/ri": "^1.2.1",
     "@types/markdown-it": "^14.1.2",
     "@types/sanitize-html": "^2.13.0"
   }
