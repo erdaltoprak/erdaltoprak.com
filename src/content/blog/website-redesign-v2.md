@@ -57,9 +57,9 @@ In the blog layout, I added the [Expressive Code](https://expressive-code.com) p
 
 The default theme is the system theme. While coding for dark mode was straightforward, getting the light theme to look good and readable for longer content was challenging. However, I think I've found a good balance
 
-| ![Light Theme](../../assets/blog/12/homepage-new.png) | ![Dark Theme](../../assets/blog/12/homepage-new-light.png) |
+| ![Dark Theme](../../assets/blog/12/homepage-new.png) | ![Light Theme](../../assets/blog/12/homepage-new-light.png) |
 |:--:|:--:|
-| *Light Theme* | *Dark Theme* |
+| *Dark Theme* | *Light Theme* |
 
 #### Projects
 
