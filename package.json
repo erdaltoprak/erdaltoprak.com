@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "git submodule update --init --recursive",
     "build": "tsx src/scripts/generate-og.ts && astro build",
     "preview": "astro preview",
     "astro": "astro"
