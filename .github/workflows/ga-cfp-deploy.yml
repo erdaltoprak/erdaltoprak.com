@@ -2,12 +2,12 @@ name: PROD ~ Cloudflare Pages Deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
+  repository_dispatch:
     types:
       - blog_update
-
+      
 jobs:
   deploy:
     runs-on: ubuntu-latest
