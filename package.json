@@ -1,0 +1,45 @@
+{
+  "name": "erdal",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "tsx src/scripts/generate-og.ts && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/rss": "^4.0.9",
+    "@astrojs/sitemap": "^3.2.1",
+    "@astrojs/tailwind": "^5.1.3",
+    "@expressive-code/plugin-line-numbers": "^0.38.3",
+    "@iconify-json/ion": "^1.2.1",
+    "astro": "^4.16.16",
+    "astro-collection-search": "^0.0.10",
+    "astro-expressive-code": "^0.38.3",
+    "astro-icon": "^1.1.4",
+    "glob": "^11.0.0",
+    "gray-matter": "^4.0.3",
+    "html-entities": "^2.5.2",
+    "markdown-it": "^14.1.0",
+    "sanitize-html": "^2.13.1",
+    "sharp": "^0.33.5",
+    "tailwindcss": "^3.4.16"
+  },
+  "devDependencies": {
+    "@fontsource/roboto": "^5.1.1",
+    "@iconify-json/hugeicons": "^1.0.0",
+    "@iconify-json/mdi": "^1.2.1",
+    "@iconify-json/meteor-icons": "^1.2.0",
+    "@iconify-json/ri": "^1.2.1",
+    "@iconify-json/simple-icons": "^1.2.1",
+    "@iconify-json/uil": "^1.2.1",
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/markdown-it": "^14.1.2",
+    "@types/sanitize-html": "^2.13.0",
+    "satori": "^0.12.1",
+    "satori-html": "^0.3.2",
+    "tsx": "^4.19.2"
+  }
+}

@@ -1,0 +1,108 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  url: string;
+  author?: string;
+  lastModified?: string;
+  model_type?: string;
+  base_model?: string[] | string;
+  demo?: string;
+  post?: string;
+  license?: string;
+}
+
+const { 
+  title,
+  description = '',
+  url,
+  author,
+  lastModified,
+  model_type,
+  base_model = [],
+  demo,
+  post,
+  license
+} = Astro.props;
+
+// Ensure base_model is always an array
+const baseModels = Array.isArray(base_model) ? base_model : [base_model].filter(Boolean);
+
+// Format date as DD/MM/YYYY
+const formatDate = (dateString: string) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-GB'); // This will format as DD/MM/YYYY
+};
+---
+
+<li class="flex flex-col text-lg border border-zinc-200 dark:border-zinc-800 bg-orange-50/30 dark:bg-zinc-800/30 p-6 gap-2 rounded-lg h-full w-full overflow-hidden">
+  <div class="flex-grow">
+    <header class="flex justify-between items-start">
+      <h2 class="text-xl font-medium dark:text-zinc-100 text-zinc-900 mb-3 break-words">
+        {title}
+      </h2>
+    </header>
+    
+    {baseModels.length > 0 && (
+      <ul class="flex gap-2 flex-wrap text-white mb-2">
+        {baseModels.map(model => (
+          <li class="bg-zinc-800 py-0.5 px-2 text-sm rounded-md break-words">{model}</li>
+        ))}
+      </ul>
+    )}
+
+    {description && (
+      <p class="mb-3 dark:text-zinc-100 text-zinc-900 break-words">
+        {description}
+      </p>
+    )}
+    
+    <div class="flex flex-col gap-1 text-sm dark:text-zinc-100 text-zinc-900">
+      {author && <p class="break-words">Author: {author}</p>}
+      {model_type && <p class="break-words">Model Type: {model_type}</p>}
+      {lastModified && (
+        <p>Last Modified: {formatDate(lastModified)}</p>
+      )}
+      {license && <p class="break-words">License: {license}</p>}
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-4 mt-auto pt-4">
+    {url && (
+      <div>
+        <a href={url} target="_blank">
+          <button class="flex flex-col text-base border-2 border-zinc-600 bg-orange-50/30 ring-black dark:bg-zinc-800/30 hover:bg-orange-100 dark:hover:bg-zinc-500 dark:text-zinc-100 text-zinc-900 p-1 rounded-lg whitespace-nowrap transition-colors">
+            View Project
+          </button>
+        </a>
+      </div>
+    )}
+    {demo && (
+      <div>
+        <a href={demo} target="_blank">
+          <button class="flex flex-col text-base border-2 border-zinc-600 bg-orange-50/30 ring-black dark:bg-zinc-800/30 hover:bg-orange-100 dark:hover:bg-zinc-500 dark:text-zinc-100 text-zinc-900 p-1 rounded-lg whitespace-nowrap transition-colors">
+            Demo
+          </button>
+        </a>
+      </div>
+    )}
+    {post && (
+      <div>
+        <a href={post} target="_blank">
+          <button class="flex flex-col text-base border-2 border-zinc-600 bg-zinc-600/30 hover:bg-orange-50 dark:hover:bg-zinc-800 text-slate-300 p-1 rounded-lg whitespace-nowrap transition-colors">
+            Blog Post
+          </button>
+        </a>
+      </div>
+    )}
+  </div>
+</li>
+
+<style>
+  .project-card {
+    border: 1px solid #ccc;
+    padding: 1em;
+    margin-bottom: 1em;
+  }
+</style> 

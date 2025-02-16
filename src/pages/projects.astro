@@ -1,0 +1,34 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+// @ts-ignore
+import projects from '../../public/projects.json';
+
+interface Project {
+  title: string;
+  description: string;
+  url: string;
+  demo?: string;
+  post?: string;
+  lastModified?: string;
+  author: string;
+  tags?: string[];
+  license?: string;
+}
+
+// Sort all projects by lastModified date
+const sortedProjects = projects
+  .sort((a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime());
+---
+
+<Layout>
+  <section class="not-prose px-4 max-w-7xl mx-auto">
+    <h1 class="mb-6 text-3xl md:text-4xl font-semibold tracking-tight mt-12">Projects</h1>
+    
+    <ul class="grid gap-6 grid-cols-1 lg:grid-cols-2 w-full">
+      {sortedProjects.map(project => (
+        <ProjectCard {...project} />
+      ))}
+    </ul>
+  </section>
+</Layout>

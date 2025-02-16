@@ -1,0 +1,47 @@
+---
+import Layout from './Layout.astro';
+import Utterances from '../components/Utterances.astro';
+
+const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+console.log("Blog Layout Title:", title);
+---
+
+<Layout
+	title={title}
+	description={description}
+	heroImage={heroImage}
+	type="blog"
+>
+	<article class="prose sm:prose-lg text-zinc-900 dark:text-zinc-100 
+		prose-a:text-blue-400 
+		[&_a]:border-b-[1px]
+		[&_a]:!border-blue-400/50
+		[&_a:hover]:!border-blue-400
+		[&>*]:mb-8
+		[&>p]:my-6
+		[&>p]:text-justify
+		[&>pre]:my-12
+		[&>blockquote]:my-12
+		[&>ul]:my-8
+		[&>ol]:my-8
+		[&_img]:my-12 
+		[&_img]:rounded-[0.5rem]
+		[&_img]:mx-auto
+		[&_img]:block
+		[&>h1]:text-4xl [&>h1]:font-bold [&>h1]:mt-12 [&>h1]:mb-4
+		[&>h2]:text-3xl [&>h2]:font-semibold [&>h2]:mt-12 [&>h2]:mb-4
+		[&>h3]:text-2xl [&>h3]:font-medium [&>h3]:mt-8 [&>h3]:mb-4
+		[&>h4]:text-xl [&>h4]:font-medium [&>h4]:mt-8 [&>h4]:mb-4
+		[&>h5]:text-lg [&>h5]:font-medium [&>h5]:mt-8 [&>h5]:mb-4
+		[&>h6]:text-base [&>h6]:font-medium [&>h6]:mt-8 [&>h6]:mb-4
+		[&_:not(pre)>code]:border-2 
+		[&_:not(pre)>code]:border-zinc-300 
+		[&_:not(pre)>code]:dark:border-zinc-600 
+		[&_:not(pre)>code]:bg-zinc-100 
+		[&_:not(pre)>code]:dark:bg-zinc-800 
+		[&_:not(pre)>code]:rounded-md
+		[&_:not(pre)>code]:px-1.5">
+		<slot />
+		<Utterances />
+	</article>
+</Layout>

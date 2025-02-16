@@ -1,0 +1,41 @@
+---
+import { NAVBAR_ITEMS } from '../consts';
+import ThemeToggle from './ThemeToggle.astro';
+import SearchButton from './SearchButton.astro';
+import { Image } from 'astro:assets';
+import memoji from '../../public/memoji.png';
+
+// Get current path and normalize it
+const currentPath = Astro.url.pathname.replace(/\/$/, '');
+---
+
+<nav class="sticky top-0 bg-orange-100/80 dark:bg-neutral-900/80 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 z-50 ">
+    <div class="max-w-4xl mx-auto px-4 py-2 flex items-center justify-between">
+        <a href="/" class="flex items-center space-x-1 hover:underline underline-offset-4 decoration-2">
+            <Image
+                src={memoji}
+                alt="Profile photo"
+                class="w-6 h-6 rounded-full"
+            />
+            <span class="text-lg font-bold hidden sm:block">Erdal Toprak</span>
+        </a>
+        <div class="flex items-center space-x-1">
+            {
+                NAVBAR_ITEMS.map((item) => (
+                    <a 
+                        href={item.href}
+                        class={`px-3 py-1.5 rounded-lg ${
+                            currentPath === item.href.replace(/\/$/, '') 
+                                ? 'bg-orange-50 dark:bg-zinc-800' 
+                                : 'hover:bg-orange-50 dark:hover:bg-zinc-800'
+                        }`}
+                    >
+                        {item.name}
+                    </a>
+                ))
+            }
+            <ThemeToggle />
+            <SearchButton />
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,154 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import { Icon } from 'astro-icon/components'
+import profile from '../../public/profile.jpg';
+import socialLinks from '../../public/social.json';
+
+// Add these constants (you can also move them to src/consts.ts)
+const APPLE_MAPS_URL = "maps://?address=Nice,France";
+const APPLE_MAPS_WEB_URL = "https://beta.maps.apple.com/?address=Nice%2CFrance&t=h";
+
+// You can move these to a separate data file if preferred
+const publications = [
+  {
+    title: "Study on the contribution of federated learning to autonomous driving",
+    date: "2022",
+    description: "An internship report on the contribution of federated learning to autonomous driving done at the University of Nice Sophia Antipolis and the I3S / CNRS laboratory.",
+    url: "/about",
+    type: "paper"
+  },
+  // Add more publications
+];
+
+const podcastAppearance = [
+  {
+    title: "Témoignage : comment remplir ses anneaux d'Apple Watch pendant 365 jours",
+    show: "MacGeneration / WatchGeneration", 
+    type: "article",
+    date: "2024",
+    links: [
+      { platform: "Web", url: "https://www.watchgeneration.fr/sport/2024/02/temoignage-comment-remplir-ses-anneaux-dapple-watch-pendant-365-jours-16301", icon: "mdi:web" },
+    ]
+  },
+  {
+    title: "Erdal: The Case For Micro Apps",
+    show: "Nostrovia",
+    type: "podcast",
+    date: "2023", 
+    links: [
+      { platform: "Apple Podcasts", url: "https://podcasts.apple.com/fr/podcast/nostrovia-the-original-nostr-podcast/id1678531266?i=1000605372568", icon: "mdi:apple" },
+      { platform: "Spotify", url: "https://open.spotify.com/episode/7bUnsCqJgzjezwoIwdRee2", icon: "mdi:spotify" },
+      { platform: "Web", url: "https://creators.spotify.com/pod/show/nostrovia/episodes/Erdal-The-Case-For-Micro-Apps-e1vi0af", icon: "mdi:web" },
+    ]
+  }
+];
+---
+
+<Layout>
+  <article class="max-w-4xl mx-auto mt-12">
+    <!-- Hero Section -->
+    <section class="mb-12">
+      <div class="flex flex-col md:flex-row items-center gap-8 mb-8">
+        <Image
+          src={profile}
+          alt="Erdal Toprak"
+          class="rounded-full w-32 h-32 md:w-40 md:h-40"
+        />
+        <div>
+          <h1 class="text-3xl md:text-4xl font-bold mb-4">About Me</h1>
+          <p class="text-xl text-zinc-700 dark:text-zinc-300">
+            Software engineer passionate about AI, decentralization, privacy and open source.
+          </p>
+          <a
+            id="mapLink"
+            href={APPLE_MAPS_WEB_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center mt-2 text-zinc-800 dark:text-zinc-300 hover:text-zinc-600 dark:hover:text-zinc-200"
+          >
+            <Icon name="mdi:map-marker" class="w-5 h-5 mr-1" />
+            <span class="underline decoration-zinc-400 hover:decoration-zinc-700 dark:decoration-zinc-300 dark:hover:decoration-white decoration-2">Nice, France</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Connect Section -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-6">Connect</h2>
+      <div class="flex flex-wrap gap-4 justify-center sm:justify-start">
+        {socialLinks.map((link) => (
+          <a
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={link.name}
+            class="p-3 rounded-lg bg-orange-50/30 dark:bg-zinc-800/30 border border-zinc-200 dark:border-zinc-800 hover:bg-orange-50 dark:hover:bg-zinc-800"
+          >
+            <Icon name={link.icon} class="w-5 h-5" />
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Publications Section -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-6">Publications</h2>
+      <div class="space-y-4">
+        {publications.map(pub => (
+          <a href={pub.url}>
+            <div class="p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-orange-50/30 dark:bg-zinc-800/30 hover:bg-orange-50 dark:hover:bg-zinc-800">
+              <h3 class="text-xl font-semibold mb-2">{pub.title}</h3>
+              <p class="text-zinc-600 dark:text-zinc-400 mb-3">{pub.description}</p>
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-zinc-500">{pub.date}</span>
+                <div class="flex items-center gap-1">
+                  <Icon name="mdi:pdf-box" class="w-5 h-5" />
+                </div>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- Podcast Section -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-semibold mb-6">Appearances</h2>
+      <div class="space-y-4">
+        {podcastAppearance.map(podcast => (
+          <div class="p-6 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-orange-50/30 dark:bg-zinc-800/30">
+            <h3 class="text-xl font-semibold mb-2">{podcast.title}</h3>
+            
+            <div class="flex flex-col sm:flex-row gap-2">
+              {podcast.links.map(link => (
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center pr-4 py-2 rounded-md hover:bg-orange-50 dark:hover:bg-zinc-800 flex-1"
+                >
+                  <Icon name={link.icon} class="w-5 h-5 min-w-[1.25rem]" />
+                  <span class="ml-2">{podcast.type === 'article' ? 'Read on' : 'Listen on'} {link.platform}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+
+  </article>
+</Layout>
+
+<script define:vars={{ APPLE_MAPS_URL }}>
+  // Check if the user is on an Apple device
+  const isAppleDevice = /Mac|iPhone|iPod|iPad/.test(navigator.userAgent);
+  const mapLink = document.getElementById('mapLink');
+  
+  if (isAppleDevice && mapLink) {
+    mapLink.href = APPLE_MAPS_URL;
+  }
+</script>

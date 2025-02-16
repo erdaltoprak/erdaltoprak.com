@@ -1,0 +1,86 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+interface PostsByYear {
+  [key: number]: CollectionEntry<'blog'>[];
+}
+
+// Get all posts
+const posts = await getCollection('blog');
+
+const postsByYear = posts.reduce<PostsByYear>((acc, post) => {
+  const year = new Date(post.data.pubDate).getFullYear();
+  if (!acc[year]) acc[year] = [];
+  acc[year].push(post);
+  return acc;
+}, {});
+
+// Sort years in descending order
+const sortedYears = Object.keys(postsByYear).map(Number).sort((a, b) => b - a);
+
+// Function to format date as "25 Jan"
+const formatDate = (date: Date): string => {
+  return date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short'
+  });
+};
+
+// Function to convert type to singular form
+const toSingular = (type: string) => {
+  if (type === 'articles') return 'article';
+  if (type === 'notes') return 'note';
+  return type || 'post';
+};
+---
+
+<Layout>
+  <section class="not-prose px-4 max-w-7xl mx-auto">
+    <h1 class="mb-6 text-3xl md:text-4xl font-semibold tracking-tight mt-12">Blog</h1>
+    <p class="text-xl text-zinc-700 dark:text-zinc-300 mb-12">A collection of my thoughts (notes) and wiki style guides (articles)</p>
+    
+    {sortedYears.map(year => (
+      <div class="mb-12">
+        <h2 class="text-2xl font-semibold mb-6">{year}</h2>
+        <ul class="space-y-2 mx-[-0.7rem]">
+          {postsByYear[year]
+            .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
+            .map((post) => (
+              <li>
+                <a 
+                  href={`/blog/${post.slug}/`} 
+                  class="group block py-2 px-3 text-inherit no-underline hover:bg-orange-50 hover:dark:bg-zinc-800 rounded-lg transition-colors"
+                >
+                  <!-- Mobile Layout -->
+                  <div class="sm:hidden">
+                    <span class="block text-zinc-900 dark:text-zinc-100 mb-2">{post.data.title}</span>
+                    <div class="flex flex-row items-center gap-3 text-zinc-600 dark:text-zinc-400">
+                      <time class="text-sm" datetime={new Date(post.data.pubDate).toISOString()}>
+                        {formatDate(new Date(post.data.pubDate))}
+                      </time>
+                      <span class="text-xs w-[70px] px-1.5 py-0.5 rounded bg-orange-50/100 dark:bg-zinc-800 uppercase tracking-wider text-center">
+                        {post.data.type}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Desktop Layout -->
+                  <div class="hidden sm:grid sm:grid-cols-[65px_75px_1fr] sm:gap-4 sm:items-center">
+                    <time class="text-sm text-zinc-600 dark:text-zinc-400" datetime={new Date(post.data.pubDate).toISOString()}>
+                      {formatDate(new Date(post.data.pubDate))}
+                    </time>
+                    <span class="text-xs w-[70px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 uppercase tracking-wider text-center">
+                      {post.data.type}
+                    </span>
+                    <span class="text-zinc-900 dark:text-zinc-100">{post.data.title}</span>
+                  </div>
+                </a>
+              </li>
+            ))}
+        </ul>
+      </div>
+    ))}
+  </section>
+</Layout>

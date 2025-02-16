@@ -1,0 +1,30 @@
+---
+import Head from "../components/Head.astro";
+import Container from "../components/Container.astro";
+import Navigation from "../components/Navigation.astro";
+import Search from "../components/Search.astro";
+
+// Get any head-related props that might be passed in
+const { title, description, heroImage, type } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+	<head>
+		<Head 
+			title={title}
+			description={description}
+			heroImage={heroImage}
+			type={type}
+		/>
+	</head>
+	<body class="bg-orange-100 dark:bg-neutral-900 text-zinc-900 dark:text-zinc-100">
+		<Navigation />
+		<Search />
+		<Container>
+			<main>
+				<slot />
+			</main>
+		</Container>
+	</body>
+</html>

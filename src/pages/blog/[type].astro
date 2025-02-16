@@ -1,0 +1,94 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+interface PostsByYear {
+  [key: number]: CollectionEntry<'blog'>[];
+}
+
+export function getStaticPaths() {
+  return [
+    { params: { type: 'articles' } },
+    { params: { type: 'notes' } },
+  ];
+}
+
+const { type } = Astro.params;
+
+// Get all unique post types
+const posts = await getCollection('blog');
+const postTypes = ['all', ...new Set(posts.map(post => post.data.type).filter(Boolean))];
+
+// Filter posts by type and group by year
+const filteredPosts = posts.filter(post => post.data.type === type);
+
+const postsByYear = filteredPosts.reduce<PostsByYear>((acc, post) => {
+  const year = new Date(post.data.pubDate).getFullYear();
+  if (!acc[year]) acc[year] = [];
+  acc[year].push(post);
+  return acc;
+}, {});
+
+// Sort years in descending order
+const sortedYears = Object.keys(postsByYear).map(Number).sort((a, b) => b - a);
+
+// Function to format date as "25 Jan"
+const formatDate = (date: Date): string => {
+  return date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short'
+  });
+};
+---
+
+<Layout>
+  <section class="mt-8">
+    <!-- Type filter -->
+    <div class="flex gap-4 mb-8">
+      {postTypes.map(postType => {
+        const isActive = type === postType;
+        const href = postType === 'all' ? '/blog' : `/blog/${postType}`;
+        return (
+          <a
+            href={href}
+            class={`px-3 py-1.5 rounded-lg text-sm ${
+              isActive
+                ? 'bg-zinc-800 text-white dark:bg-zinc-100 dark:text-black'
+                : 'text-zinc-800 hover:bg-orange-50 border border-black dark:border-white dark:text-zinc-100 dark:hover:bg-zinc-800'
+            }`}
+            aria-current={isActive ? 'page' : undefined}
+          >
+            {typeof postType === 'string' ? postType.charAt(0).toUpperCase() + postType.slice(1) : postType}
+          </a>
+        );
+      })}
+    </div>
+
+    {/* Show message if no posts match the filter */}
+    {filteredPosts.length === 0 ? (
+      <p class="text-zinc-600 dark:text-zinc-400">No posts found for this filter.</p>
+    ) : (
+      sortedYears.map(year => (
+        <div class="mb-8">
+          <h2 class="text-2xl font-semibold mb-4">{year}</h2>
+          <ul class="space-y-2">
+            {postsByYear[year]
+              .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
+              .map((post) => (
+                <li>
+                  <a href={`/blog/${post.slug}/`} class="group grid grid-cols-[100px_1fr] sm:flex sm:gap-4 text-inherit no-underline">
+                    <time datetime={new Date(post.data.pubDate).toISOString()} 
+                          class="text-zinc-500 dark:text-zinc-400 sm:w-[100px] shrink-0">
+                      {formatDate(new Date(post.data.pubDate))}
+                    </time>
+                    <span class="group-hover:underline">{post.data.title}</span>
+                  </a>
+                </li>
+              ))}
+          </ul>
+        </div>
+      ))
+    )}
+  </section>
+</Layout> 
