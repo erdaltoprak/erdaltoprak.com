@@ -1,5 +1,5 @@
 # erdaltoprak.com
-    
+
 Personal website built with Astro and deployed on Cloudflare Pages. Features a blog, project showcase, and integration with GitHub and Hugging Face APIs.
 
 ## Tech Stack
