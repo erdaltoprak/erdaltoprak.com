@@ -11,7 +11,6 @@ import collectionSearch from 'astro-collection-search';
 // https://astro.build/config
 export default defineConfig({
   site: SITE_URL,
-  trailingSlash: 'never',
   devToolbar: {
       enabled: false
     },
