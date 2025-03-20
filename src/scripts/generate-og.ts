@@ -93,7 +93,7 @@ async function generateOGImage(title: string, slug: string, heroImage: string, f
     const pngBuffer = pngData.asPng();
 
     const outputPath = join(OUTPUT_DIR, `${slug}.png`);
-    await writeFile(outputPath, pngBuffer);
+    await writeFile(outputPath, new Uint8Array(pngBuffer));
     console.log(`Generated OG image for: ${slug}`);
 
   } catch (error) {
@@ -104,16 +104,12 @@ async function generateOGImage(title: string, slug: string, heroImage: string, f
 
 async function main() {
   try {
-    const fontRegular = Buffer.from(
-      await readFile(
-        './node_modules/@fontsource/roboto/files/roboto-latin-400-normal.woff'
-      )
+    const fontRegular = await readFile(
+      './node_modules/@fontsource/roboto/files/roboto-latin-400-normal.woff'
     );
 
-    const fontBold = Buffer.from(
-      await readFile(
-        './node_modules/@fontsource/roboto/files/roboto-latin-700-normal.woff'
-      )
+    const fontBold = await readFile(
+      './node_modules/@fontsource/roboto/files/roboto-latin-700-normal.woff'
     );
 
     const fonts = {
@@ -132,7 +128,7 @@ async function main() {
         const fullPath = join(BLOG_DIR, postPath);
         const content = await readFile(fullPath, 'utf-8');
         const { data } = matter(content);
-        const slug = postPath.split('/')[0];
+        const slug = postPath.split('/')[0].toLowerCase(); // Ensure lowercase slug
 
         if (!data.heroImage) {
           console.warn(`No hero image found for ${slug}, skipping OG image generation`);

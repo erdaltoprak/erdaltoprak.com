@@ -20,7 +20,7 @@ const {
 const metaTitle = title === SITE_TITLE ? title : `${SITE_TITLE} | ${title}`;
 
 const ogImage = type === 'blog' 
-  ? new URL(`/og/${Astro.params.slug}.png`, SITE_URL).toString()
+  ? new URL(`/og/${Astro.params.slug?.toLowerCase()}.png`, SITE_URL).toString()
   : OG_IMAGE;
 ---
 
