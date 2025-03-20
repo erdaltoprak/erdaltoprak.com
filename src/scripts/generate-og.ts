@@ -52,6 +52,9 @@ async function createBlurredBackground(imagePath: string): Promise<string> {
 
 async function generateOGImage(title: string, slug: string, heroImage: string, fonts: { regular: Buffer; bold: Buffer }) {
   try {
+    // Convert slug to lowercase for file naming consistency
+    const lowercaseSlug = slug.toLowerCase();
+    
     const cleanHeroImage = heroImage.replace(/^\.\//, '');
     const imagePath = join(BLOG_DIR, slug, cleanHeroImage);
     const blurredBackground = await createBlurredBackground(imagePath);
@@ -92,7 +95,8 @@ async function generateOGImage(title: string, slug: string, heroImage: string, f
     const pngData = resvg.render();
     const pngBuffer = pngData.asPng();
 
-    const outputPath = join(OUTPUT_DIR, `${slug}.png`);
+    // Use lowercase slug for the output filename
+    const outputPath = join(OUTPUT_DIR, `${lowercaseSlug}.png`);
     await writeFile(outputPath, new Uint8Array(pngBuffer));
     console.log(`Generated OG image for: ${slug}`);
 
@@ -128,13 +132,15 @@ async function main() {
         const fullPath = join(BLOG_DIR, postPath);
         const content = await readFile(fullPath, 'utf-8');
         const { data } = matter(content);
-        const slug = postPath.split('/')[0].toLowerCase(); // Ensure lowercase slug
+        const slug = postPath.split('/')[0];
 
         if (!data.heroImage) {
           console.warn(`No hero image found for ${slug}, skipping OG image generation`);
           continue;
         }
 
+        // Slug is passed as-is (preserving original case for folder path operations)
+        // but will be lowercased inside the generateOGImage function
         await generateOGImage(data.title, slug, data.heroImage, fonts);
       } catch (error) {
         console.error(`Error processing post ${postPath}:`, error);
