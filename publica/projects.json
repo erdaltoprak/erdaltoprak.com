@@ -1,0 +1,28 @@
+[
+  {
+    "title": "erdaltoprak.com",
+    "description": "👨🏻‍💻 Public repo for edaltoprak.com",
+    "url": "https://github.com/erdaltoprak/erdaltoprak.com",
+    "demo": "https://erdaltoprak.com",
+    "post": "",
+    "date": "2025",
+    "license": "MIT License"
+  },
+  {
+    "title": "tamga",
+    "description": "An offline first nostr contact & profile manager for iOS!",
+    "url": "https://github.com/erdaltoprak/tamga",
+    "demo": "https://tamga.pages.dev",
+    "post": "",
+    "date": "2023",
+    "license": "GNU General Public License v3.0"
+  },
+  {
+    "title": "eGouvernement",
+    "description": "A proof of concept chatbot for the French government",
+    "url": "",
+    "demo": "https://egouvernement.fr",
+    "post": "",
+    "date": "2024"
+  }
+]

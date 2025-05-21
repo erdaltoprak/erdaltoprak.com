@@ -3,12 +3,9 @@ interface Props {
   title: string;
   description?: string;
   url: string;
-  author?: string;
-  lastModified?: string;
-  model_type?: string;
-  base_model?: string[] | string;
   demo?: string;
   post?: string;
+  date: string;
   license?: string;
 }
 
@@ -16,24 +13,11 @@ const {
   title,
   description = '',
   url,
-  author,
-  lastModified,
-  model_type,
-  base_model = [],
+  date,
   demo,
   post,
   license
 } = Astro.props;
-
-// Ensure base_model is always an array
-const baseModels = Array.isArray(base_model) ? base_model : [base_model].filter(Boolean);
-
-// Format date as DD/MM/YYYY
-const formatDate = (dateString: string) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-GB'); // This will format as DD/MM/YYYY
-};
 ---
 
 <li class="flex flex-col text-lg border border-zinc-200 dark:border-zinc-800 bg-orange-50/30 dark:bg-zinc-800/30 p-6 gap-2 rounded-lg h-full w-full overflow-hidden">
@@ -44,14 +28,6 @@ const formatDate = (dateString: string) => {
       </h2>
     </header>
     
-    {baseModels.length > 0 && (
-      <ul class="flex gap-2 flex-wrap text-white mb-2">
-        {baseModels.map(model => (
-          <li class="bg-zinc-800 py-0.5 px-2 text-sm rounded-md break-words">{model}</li>
-        ))}
-      </ul>
-    )}
-
     {description && (
       <p class="mb-3 dark:text-zinc-100 text-zinc-900 break-words">
         {description}
@@ -59,10 +35,8 @@ const formatDate = (dateString: string) => {
     )}
     
     <div class="flex flex-col gap-1 text-sm dark:text-zinc-100 text-zinc-900">
-      {author && <p class="break-words">Author: {author}</p>}
-      {model_type && <p class="break-words">Model Type: {model_type}</p>}
-      {lastModified && (
-        <p>Last Modified: {formatDate(lastModified)}</p>
+      {date && (
+        <p>Date: {date}</p>
       )}
       {license && <p class="break-words">License: {license}</p>}
     </div>

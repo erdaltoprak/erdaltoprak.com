@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 // @ts-ignore
-import projects from '../../public/projects.json';
+import projectsData from '../../public/projects.json';
 
 interface Project {
   title: string;
@@ -10,15 +10,35 @@ interface Project {
   url: string;
   demo?: string;
   post?: string;
-  lastModified?: string;
-  author: string;
-  tags?: string[];
+  date: string;
   license?: string;
+  // Removed author and tags as they are not in the JSON
 }
 
-// Sort all projects by lastModified date
-const sortedProjects = projects
-  .sort((a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime());
+// Add originalIndex to each project before sorting
+const projectsWithOriginalIndex = projectsData.map((project, index) => ({
+  ...project,
+  originalIndex: index,
+}));
+
+// Sort all projects:
+// 1. Primary: by date year (descending, newest first).
+// 2. Secondary: by original array order (ascending) if years are the same.
+const sortedProjects = projectsWithOriginalIndex.sort((a, b) => {
+  // Since date is guaranteed to be a year string,
+  // new Date().getTime() will produce valid timestamps.
+  const timeA = new Date(a.date).getTime();
+  const timeB = new Date(b.date).getTime(); 
+
+  // If years (and thus timestamps) are different, sort by year (descending)
+  if (timeA !== timeB) {
+    return timeB - timeA;
+  }
+
+  // Years are the same, sort by originalIndex (ascending)
+  // to maintain original relative order.
+  return a.originalIndex - b.originalIndex;
+});
 ---
 
 <Layout>

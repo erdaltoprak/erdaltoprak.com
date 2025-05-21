@@ -1,0 +1,62 @@
+[
+    {
+      "url": "https://x.com/erdalxtoprak",
+      "icon": "ri:twitter-x-line",
+      "name": "X"
+    },
+    {
+      "url": "https://bsky.app/profile/erdaltoprak.com",
+      "icon": "simple-icons:bluesky",
+      "name": "Bluesky"
+    },
+    {
+      "url": "https://500px.com/p/erdal",
+      "icon": "uil:500px",
+      "name": "500px"
+    },
+    {
+      "url": "https://www.instagram.com/erdalxtoprak/",
+      "icon": "mdi:instagram",
+      "name": "Instagram"
+    },
+    {
+      "url": "https://www.chess.com/member/erdal",
+      "icon": "simple-icons:chessdotcom",
+      "name": "Chess"
+    },
+    {
+      "url": "https://github.com/erdaltoprak",
+      "icon": "ri:github-line",
+      "name": "GitHub"
+    },
+    {
+      "url": "https://www.linkedin.com/in/erdaltoprak",
+      "icon": "mdi:linkedin",
+      "name": "LinkedIn"
+    },
+    {
+      "url": "https://t.me/erdalxtoprak",
+      "icon": "hugeicons:telegram",
+      "name": "Telegram"
+    },
+    {
+      "url": "http://discordapp.com/users/1130049778395402281",
+      "icon": "simple-icons:discord",
+      "name": "Discord"
+    },
+    {
+      "url": "https://huggingface.co/erdal",
+      "icon": "simple-icons:huggingface",
+      "name": "HF"
+    },
+    {
+      "url": "https://www.perplexity.ai/?s=O&q=Who%20is%20Erdal%20Toprak%20from%20erdaltoprak.com",
+      "icon": "ri:perplexity-fill",
+      "name": "Perplexity"
+    },
+    {
+      "url": "mailto:contact@erdaltoprak.com?subject=[YOUR_SUBJECT_HERE] ~ erdaltoprak.com",
+      "icon": "mdi:email",
+      "name": "Email"
+    }
+]

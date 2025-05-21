@@ -1,6 +1,3 @@
-[submodule "public"]
-	path = public
-	url = git@github.com:erdaltoprak/blog-public.git
 [submodule "src/content"]
 	path = src/content
 	url = git@github.com:erdaltoprak/blog-content.git
