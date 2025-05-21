@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://erdaltoprak.com/sitemap-index.xml
