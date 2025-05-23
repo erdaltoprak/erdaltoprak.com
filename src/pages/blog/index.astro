@@ -41,14 +41,38 @@ const toSingular = (type: string) => {
     <h1 class="mb-6 text-3xl md:text-4xl font-semibold tracking-tight mt-12">Blog</h1>
     <p class="text-xl text-zinc-700 dark:text-zinc-300 mb-12">A collection of my thoughts (notes) and wiki style guides (articles)</p>
     
+    <!-- Filter Tabs -->
+    <div class="mb-8">
+      <div class="flex flex-wrap gap-2">
+        <button 
+          class="tab-button active px-3 py-1.5 text-sm font-medium rounded-lg transition-colors bg-orange-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100" 
+          data-filter="all"
+        >
+          All
+        </button>
+        <button 
+          class="tab-button px-3 py-1.5 text-sm font-medium rounded-lg transition-colors text-zinc-900 dark:text-zinc-100 hover:bg-orange-50 dark:hover:bg-zinc-800" 
+          data-filter="article"
+        >
+          Articles
+        </button>
+        <button 
+          class="tab-button px-3 py-1.5 text-sm font-medium rounded-lg transition-colors text-zinc-900 dark:text-zinc-100 hover:bg-orange-50 dark:hover:bg-zinc-800" 
+          data-filter="note"
+        >
+          Notes
+        </button>
+      </div>
+    </div>
+    
     {sortedYears.map(year => (
-      <div class="mb-12">
+      <div class="mb-12 year-section" data-year={year}>
         <h2 class="text-2xl font-semibold mb-6">{year}</h2>
         <ul class="space-y-2 mx-[-0.7rem]">
           {postsByYear[year]
             .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
             .map((post) => (
-              <li>
+              <li class="post-item" data-type={post.data.type}>
                 <a 
                   href={`/blog/${post.slug}/`} 
                   class="group block py-2 px-3 text-inherit no-underline hover:bg-orange-50 hover:dark:bg-zinc-800 rounded-lg transition-colors"
@@ -71,7 +95,7 @@ const toSingular = (type: string) => {
                     <time class="text-sm text-zinc-600 dark:text-zinc-400" datetime={new Date(post.data.pubDate).toISOString()}>
                       {formatDate(new Date(post.data.pubDate))}
                     </time>
-                    <span class="text-xs w-[70px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 uppercase tracking-wider text-center">
+                    <span class="text-xs w-[70px] px-1.5 py-0.5 rounded bg-orange-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 uppercase tracking-wider text-center">
                       {post.data.type}
                     </span>
                     <span class="text-zinc-900 dark:text-zinc-100">{post.data.title}</span>
@@ -83,4 +107,49 @@ const toSingular = (type: string) => {
       </div>
     ))}
   </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const tabButtons = document.querySelectorAll('.tab-button');
+      const postItems = document.querySelectorAll('.post-item');
+      const yearSections = document.querySelectorAll('.year-section');
+
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const filter = button.getAttribute('data-filter');
+          
+          // Update active tab
+          tabButtons.forEach(btn => {
+            btn.classList.remove('active', 'bg-orange-50', 'dark:bg-zinc-800');
+          });
+          
+          button.classList.add('active', 'bg-orange-50', 'dark:bg-zinc-800');
+          
+          // Filter posts
+          yearSections.forEach(section => {
+            const year = section.getAttribute('data-year');
+            const postsInYear = section.querySelectorAll('.post-item');
+            let visibleCount = 0;
+            
+            postsInYear.forEach(post => {
+              const postType = post.getAttribute('data-type');
+              if (filter === 'all' || postType === filter) {
+                post.style.display = 'block';
+                visibleCount++;
+              } else {
+                post.style.display = 'none';
+              }
+            });
+            
+            // Hide year section if no posts are visible
+            if (visibleCount === 0) {
+              section.style.display = 'none';
+            } else {
+              section.style.display = 'block';
+            }
+          });
+        });
+      });
+    });
+  </script>
 </Layout>

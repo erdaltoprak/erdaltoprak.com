@@ -8,3 +8,7 @@ dev:
 
 submodules:
 	git submodule update --init --recursive --remote
+
+tree:
+	pwd
+	git ls-tree -r --name-only HEAD
