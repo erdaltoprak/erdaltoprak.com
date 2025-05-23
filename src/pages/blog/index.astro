@@ -45,20 +45,23 @@ const toSingular = (type: string) => {
     <div class="mb-8">
       <div class="flex flex-wrap gap-2">
         <button 
-          class="tab-button active px-3 py-1.5 text-sm font-medium rounded-lg transition-colors bg-orange-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100" 
+          class="tab-button px-3 py-1.5 text-sm font-medium rounded-lg text-zinc-900 dark:text-zinc-100 hover:bg-orange-50 dark:hover:bg-zinc-800 data-[active='true']:bg-orange-50 data-[active='true']:dark:bg-zinc-800" 
           data-filter="all"
+          data-active="true"
         >
           All
         </button>
         <button 
-          class="tab-button px-3 py-1.5 text-sm font-medium rounded-lg transition-colors text-zinc-900 dark:text-zinc-100 hover:bg-orange-50 dark:hover:bg-zinc-800" 
+          class="tab-button px-3 py-1.5 text-sm font-medium rounded-lg text-zinc-900 dark:text-zinc-100 hover:bg-orange-50 dark:hover:bg-zinc-800 data-[active='true']:bg-orange-50 data-[active='true']:dark:bg-zinc-800" 
           data-filter="article"
+          data-active="false"
         >
           Articles
         </button>
         <button 
-          class="tab-button px-3 py-1.5 text-sm font-medium rounded-lg transition-colors text-zinc-900 dark:text-zinc-100 hover:bg-orange-50 dark:hover:bg-zinc-800" 
+          class="tab-button px-3 py-1.5 text-sm font-medium rounded-lg text-zinc-900 dark:text-zinc-100 hover:bg-orange-50 dark:hover:bg-zinc-800 data-[active='true']:bg-orange-50 data-[active='true']:dark:bg-zinc-800" 
           data-filter="note"
+          data-active="false"
         >
           Notes
         </button>
@@ -108,46 +111,44 @@ const toSingular = (type: string) => {
     ))}
   </section>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const tabButtons = document.querySelectorAll('.tab-button');
-      const postItems = document.querySelectorAll('.post-item');
-      const yearSections = document.querySelectorAll('.year-section');
+  <script is:inline>
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const postItems = document.querySelectorAll('.post-item');
+    const yearSections = document.querySelectorAll('.year-section');
 
-      tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          const filter = button.getAttribute('data-filter');
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const filter = button.getAttribute('data-filter');
+        
+        // Update active tab using data attributes instead of class manipulation
+        tabButtons.forEach(btn => {
+          btn.setAttribute('data-active', 'false');
+        });
+        
+        button.setAttribute('data-active', 'true');
+        
+        // Filter posts
+        yearSections.forEach(section => {
+          const year = section.getAttribute('data-year');
+          const postsInYear = section.querySelectorAll('.post-item');
+          let visibleCount = 0;
           
-          // Update active tab
-          tabButtons.forEach(btn => {
-            btn.classList.remove('active', 'bg-orange-50', 'dark:bg-zinc-800');
-          });
-          
-          button.classList.add('active', 'bg-orange-50', 'dark:bg-zinc-800');
-          
-          // Filter posts
-          yearSections.forEach(section => {
-            const year = section.getAttribute('data-year');
-            const postsInYear = section.querySelectorAll('.post-item');
-            let visibleCount = 0;
-            
-            postsInYear.forEach(post => {
-              const postType = post.getAttribute('data-type');
-              if (filter === 'all' || postType === filter) {
-                post.style.display = 'block';
-                visibleCount++;
-              } else {
-                post.style.display = 'none';
-              }
-            });
-            
-            // Hide year section if no posts are visible
-            if (visibleCount === 0) {
-              section.style.display = 'none';
+          postsInYear.forEach(post => {
+            const postType = post.getAttribute('data-type');
+            if (filter === 'all' || postType === filter) {
+              post.style.display = 'block';
+              visibleCount++;
             } else {
-              section.style.display = 'block';
+              post.style.display = 'none';
             }
           });
+          
+          // Hide year section if no posts are visible
+          if (visibleCount === 0) {
+            section.style.display = 'none';
+          } else {
+            section.style.display = 'block';
+          }
         });
       });
     });
