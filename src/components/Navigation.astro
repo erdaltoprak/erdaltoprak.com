@@ -40,7 +40,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
         <div class="flex items-center space-x-3 ml-auto sm:ml-0">
             <ThemeToggle />
             <SearchButton />
-            <button id="menu-button" aria-label="Menu" class="p-2 rounded hover:bg-orange-50 dark:hover:bg-zinc-800 sm:hidden">
+            <button id="menu-button" aria-label="Menu" class="p-2 rounded hover:bg-orange-50 dark:hover:bg-zinc-800 focus:outline-none sm:hidden">
                 <Icon name="mdi:menu" class="w-6 h-6" />
             </button>
         </div>
@@ -65,6 +65,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
   function closeMenu() {
     menu?.classList.add('hidden');
     menuBtn?.classList.remove('bg-orange-50', 'dark:bg-zinc-800');
+    menuBtn?.blur();
   }
 
   menuBtn?.addEventListener('click', (e) => {
