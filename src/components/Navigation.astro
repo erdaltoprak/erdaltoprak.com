@@ -40,7 +40,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
         <div class="flex items-center space-x-3 ml-auto sm:ml-0">
             <ThemeToggle />
             <SearchButton />
-            <button id="menu-button" aria-label="Menu" class="p-2 rounded hover:bg-orange-50 dark:hover:bg-zinc-800 focus:outline-none sm:hidden">
+            <button id="menu-button" aria-label="Menu" class="p-2 rounded hover:bg-orange-50 dark:hover:bg-zinc-800 focus:outline-none focus-visible:outline-none active:bg-orange-50 active:dark:bg-zinc-800 sm:hidden">
                 <Icon name="mdi:menu" class="w-6 h-6" />
             </button>
         </div>
@@ -61,31 +61,79 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
 <script>
   const menuBtn = document.getElementById('menu-button');
   const menu = document.getElementById('mobile-menu');
+  let isMenuOpen = false;
 
   function closeMenu() {
+    if (!isMenuOpen) return;
+    
+    isMenuOpen = false;
     menu?.classList.add('hidden');
-    menuBtn?.classList.remove('bg-orange-50', 'dark:bg-zinc-800');
-    menuBtn?.blur();
+    menuBtn?.classList.remove('bg-orange-50', 'dark:bg-zinc-800', 'menu-active');
+    
+    // Force blur and clear any lingering focus/active states
+    if (menuBtn) {
+      menuBtn.blur();
+      // Remove any focus/active states by triggering a reflow
+      menuBtn.style.cssText = menuBtn.style.cssText;
+    }
+  }
+
+  function openMenu() {
+    isMenuOpen = true;
+    menu?.classList.remove('hidden');
+    menuBtn?.classList.add('bg-orange-50', 'dark:bg-zinc-800', 'menu-active');
   }
 
   menuBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
     e.stopPropagation();
-    const isHidden = menu?.classList.contains('hidden');
-    if (isHidden) {
-      menu?.classList.remove('hidden');
-      menuBtn?.classList.add('bg-orange-50', 'dark:bg-zinc-800');
-    } else {
+    
+    if (isMenuOpen) {
       closeMenu();
+    } else {
+      openMenu();
     }
+    
+    // Always blur after click to prevent stuck focus
+    setTimeout(() => menuBtn?.blur(), 50);
+  });
+
+  // Prevent default touch behaviors that might cause stuck states
+  menuBtn?.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    setTimeout(() => menuBtn?.blur(), 100);
   });
 
   // Close on outside click
   document.addEventListener('click', (e) => {
-    if (!menu?.contains(e.target) && !menuBtn?.contains(e.target)) {
+    if (isMenuOpen && !menu?.contains(e.target) && !menuBtn?.contains(e.target)) {
       closeMenu();
     }
   });
 
   // Close on scroll
-  window.addEventListener('scroll', closeMenu);
+  window.addEventListener('scroll', () => {
+    if (isMenuOpen) {
+      closeMenu();
+    }
+  });
+
+  // Handle page navigation
+  window.addEventListener('beforeunload', closeMenu);
 </script>
+
+<style>
+  /* Ensure no focus states persist on the menu button */
+  #menu-button:focus,
+  #menu-button:focus-visible,
+  #menu-button:active {
+    outline: none !important;
+  }
+  
+  /* Only show background when explicitly marked as active */
+  #menu-button:not(.menu-active):focus,
+  #menu-button:not(.menu-active):focus-visible,
+  #menu-button:not(.menu-active):active {
+    background-color: transparent !important;
+  }
+</style>
