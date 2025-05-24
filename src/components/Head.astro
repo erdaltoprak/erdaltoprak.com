@@ -53,3 +53,8 @@ const ogImage = type === 'blog'
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImage} />
 <meta name="twitter:creator" content="@erdalxtoprak" />
+
+<!-- RSS Discovery -->
+<link rel="alternate" type="application/rss+xml" title="RSS – All content" href={`${SITE_URL}/rss.xml`} />
+<link rel="alternate" type="application/rss+xml" title="RSS – Articles" href={`${SITE_URL}/articles/rss.xml`} />
+<link rel="alternate" type="application/rss+xml" title="RSS – Notes" href={`${SITE_URL}/notes/rss.xml`} />
