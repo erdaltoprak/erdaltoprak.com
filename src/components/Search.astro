@@ -188,11 +188,16 @@ function renderResults() {
     .join('');
 }
 
-// Create result item HTML
+// Helper to compute the correct URL based on the collection a document belongs to
+function getPostUrl(result: any) {
+  const base = result.collection === 'articles' ? '/articles' : result.collection === 'notes' ? '/notes' : '/blog';
+  return `${base}/${result.file.replace(/\/index\.mdx?$/, '').replace(/\.mdx?$/, '')}`;
+}
+
 function createResultItem(result: any, index: number) {
   return `
     <a 
-      href="/blog/${result.file.replace(/\/index\.mdx?$/, '').replace(/\.mdx?$/, '')}"
+      href="${getPostUrl(result)}"
       class="block p-3 rounded-lg hover:bg-orange-50 dark:hover:bg-zinc-700 ${index === selectedIndex ? 'bg-orange-50 dark:bg-zinc-700' : ''}"
     >
       <h3 class="font-medium text-zinc-900 dark:text-zinc-100">
@@ -239,12 +244,12 @@ function handleKeyboard(e: KeyboardEvent) {
             }
           } else if (searchResults[selectedIndex]) {
             const result = searchResults[selectedIndex];
-            window.location.href = `/blog/${result.file.replace(/\/index\.mdx?$/, '').replace(/\.mdx?$/, '')}`;
+            window.location.href = getPostUrl(result);
           }
         } else if (searchResults.length > 0) { // New condition: if there are results but none selected
           // Navigate to the first result
           const result = searchResults[0];
-          window.location.href = `/blog/${result.file.replace(/\/index\.mdx?$/, '').replace(/\.mdx?$/, '')}`;
+          window.location.href = getPostUrl(result);
         } else if (!input?.value) { // If no input and no selection, trigger first quick action
           sharePage();
           hideOverlay();

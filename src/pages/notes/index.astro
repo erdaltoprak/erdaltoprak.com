@@ -1,0 +1,60 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+interface PostsByYear {
+  [key: number]: CollectionEntry<'notes'>[];
+}
+
+const posts = await getCollection('notes');
+
+const postsByYear = posts.reduce<PostsByYear>((acc, post) => {
+  const year = new Date(post.data.pubDate).getFullYear();
+  if (!acc[year]) acc[year] = [];
+  acc[year].push(post);
+  return acc;
+}, {});
+
+const sortedYears = Object.keys(postsByYear).map(Number).sort((a, b) => b - a);
+
+const formatDate = (date: Date): string => {
+  return date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short'
+  });
+};
+---
+
+<Layout>
+  <section class="not-prose px-4 max-w-7xl mx-auto">
+    <h1 class="mb-6 text-3xl md:text-4xl font-semibold tracking-tight mt-12">Notes</h1>
+    <p class="text-xl text-zinc-700 dark:text-zinc-300 mb-12">Thoughts and observations on anything.</p>
+    {sortedYears.map(year => (
+      <div class="mb-12">
+        <h2 class="text-2xl font-semibold mb-6">{year}</h2>
+        <ul class="space-y-2 mx-[-0.7rem]">
+          {postsByYear[year]
+            .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
+            .map((post) => (
+              <li>
+                <a 
+                  href={`/notes/${post.slug}/`} 
+                  class="group block py-2 px-3 text-inherit no-underline hover:bg-orange-50 hover:dark:bg-zinc-800 rounded-lg transition-colors"
+                >
+                  <div class="sm:hidden">
+                    <span class="block text-zinc-900 dark:text-zinc-100 mb-2">{post.data.title}</span>
+                    <time class="text-sm text-zinc-600 dark:text-zinc-400" datetime={new Date(post.data.pubDate).toISOString()}>{formatDate(new Date(post.data.pubDate))}</time>
+                  </div>
+                  <div class="hidden sm:grid sm:grid-cols-[65px_1fr] sm:gap-4 sm:items-center">
+                    <time class="text-sm text-zinc-600 dark:text-zinc-400" datetime={new Date(post.data.pubDate).toISOString()}> {formatDate(new Date(post.data.pubDate))}</time>
+                    <span class="text-zinc-900 dark:text-zinc-100">{post.data.title}</span>
+                  </div>
+                </a>
+              </li>
+            ))}
+        </ul>
+      </div>
+    ))}
+  </section>
+</Layout> 

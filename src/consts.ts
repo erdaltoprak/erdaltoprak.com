@@ -4,7 +4,8 @@ export const SITE_DESCRIPTION = "Erdal Toprak's personal website and blog";
 export const OG_IMAGE = `${SITE_URL}/og.jpg`;
 
 export const NAVBAR_ITEMS = [
-    { name: "Blog", href: "/blog" },
+    { name: "Notes", href: "/notes" },
+    { name: "Articles", href: "/articles" },
     { name: "Projects", href: "/projects" },
     { name: "About", href: "/about" }
   ];

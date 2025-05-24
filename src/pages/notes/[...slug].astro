@@ -1,0 +1,44 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import BlogPost from '../../layouts/LayoutBlog.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('notes', ({ data }) => {
+    return import.meta.env.PROD ? !data.draft : true;
+  });
+  return posts.map((post) => ({
+    params: { slug: post.slug.replace(/\/index$/, '') },
+    props: post,
+  }));
+}
+
+type Props = CollectionEntry<'notes'>;
+const post = Astro.props as Props;
+const { Content } = await post.render();
+
+const heroImage = post.data.heroImage;
+const pubDate = post.data.pubDate instanceof Date ? post.data.pubDate : new Date(post.data.pubDate);
+---
+
+<BlogPost {...post.data} heroImage={heroImage} type="note">
+  <h1>{post.data.title}</h1>
+  {pubDate && (
+    <time class="text-sm text-zinc-600 dark:text-zinc-400 block -mt-4 mb-8">
+      {pubDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })}
+    </time>
+  )}
+  <Content />
+</BlogPost>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('article a').forEach(link => {
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+    });
+  });
+</script> 
