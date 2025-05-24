@@ -48,7 +48,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
 </nav>
 
 <!-- Mobile Menu Dropdown -->
-<div id="mobile-menu" class="hidden absolute top-14 right-4 w-44 bg-orange-100 dark:bg-neutral-900 shadow-xl rounded-lg z-50 sm:hidden">
+<div id="mobile-menu" class="hidden fixed top-14 right-4 w-44 bg-orange-100 dark:bg-neutral-900 shadow-xl rounded-lg z-50 sm:hidden">
   <div class="flex flex-col py-2">
     {NAVBAR_ITEMS.map((item) => (
       <a href={item.href} class="px-4 py-2 hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded">
@@ -62,7 +62,29 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
   const menuBtn = document.getElementById('menu-button');
   const menu = document.getElementById('mobile-menu');
 
-  menuBtn?.addEventListener('click', () => {
-    menu?.classList.toggle('hidden');
+  function closeMenu() {
+    menu?.classList.add('hidden');
+    menuBtn?.classList.remove('bg-orange-50', 'dark:bg-zinc-800');
+  }
+
+  menuBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isHidden = menu?.classList.contains('hidden');
+    if (isHidden) {
+      menu?.classList.remove('hidden');
+      menuBtn?.classList.add('bg-orange-50', 'dark:bg-zinc-800');
+    } else {
+      closeMenu();
+    }
   });
+
+  // Close on outside click
+  document.addEventListener('click', (e) => {
+    if (!menu?.contains(e.target) && !menuBtn?.contains(e.target)) {
+      closeMenu();
+    }
+  });
+
+  // Close on scroll
+  window.addEventListener('scroll', closeMenu);
 </script>
