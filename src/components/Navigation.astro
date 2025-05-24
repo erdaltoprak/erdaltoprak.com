@@ -11,7 +11,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
 ---
 
 <nav class="sticky top-0 bg-orange-100/80 dark:bg-neutral-900/80 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 z-50 ">
-    <div class="max-w-4xl mx-auto px-4 py-2 flex items-center justify-between">
+    <div class="max-w-4xl mx-auto px-4 py-2 flex items-center gap-4">
         <a href="/" class="flex items-center space-x-1 hover:underline underline-offset-4 decoration-2">
             <Image
                 src={memoji}
@@ -21,7 +21,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
             <span class="text-lg font-bold hidden sm:block">Erdal Toprak</span>
         </a>
         <!-- Desktop links -->
-        <div class="hidden sm:flex items-center space-x-1">
+        <div class="hidden sm:flex items-center space-x-1 ml-auto">
             {NAVBAR_ITEMS.map((item) => (
                 <a 
                     href={item.href}
@@ -37,7 +37,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
         </div>
 
         <!-- Icon cluster -->
-        <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-3 ml-auto sm:ml-0">
             <ThemeToggle />
             <SearchButton />
             <button id="menu-button" aria-label="Menu" class="p-2 rounded hover:bg-orange-50 dark:hover:bg-zinc-800 sm:hidden">
