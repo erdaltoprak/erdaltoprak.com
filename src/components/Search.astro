@@ -70,9 +70,12 @@ function showNotification(message: string) {
 
 // Share functionality
 async function sharePage() {
+  // Remove hash fragment from URL for sharing
+  const cleanUrl = window.location.href.split('#')[0];
+  
   const shareData = {
     title: document.querySelector('meta[property="og:title"]')?.getAttribute('content') || document.title,
-    url: window.location.href,
+    url: cleanUrl,
   };
   console.log(shareData);
 
@@ -85,14 +88,14 @@ async function sharePage() {
 
     // Fallback to clipboard API
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(cleanUrl);
       showNotification('URL copied to clipboard!');
       return;
     }
 
     // Last resort fallback using execCommand
     const textArea = document.createElement('textarea');
-    textArea.value = window.location.href;
+    textArea.value = cleanUrl;
     textArea.style.position = 'fixed';
     textArea.style.left = '-999999px';
     textArea.style.top = '-999999px';

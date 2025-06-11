@@ -1,0 +1,125 @@
+---
+export interface Props {
+  headings: Array<{
+    depth: number;
+    slug: string;
+    text: string;
+  }>;
+}
+
+const { headings } = Astro.props;
+
+// Filter to only show h2 and h3 headings for cleaner ToC
+const filteredHeadings = headings.filter(heading => heading.depth <= 3 && heading.depth >= 2);
+---
+
+{filteredHeadings.length > 1 && (
+  <div id="mobile-toc-wrapper" class="min-[1500px]:hidden sticky top-[52px] -mx-4 bg-orange-100/80 dark:bg-neutral-900/80 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 z-40">
+    <div id="mobile-toc" class="max-w-4xl mx-auto px-4">
+      <!-- Collapsed state -->
+      <button 
+        id="mobile-toc-button"
+        class="w-full py-3 flex items-center justify-between text-sm font-medium text-zinc-900 dark:text-zinc-100"
+        aria-expanded="false"
+        aria-controls="mobile-toc-content"
+      >
+        <span>On this page</span>
+        <svg id="mobile-toc-icon" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      
+      <!-- Expanded content -->
+      <div 
+        id="mobile-toc-content" 
+        class="hidden pb-3 max-h-64 overflow-y-auto"
+        aria-labelledby="mobile-toc-button"
+      >
+        <nav class="space-y-1">
+          {filteredHeadings.map((heading) => (
+            <a 
+              href={`#${heading.slug}`}
+              class={`mobile-toc-link block text-zinc-800 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-orange-50 dark:hover:bg-zinc-800 py-1.5 px-0 rounded leading-snug ${heading.depth === 3 ? 'pl-0 text-xs' : 'text-sm'}`}
+              data-slug={heading.slug}
+            >
+              {heading.text}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </div>
+  </div>
+)}
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const button = document.getElementById('mobile-toc-button');
+    const content = document.getElementById('mobile-toc-content');
+    const icon = document.getElementById('mobile-toc-icon');
+    const links = document.querySelectorAll('.mobile-toc-link');
+    const mobileToC = document.getElementById('mobile-toc-wrapper');
+    
+    if (!button || !content || !icon || !mobileToC) return;
+    
+    let isOpen = false;
+    
+    function toggleToc() {
+      isOpen = !isOpen;
+      
+      if (isOpen) {
+        content.classList.remove('hidden');
+        button.setAttribute('aria-expanded', 'true');
+        icon.style.transform = 'rotate(180deg)';
+      } else {
+        content.classList.add('hidden');
+        button.setAttribute('aria-expanded', 'false');
+        icon.style.transform = 'rotate(0deg)';
+      }
+    }
+    
+    function closeToc() {
+      if (isOpen) {
+        isOpen = false;
+        content.classList.add('hidden');
+        button.setAttribute('aria-expanded', 'false');
+        icon.style.transform = 'rotate(0deg)';
+      }
+    }
+    
+    // Toggle on button click
+    button.addEventListener('click', toggleToc);
+    
+    // Close when clicking a link
+    links.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const slug = link.getAttribute('data-slug');
+        if (slug) {
+          const target = document.getElementById(slug);
+          if (target) {
+            // Smooth scroll to target with offset
+            const yOffset = -350; // Reduced offset for better mobile positioning
+            const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            
+            window.scrollTo({ top: y, behavior: 'smooth' });
+            
+            // Update URL hash
+            history.pushState(null, '', `#${slug}`);
+            
+            // Close TOC after navigation
+            setTimeout(() => {
+              closeToc();
+            }, 100);
+          }
+        }
+      });
+    });
+    
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (isOpen && mobileToC && !mobileToC.contains(e.target as Node)) {
+        closeToc();
+      }
+    });
+  });
+</script> 

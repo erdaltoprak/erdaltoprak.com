@@ -14,13 +14,13 @@ export async function getStaticPaths() {
 
 type Props = CollectionEntry<'notes'>;
 const post = Astro.props as Props;
-const { Content } = await post.render();
+const { Content, headings } = await post.render();
 
 const heroImage = post.data.heroImage;
 const pubDate = post.data.pubDate instanceof Date ? post.data.pubDate : new Date(post.data.pubDate);
 ---
 
-<BlogPost {...post.data} heroImage={heroImage} type="note">
+<BlogPost {...post.data} heroImage={heroImage} type="note" headings={headings}>
   <h1>{post.data.title}</h1>
   {pubDate && (
     <time class="text-sm text-zinc-600 dark:text-zinc-400 block -mt-4 mb-8">
@@ -31,6 +31,7 @@ const pubDate = post.data.pubDate instanceof Date ? post.data.pubDate : new Date
       })}
     </time>
   )}
+  
   <Content />
 </BlogPost>
 

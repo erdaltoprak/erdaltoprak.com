@@ -1,0 +1,68 @@
+---
+export interface Props {
+  headings: Array<{
+    depth: number;
+    slug: string;
+    text: string;
+  }>;
+}
+
+const { headings } = Astro.props;
+
+// Filter to only show h2 and h3 headings for cleaner ToC
+const filteredHeadings = headings.filter(heading => heading.depth <= 3 && heading.depth >= 2);
+---
+
+{filteredHeadings.length > 1 && (
+  <nav class="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto w-64" aria-labelledby="toc-heading">
+    <div class="w-full p-6 bg-orange-50/30 dark:bg-zinc-800/50 backdrop-blur-sm rounded-lg border border-zinc-200 dark:border-zinc-800">
+      <a href="#" class="block mb-4">
+        <h2 id="toc-heading" class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 hover:bg-orange-50 dark:hover:bg-zinc-700 cursor-pointer px-0 py-1 rounded">
+          On this page
+        </h2>
+      </a>
+      <div class="space-y-2 text-sm">
+        {filteredHeadings.map((heading) => (
+          <div>
+            <a 
+              href={`#${heading.slug}`}
+              class={`desktop-toc-link block text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-orange-50 dark:hover:bg-zinc-700 py-1 px-0 rounded leading-snug break-words ${heading.depth === 3 ? 'pl-0' : 'pl-0'}`}
+              data-slug={heading.slug}
+            >
+              {heading.text}
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </nav>
+)}
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tocLinks = document.querySelectorAll('.desktop-toc-link');
+    
+    if (!tocLinks.length) return;
+    
+    // Handle TOC link clicks
+    tocLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const slug = link.getAttribute('data-slug');
+        if (slug) {
+          const target = document.getElementById(slug);
+          if (target) {
+            // Smooth scroll to target with offset
+            const yOffset = -80; // Adjust for navbar height
+            const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            
+            window.scrollTo({ top: y, behavior: 'smooth' });
+            
+            // Update URL hash
+            history.pushState(null, '', `#${slug}`);
+          }
+        }
+      });
+    });
+  });
+</script> 
