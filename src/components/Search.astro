@@ -167,6 +167,8 @@ function renderQuickActions() {
 async function handleSearch() {
   const query = input?.value.trim();
   if (!query) {
+    searchResults = [];
+    selectedIndex = -1;
     renderQuickActions();
     return;
   }
