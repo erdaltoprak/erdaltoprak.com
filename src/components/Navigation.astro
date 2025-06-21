@@ -38,7 +38,9 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
 
         <!-- Icon cluster -->
         <div class="flex items-center space-x-3 ml-auto sm:ml-0">
-            <ThemeToggle />
+            <div class="relative">
+                <ThemeToggle />
+            </div>
             <SearchButton />
             <button id="menu-button" aria-label="Menu" class="p-2 rounded sm:hover:bg-orange-50 sm:dark:hover:bg-zinc-800 focus:outline-none focus-visible:outline-none active:bg-orange-50 active:dark:bg-zinc-800 sm:hidden">
                 <Icon name="mdi:menu" class="w-6 h-6" />
@@ -48,13 +50,43 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
 </nav>
 
 <!-- Mobile Menu Dropdown -->
-<div id="mobile-menu" class="hidden fixed top-14 right-4 w-44 bg-orange-100 dark:bg-neutral-900 shadow-xl rounded-lg z-50 sm:hidden">
+<div id="mobile-menu" class="hidden fixed top-14 right-4 w-44 bg-orange-100/80 dark:bg-neutral-900/80 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800 shadow-xl rounded-lg z-50 sm:hidden">
   <div class="flex flex-col py-2">
     {NAVBAR_ITEMS.map((item) => (
       <a href={item.href} class="px-4 py-2 hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded">
         {item.name}
       </a>
     ))}
+  </div>
+</div>
+
+<!-- Theme Dropdown -->
+<div id="theme-dropdown" class="hidden fixed w-44 bg-orange-100/80 dark:bg-neutral-900/80 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800 shadow-xl rounded-lg z-50">
+  <div class="flex flex-col py-2">
+    <button 
+      data-theme="system"
+      class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 theme-option rounded"
+    >
+      <Icon name="qlementine-icons:key-cmd-16" class="w-4 h-4" />
+      <span>System</span>
+      <Icon name="meteor-icons:check" class="w-4 h-4 ml-auto text-zinc-900 dark:text-zinc-100 hidden" id="system-check" />
+    </button>
+    <button 
+      data-theme="light"
+      class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 theme-option rounded"
+    >
+      <Icon name="meteor-icons:sun" class="w-4 h-4" />
+      <span>Light</span>
+      <Icon name="meteor-icons:check" class="w-4 h-4 ml-auto text-zinc-900 dark:text-zinc-100 hidden" id="light-check" />
+    </button>
+    <button 
+      data-theme="dark"
+      class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 theme-option rounded"
+    >
+      <Icon name="meteor-icons:moon" class="w-4 h-4" />
+      <span>Dark</span>
+      <Icon name="meteor-icons:check" class="w-4 h-4 ml-auto text-zinc-900 dark:text-zinc-100 hidden" id="dark-check" />
+    </button>
   </div>
 </div>
 
@@ -111,6 +143,158 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
 
   // Handle page navigation
   window.addEventListener('beforeunload', closeMenu);
+
+  // Theme script
+  // Theme management with cookies
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  }
+
+  function setCookie(name, value, days = 365) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Lax`;
+  }
+
+  function applyTheme(theme) {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else if (theme === 'light') {
+      document.documentElement.classList.remove('dark');
+    } else {
+      // System theme
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+  }
+
+  function updateThemeIcon(currentTheme) {
+    // Hide all icons first
+    document.querySelectorAll('.theme-icon').forEach(icon => icon.classList.add('hidden'));
+    document.querySelectorAll('[id$="-check"]').forEach(check => check.classList.add('hidden'));
+    
+    // Show the appropriate icon and check mark
+    if (currentTheme === 'system') {
+      document.getElementById('system-icon').classList.remove('hidden');
+      const systemCheck = document.getElementById('system-check');
+      if (systemCheck) systemCheck.classList.remove('hidden');
+    } else if (currentTheme === 'light') {
+      document.getElementById('light-icon').classList.remove('hidden');
+      const lightCheck = document.getElementById('light-check');
+      if (lightCheck) lightCheck.classList.remove('hidden');
+    } else if (currentTheme === 'dark') {
+      document.getElementById('dark-icon').classList.remove('hidden');
+      const darkCheck = document.getElementById('dark-check');
+      if (darkCheck) darkCheck.classList.remove('hidden');
+    }
+  }
+
+  // Initialize theme on page load
+  if (typeof window !== 'undefined') {
+    let currentTheme = getCookie('theme') || localStorage.getItem('theme') || 'system';
+    
+    // Migrate from localStorage to cookies if needed
+    if (!getCookie('theme') && localStorage.getItem('theme')) {
+      setCookie('theme', localStorage.getItem('theme'));
+      localStorage.removeItem('theme');
+    }
+    
+    // Set default to system if no theme is set
+    if (!currentTheme || !['system', 'light', 'dark'].includes(currentTheme)) {
+      currentTheme = 'system';
+      setCookie('theme', currentTheme);
+    }
+    
+    applyTheme(currentTheme);
+    updateThemeIcon(currentTheme);
+
+    // Listen for system theme changes when in system mode
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (getCookie('theme') === 'system') {
+        applyTheme('system');
+      }
+    });
+
+    // Dropdown functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeDropdown = document.getElementById('theme-dropdown');
+    let isThemeDropdownOpen = false;
+
+    function closeThemeDropdown() {
+      if (!isThemeDropdownOpen) return;
+      isThemeDropdownOpen = false;
+      themeDropdown.classList.add('hidden');
+      themeDropdown.style.top = null;
+      themeDropdown.style.right = null;
+    }
+
+    function openThemeDropdown() {
+      const toggleRect = themeToggle.getBoundingClientRect();
+      themeDropdown.style.top = `${toggleRect.bottom + 8}px`;
+      themeDropdown.style.right = `${window.innerWidth - toggleRect.right}px`;
+      isThemeDropdownOpen = true;
+      themeDropdown.classList.remove('hidden');
+    }
+
+    // Toggle dropdown on button click
+    themeToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      if (isThemeDropdownOpen) {
+        closeThemeDropdown();
+      } else {
+        openThemeDropdown();
+      }
+    });
+
+    // Handle theme selection
+    document.querySelectorAll('.theme-option').forEach(option => {
+      option.addEventListener('click', (e) => {
+        const selectedTheme = e.currentTarget.dataset.theme;
+        setCookie('theme', selectedTheme);
+        applyTheme(selectedTheme);
+        updateThemeIcon(selectedTheme);
+        closeThemeDropdown();
+      });
+    });
+
+    // Close dropdown on outside click
+    document.addEventListener('click', (e) => {
+      if (isThemeDropdownOpen && !themeToggle.contains(e.target) && !themeDropdown.contains(e.target)) {
+        closeThemeDropdown();
+      }
+    });
+
+    // Close dropdown on scroll
+    window.addEventListener('scroll', () => {
+      if (isThemeDropdownOpen) {
+        closeThemeDropdown();
+      }
+    });
+
+    // Close dropdowns on resize
+    window.addEventListener('resize', () => {
+      if (isThemeDropdownOpen) {
+        closeThemeDropdown();
+      }
+      if (isMenuOpen) {
+        closeMenu();
+      }
+    });
+
+    // Close dropdown on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isThemeDropdownOpen) {
+        closeThemeDropdown();
+      }
+    });
+  }
 </script>
 
 <style>
