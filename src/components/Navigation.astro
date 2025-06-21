@@ -294,6 +294,14 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
         closeThemeDropdown();
       }
     });
+
+    // Expose theme utils for other components like Search
+    (window as any).themeUtils = {
+      getCookie,
+      setCookie,
+      applyTheme,
+      updateThemeIcon,
+    };
   }
 </script>
 

@@ -14,7 +14,7 @@ import { Icon } from 'astro-icon/components';
         <input
           type="text"
           id="search-input"
-          class="w-full pl-10 pr-3 py-1 bg-transparent border-none outline-none focus:ring-0 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400"
+          class="w-full pl-10 pr-3 py-1 bg-transparent border-none outline-none focus:ring-0 text-zinc-900 dark:text-zinc-100 placeholder-zinc-600 dark:placeholder-zinc-400"
           placeholder="Search posts..."
           autocomplete="off"
           spellcheck="false"
@@ -43,14 +43,20 @@ const input = document.getElementById('search-input') as HTMLInputElement;
 const resultsContainer = document.getElementById('search-results');
 let selectedIndex = -1;
 let searchResults: any[] = [];
+let currentView = 'quickActions'; // 'quickActions', 'results', 'themeSwitcher'
 
 const quickActions = [
   { 
     id: "share",
     name: "Share this page", 
     icon: "meteor-icons:share",
-    shortcut: "↵",
     action: "share" 
+  },
+  {
+    id: "theme",
+    name: "Switch theme",
+    icon: "ion:color-palette-outline",
+    action: "theme"
   }
 ];
 
@@ -126,12 +132,8 @@ function createQuickActionItem(action: typeof quickActions[0], index: number) {
       class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-orange-50 dark:hover:bg-zinc-700 ${index === selectedIndex ? 'bg-orange-50 dark:bg-zinc-700' : ''}"
     >
       <div class="flex items-center gap-3 min-w-0 flex-1">
-        <Icon name="${action.icon}" class="w-5 h-5 shrink-0 text-zinc-400" />
         <span class="text-neutral-900 dark:text-zinc-100 truncate">${action.name}</span>
       </div>
-      <kbd class="px-2 py-1 text-xs text-zinc-400 bg-orange-100dark:bg-zinc-700 rounded shrink-0 ml-2">
-        ${action.shortcut}
-      </kbd>
     </button>
   `;
 }
@@ -141,7 +143,8 @@ function showOverlay() {
   overlay?.classList.remove('hidden');
   input?.focus();
   document.body.style.overflow = 'hidden';
-  renderQuickActions();
+  currentView = 'quickActions';
+  render();
 }
 
 // Render quick actions
@@ -158,8 +161,44 @@ function renderQuickActions() {
       if (action === 'share') {
         sharePage();
         hideOverlay();
+      } else if (action === 'theme') {
+        currentView = 'themeSwitcher';
+        selectedIndex = -1;
+        render();
       }
     });
+  });
+}
+
+function renderThemeSwitcher() {
+  if (!resultsContainer) return;
+  const currentTheme = (window as any).themeUtils?.getCookie('theme') || 'system';
+  const themes = [
+      { id: 'system', name: 'System' },
+      { id: 'light', name: 'Light' },
+      { id: 'dark', name: 'Dark' },
+  ];
+  resultsContainer.innerHTML = themes.map((theme, index) => `
+      <button
+        data-theme="${theme.id}"
+        class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-orange-50 dark:hover:bg-zinc-700 theme-switcher-option text-neutral-900 dark:text-zinc-100 ${index === selectedIndex ? 'bg-orange-50 dark:bg-zinc-700' : ''}"
+      >
+        <span>${theme.name}</span>
+        ${currentTheme === theme.id ? '<span class="ml-auto">✓</span>' : ''}
+      </button>
+  `).join('');
+
+  // Add click handlers
+  resultsContainer.querySelectorAll('.theme-switcher-option').forEach(button => {
+      button.addEventListener('click', (e) => {
+          const selectedTheme = (e.currentTarget as HTMLButtonElement).dataset.theme;
+          if ((window as any).themeUtils) {
+              (window as any).themeUtils.setCookie('theme', selectedTheme);
+              (window as any).themeUtils.applyTheme(selectedTheme);
+              (window as any).themeUtils.updateThemeIcon(selectedTheme);
+          }
+          hideOverlay();
+      });
   });
 }
 
@@ -169,12 +208,14 @@ async function handleSearch() {
   if (!query) {
     searchResults = [];
     selectedIndex = -1;
-    renderQuickActions();
+    currentView = 'quickActions';
+    render();
     return;
   }
 
+  currentView = 'results';
   searchResults = await Search(query);
-  renderResults();
+  render();
 }
 
 // Render results
@@ -191,6 +232,20 @@ function renderResults() {
   resultsContainer!.innerHTML = searchResults
     .map((result, index) => createResultItem(result, index))
     .join('');
+}
+
+function render() {
+  switch (currentView) {
+    case 'quickActions':
+      renderQuickActions();
+      break;
+    case 'themeSwitcher':
+      renderThemeSwitcher();
+      break;
+    case 'results':
+      renderResults();
+      break;
+  }
 }
 
 // Helper to compute the correct URL based on the collection a document belongs to
@@ -228,41 +283,64 @@ function hideOverlay() {
 // Update handleKeyboard to handle quick action selection
 function handleKeyboard(e: KeyboardEvent) {
   if (!overlay?.classList.contains('hidden')) {
+    const totalItems = currentView === 'results' 
+      ? searchResults.length 
+      : currentView === 'themeSwitcher'
+      ? 3 // there are 3 theme options
+      : quickActions.length;
+
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        selectedIndex = Math.min(selectedIndex + 1, (searchResults.length || quickActions.length) - 1);
-        input?.value ? renderResults() : renderQuickActions();
+        selectedIndex = Math.min(selectedIndex + 1, totalItems - 1);
+        render();
         break;
       case 'ArrowUp':
         e.preventDefault();
         selectedIndex = Math.max(selectedIndex - 1, -1);
-        input?.value ? renderResults() : renderQuickActions();
+        render();
         break;
       case 'Enter':
         e.preventDefault();
-        if (selectedIndex >= 0) {
-          if (!input?.value && quickActions[selectedIndex]) {
-            if (quickActions[selectedIndex].id === 'share') {
-              sharePage();
-              hideOverlay();
+        
+        const effectiveIndex = selectedIndex === -1 ? 0 : selectedIndex;
+
+        if (currentView === 'quickActions') {
+            if (!quickActions[effectiveIndex]) return;
+            const action = quickActions[effectiveIndex];
+            if (action.id === 'share') {
+                sharePage();
+                hideOverlay();
+            } else if (action.id === 'theme') {
+                currentView = 'themeSwitcher';
+                selectedIndex = -1;
+                render();
             }
-          } else if (searchResults[selectedIndex]) {
-            const result = searchResults[selectedIndex];
-            window.location.href = getPostUrl(result);
-          }
-        } else if (searchResults.length > 0) { // New condition: if there are results but none selected
-          // Navigate to the first result
-          const result = searchResults[0];
-          window.location.href = getPostUrl(result);
-        } else if (!input?.value) { // If no input and no selection, trigger first quick action
-          sharePage();
-          hideOverlay();
+        } else if (currentView === 'themeSwitcher') {
+            const themes = ['system', 'light', 'dark'];
+            const selectedTheme = themes[effectiveIndex];
+            if ((window as any).themeUtils && selectedTheme) {
+                (window as any).themeUtils.setCookie('theme', selectedTheme);
+                (window as any).themeUtils.applyTheme(selectedTheme);
+                (window as any).themeUtils.updateThemeIcon(selectedTheme);
+            }
+            hideOverlay();
+        } else if (currentView === 'results') {
+            if (searchResults[effectiveIndex]) {
+                const result = searchResults[effectiveIndex];
+                window.location.href = getPostUrl(result);
+            }
         }
         break;
       case 'Escape':
         e.preventDefault();
-        hideOverlay();
+        if (currentView === 'themeSwitcher') {
+          currentView = 'quickActions';
+          selectedIndex = -1;
+          render();
+        } else {
+          hideOverlay();
+        }
         break;
     }
   }
