@@ -153,7 +153,9 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
 </script>
 
 <!-- Theme functionality -->
-<script type="module" src="/src/scripts/theme-client.js"></script>
+<script>
+  import('../scripts/theme-client.js');
+</script>
 
 <style>
   /* Ensure no focus states persist on the menu button */
