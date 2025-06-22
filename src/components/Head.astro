@@ -58,3 +58,42 @@ const ogImage = type === 'blog'
 <link rel="alternate" type="application/rss+xml" title="RSS – All content" href={`${SITE_URL}/rss.xml`} />
 <link rel="alternate" type="application/rss+xml" title="RSS – Articles" href={`${SITE_URL}/articles/rss.xml`} />
 <link rel="alternate" type="application/rss+xml" title="RSS – Notes" href={`${SITE_URL}/notes/rss.xml`} />
+
+<!-- Runs before first paint -->
+<script is:inline>
+(() => {
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  };
+
+  // Get theme preference from cookie, fallback to localStorage, then system
+  let theme = getCookie('theme') || localStorage.getItem('theme') || 'system';
+  
+  // Migrate from localStorage to cookies if needed
+  if (!getCookie('theme') && localStorage.getItem('theme')) {
+    const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
+    document.cookie = `theme=${localStorage.getItem('theme')}; expires=${expires}; path=/; SameSite=Lax`;
+    localStorage.removeItem('theme');
+  }
+  
+  // Set default to system if no valid theme is set
+  if (!theme || !['system', 'light', 'dark'].includes(theme)) {
+    theme = 'system';
+    const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
+    document.cookie = `theme=${theme}; expires=${expires}; path=/; SameSite=Lax`;
+  }
+
+  // Apply theme immediately
+  const shouldBeDark = theme === 'dark' || 
+    (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  
+  if (shouldBeDark) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+})();
+</script>
