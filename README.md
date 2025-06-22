@@ -1,68 +1,103 @@
 # erdaltoprak.com
-  
-Personal website built with Astro and deployed on Cloudflare Pages. Features a blog, project showcase, and integration with GitHub and Hugging Face APIs.
 
-## Tech Stack
+> Personal website & knowledge hub of **Erdal Toprak** – built with [Astro](https://astro.build) & deployed on **Cloudflare Pages**.
 
-- [Astro](https://astro.build) - Web framework
-- [Tailwind CSS](https://tailwindcss.com) - Styling
-- [TypeScript](https://www.typescriptlang.org) - Type safety
-- [Cloudflare Pages](https://pages.cloudflare.com) - Hosting
+[![Deploy](https://img.shields.io/github/actions/workflow/status/erdaltoprak/erdaltoprak.com/ga-cfp-deploy.yml?label=Deploy&logo=github)](https://github.com/erdaltoprak/erdaltoprak.com/actions) 
+[![License](https://img.shields.io/github/license/erdaltoprak/erdaltoprak.com?color=informational)](LICENSE)
 
-## Development
+---
 
-### Prerequisites
+## ✨ Key Features
 
-- [Node.js](https://nodejs.org) (v20 or higher)
-- [pnpm](https://pnpm.io)
+• **Dark/Light Mode** – respects system preference & manual toggle  
+• **⌘K Search Overlay** – full-text search (powered by `astro-collection-search`) plus quick actions (share / theme)  
+• **Articles & Notes** – content authored in Markdown/MDX, rendered via Astro Content Collections  
+• **Dynamic OG Images** – generated at build-time with Satori + Sharp  
+• **Static Project Showcase** – curated list in `public/projects.json`  
+• **Syntax-Highlighted Code** – via `astro-expressive-code` (Material Darker & GitHub Light)  
+• **Utterances Comments** – GitHub–powered discussions  
+• **SEO Toolkit** – automatic sitemap & RSS feeds  
+• **Zero-config CI/CD** – GitHub Actions → Cloudflare Pages, auto-triggered by content submodule commits
 
-### Setup
+---
 
-1. Clone the repository
+## 🔧 Tech Stack
 
-    ```sh
-    git clone https://github.com/erdaltoprak/erdaltoprak.com.git
-    cd erdaltoprak.com
-    ```
+| Layer | Tools |
+|-------|-------|
+| Framework | Astro 4 + TypeScript |
+| Styling   | Tailwind CSS v3 |
+| Icons     | `astro-icon` + Iconify sets |
+| Search    | `astro-collection-search` |
+| Code blocks | `astro-expressive-code` w/ line numbers |
+| Images    | Sharp (optimisation) |
+| Hosting   | Cloudflare Pages |
 
-2. Install dependencies
+---
 
-    ```sh
-    pnpm install
-    ```
+## 🚀 Quick Start
 
-3. Start the development server
+```bash
+# 1. Clone + pull content submodule
+$ git clone --recursive https://github.com/erdaltoprak/erdaltoprak.com.git
+$ cd erdaltoprak.com
 
-    ```sh
-    pnpm dev
-    ```
+# 2. Install deps (Node 20+)
+$ npm install
 
-### Build
-
-To build the project for production:
-
-```sh
-pnpm build
+# 3. Start dev server
+$ npm run dev
 ```
 
-### Scripts
+Visit <http://localhost:4321> – changes reload instantly.
 
-- `pnpm dev` - Start the development server
-- `pnpm build` - Build the project for production
-- `pnpm preview` - Preview the production build locally
-- `pnpm fetch:all` - Fetch latest data from GitHub and Hugging Face APIs
+### Building
 
-## Features
+```bash
+# Generates OG images then builds static site into ./dist
+npm run build
+```
 
-- **Dark/Light Mode**: Toggle between themes
-- **Command Palette**: Access via ⌘K
-- **Blog**: Write posts with MDX support
-- **Project Showcase**: Highlight your projects
-- **GitHub Integration**: Display repositories
-- **Hugging Face Integration**: Showcase models and datasets
-- **Comments**: Powered by Utterances
-- **SEO Friendly**: Optimized for search engines
+### Updating content
 
-## License
+The Markdown/MDX sources live in the `src/content` submodule.
 
-This project is licensed under the [MIT License](LICENSE).
+```bash
+# Pull latest posts from the content repo
+git submodule update --remote --merge
+```
+
+---
+
+## 📁 Repository Layout
+
+```
+├─ src/
+│  ├─ components/      # UI building blocks
+│  ├─ layouts/         # Page templates
+│  ├─ pages/           # Astro routes (Articles, Notes, Projects…)
+│  ├─ scripts/         # build-time helpers (generate-og.ts)
+│  └─ content/ ⇢ git submodule (Markdown/MDX)
+├─ public/             # Static assets & pre-built JSON (projects, social links)
+└─ .github/workflows/  # CI/CD pipelines
+```
+
+---
+
+## 🛠️ Deployment Pipeline
+
+1. **Push to `main`** → GitHub Action runs on Ubuntu, installs deps, runs `npm run build`.  
+2. Artifacts are deployed to **Cloudflare Pages** with `wrangler-action`.  
+3. Commits to the `blog-content` repository trigger a repository-dispatch event (`blog_update`) that rebuilds this site automatically.
+
+---
+
+## 🤝 Contributing
+
+PRs & issues are welcome. Ensure commits pass lint & build steps (`npm run build`).
+
+---
+
+## 📄 License
+
+This project is released under the [MIT License](LICENSE).
