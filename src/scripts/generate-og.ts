@@ -7,8 +7,9 @@ import { Resvg } from '@resvg/resvg-js';
 import { glob } from 'glob';
 import sharp from 'sharp';
 
-const BLOG_DIR = 'src/content/blog';
+const CONTENT_DIR = 'src/content';
 const OUTPUT_DIR = 'public/og';
+const COLLECTIONS = ['articles', 'notes'];
 
 async function fileExists(path: string): Promise<boolean> {
   try {
@@ -50,13 +51,13 @@ async function createBlurredBackground(imagePath: string): Promise<string> {
   }
 }
 
-async function generateOGImage(title: string, slug: string, heroImage: string, fonts: { regular: Buffer; bold: Buffer }) {
+async function generateOGImage(title: string, slug: string, heroImage: string, collection: string, fonts: { regular: Buffer; bold: Buffer }) {
   try {
     // Convert slug to lowercase for file naming consistency
     const lowercaseSlug = slug.toLowerCase();
     
     const cleanHeroImage = heroImage.replace(/^\.\//, '');
-    const imagePath = join(BLOG_DIR, slug, cleanHeroImage);
+    const imagePath = join(CONTENT_DIR, collection, slug, cleanHeroImage);
     const blurredBackground = await createBlurredBackground(imagePath);
 
     const markup = html`
@@ -123,28 +124,32 @@ async function main() {
 
     await mkdir(OUTPUT_DIR, { recursive: true });
 
-    const blogPosts = await glob('**/index.md', {
-      cwd: BLOG_DIR,
-    });
+    // Process both articles and notes collections
+    for (const collection of COLLECTIONS) {
+      const collectionDir = join(CONTENT_DIR, collection);
+      const posts = await glob('**/index.md', {
+        cwd: collectionDir,
+      });
 
-    for (const postPath of blogPosts) {
-      try {
-        const fullPath = join(BLOG_DIR, postPath);
-        const content = await readFile(fullPath, 'utf-8');
-        const { data } = matter(content);
-        const slug = postPath.split('/')[0];
+      for (const postPath of posts) {
+        try {
+          const fullPath = join(collectionDir, postPath);
+          const content = await readFile(fullPath, 'utf-8');
+          const { data } = matter(content);
+          const slug = postPath.split('/')[0];
 
-        if (!data.heroImage) {
-          console.warn(`No hero image found for ${slug}, skipping OG image generation`);
+          if (!data.heroImage) {
+            console.warn(`No hero image found for ${collection}/${slug}, skipping OG image generation`);
+            continue;
+          }
+
+          // Slug is passed as-is (preserving original case for folder path operations)
+          // but will be lowercased inside the generateOGImage function
+          await generateOGImage(data.title, slug, data.heroImage, collection, fonts);
+        } catch (error) {
+          console.error(`Error processing post ${collection}/${postPath}:`, error);
           continue;
         }
-
-        // Slug is passed as-is (preserving original case for folder path operations)
-        // but will be lowercased inside the generateOGImage function
-        await generateOGImage(data.title, slug, data.heroImage, fonts);
-      } catch (error) {
-        console.error(`Error processing post ${postPath}:`, error);
-        continue;
       }
     }
 
