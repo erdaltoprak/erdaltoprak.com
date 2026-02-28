@@ -1,6 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
+import tailwindcss from '@tailwindcss/vite';
 import { SITE_URL } from './src/consts';
 import sitemap from '@astrojs/sitemap';
 import expressiveCode from 'astro-expressive-code';
@@ -10,13 +10,15 @@ import icon from "astro-icon";
 // https://astro.build/config
 export default defineConfig({
   site: SITE_URL,
+  vite: {
+    plugins: [tailwindcss()],
+  },
   trailingSlash: 'never',
   devToolbar: {
       enabled: false
     },
 
   integrations: [
-    tailwind(), 
     sitemap(),
     expressiveCode({
       // You can set configuration options here
