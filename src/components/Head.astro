@@ -1,0 +1,107 @@
+---
+import { SITE_TITLE, SITE_DESCRIPTION, OG_IMAGE, SITE_URL } from '../consts';
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalURL?: string;
+  type?: 'website' | 'blog';
+  heroImage?: string;
+}
+
+const {
+  title = SITE_TITLE,
+  description = SITE_DESCRIPTION,
+  canonicalURL = Astro.url,
+  type = 'website',
+  heroImage
+} = Astro.props;
+
+const metaTitle = title === SITE_TITLE ? title : `${SITE_TITLE} | ${title}`;
+
+const ogImage = type === 'blog' 
+  ? new URL(`/og/${Astro.params.slug?.toLowerCase()}.png`, SITE_URL).toString()
+  : OG_IMAGE;
+---
+
+<!-- View Transitions -->
+<ClientRouter />
+
+<!-- Global Metadata -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" type="image/ico" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#1d1d22" />
+<link rel="sitemap" href="/sitemap-index.xml" />
+<meta name="generator" content={Astro.generator} />
+<meta name="theme-color" content="#fdf9ee" />
+<meta name="msapplication-TileColor" content="#fdf9ee" />
+<meta name="msapplication-config" content="/browserconfig.xml" />
+
+<!-- Primary Meta Tags -->
+<title>{metaTitle}</title>
+<meta name="title" content={metaTitle} />
+<meta name="description" content={description} />
+
+<!-- Canonical URL -->
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={metaTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonicalURL} />
+<meta name="twitter:title" content={metaTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+<meta name="twitter:creator" content="@erdalxtoprak" />
+
+<!-- RSS Discovery -->
+<link rel="alternate" type="application/rss+xml" title="RSS – All content" href={`${SITE_URL}/rss.xml`} />
+
+<!-- Runs before first paint and on view-transition swap -->
+<script is:inline>
+function applyStoredTheme() {
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  };
+
+  let theme = getCookie('theme') || localStorage.getItem('theme') || 'system';
+  
+  if (!getCookie('theme') && localStorage.getItem('theme')) {
+    const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
+    document.cookie = `theme=${localStorage.getItem('theme')}; expires=${expires}; path=/; SameSite=Lax`;
+    localStorage.removeItem('theme');
+  }
+  
+  if (!theme || !['system', 'light', 'dark'].includes(theme)) {
+    theme = 'system';
+    const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
+    document.cookie = `theme=${theme}; expires=${expires}; path=/; SameSite=Lax`;
+  }
+
+  const shouldBeDark = theme === 'dark' || 
+    (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  
+  if (shouldBeDark) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+}
+// Apply on initial load
+applyStoredTheme();
+// Re-apply after view transition swap to prevent flash
+document.addEventListener('astro:after-swap', applyStoredTheme);
+</script>

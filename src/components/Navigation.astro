@@ -1,0 +1,298 @@
+---
+import { NAVBAR_ITEMS } from '../consts';
+import ThemeToggle from './ThemeToggle.astro';
+import SearchButton from './SearchButton.astro';
+import { Icon } from 'astro-icon/components'
+
+const currentPath = Astro.url.pathname.replace(/\/$/, '');
+---
+
+<nav class="sticky top-0 bg-orange-100/80 dark:bg-neutral-900/80 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 z-50 ">
+    <div class="max-w-4xl mx-auto px-4 py-2 flex items-center gap-4">
+        <a href="/" class="flex items-center space-x-1 hover:underline underline-offset-4 decoration-2">
+            <span class="text-lg font-bold">Erdal Toprak</span>
+        </a>
+        <!-- Desktop links -->
+        <div class="hidden sm:flex items-center space-x-1 ml-auto">
+            {NAVBAR_ITEMS.map((item) => (
+                <a 
+                    href={item.href}
+                    class={`px-3 py-1.5 rounded-lg ${
+                        currentPath === item.href.replace(/\/$/, '') 
+                            ? 'bg-orange-50 dark:bg-neutral-900' 
+                            : 'hover:bg-orange-50 dark:hover:bg-zinc-800'
+                    }`}
+                >
+                    {item.name}
+                </a>
+            ))}
+        </div>
+
+        <!-- Icon cluster -->
+        <div class="flex items-center space-x-3 ml-auto sm:ml-0">
+            <button id="projects-toggle" aria-label="Projects" class="p-2 rounded hover:bg-orange-50 dark:hover:bg-zinc-800 focus:outline-none focus-visible:outline-none">
+                <Icon name="mdi:code-braces" class="w-5 h-5" />
+            </button>
+            <div class="relative">
+                <ThemeToggle />
+            </div>
+            <SearchButton />
+            <button id="menu-button" aria-label="Menu" class="p-2 rounded sm:hover:bg-orange-50 sm:dark:hover:bg-zinc-800 focus:outline-none focus-visible:outline-none active:bg-orange-50 active:dark:bg-zinc-800 sm:hidden">
+                <Icon name="mdi:menu" class="w-6 h-6" />
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Menu Dropdown -->
+<div id="mobile-menu" class="hidden fixed top-14 right-4 w-44 bg-orange-100/80 dark:bg-neutral-900/80 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800 shadow-xl rounded-lg z-50 sm:hidden">
+  <div class="flex flex-col py-2">
+    {NAVBAR_ITEMS.map((item) => (
+      <a href={item.href} class="px-4 py-2 hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded">
+        {item.name}
+      </a>
+    ))}
+  </div>
+</div>
+
+<!-- Theme Dropdown -->
+<div id="theme-dropdown" class="hidden fixed w-44 bg-orange-100/80 dark:bg-neutral-900/80 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800 shadow-xl rounded-lg z-50">
+  <div class="flex flex-col py-2">
+    <button 
+      data-theme="system"
+      class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 theme-option rounded"
+    >
+      <Icon name="qlementine-icons:key-cmd-16" class="w-4 h-4" />
+      <span>System</span>
+      <Icon name="meteor-icons:check" class="w-4 h-4 ml-auto text-zinc-900 dark:text-zinc-100 hidden" id="system-check" />
+    </button>
+    <button 
+      data-theme="light"
+      class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 theme-option rounded"
+    >
+      <Icon name="meteor-icons:sun" class="w-4 h-4" />
+      <span>Light</span>
+      <Icon name="meteor-icons:check" class="w-4 h-4 ml-auto text-zinc-900 dark:text-zinc-100 hidden" id="light-check" />
+    </button>
+    <button 
+      data-theme="dark"
+      class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 theme-option rounded"
+    >
+      <Icon name="meteor-icons:moon" class="w-4 h-4" />
+      <span>Dark</span>
+      <Icon name="meteor-icons:check" class="w-4 h-4 ml-auto text-zinc-900 dark:text-zinc-100 hidden" id="dark-check" />
+    </button>
+  </div>
+</div>
+
+<!-- Projects Dropdown -->
+<div id="projects-dropdown" class="hidden fixed w-44 bg-orange-100/80 dark:bg-neutral-900/80 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800 shadow-xl rounded-lg z-50">
+  <div class="flex flex-col py-2">
+    <a
+      href="https://github.com/erdaltoprak"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="flex items-center gap-3 px-4 py-2 hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded"
+    >
+      <Icon name="mdi:github" class="w-4 h-4" />
+      <span>GitHub</span>
+    </a>
+    <a
+      href="https://huggingface.co/erdal"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="flex items-center gap-3 px-4 py-2 hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded"
+    >
+      <Icon name="simple-icons:huggingface" class="w-4 h-4" />
+      <span>Hugging Face</span>
+    </a>
+  </div>
+</div>
+
+<script>
+  const navRuntime = ((window as any).__erdalNavRuntime ??= {});
+  navRuntime.controller?.abort?.();
+  navRuntime.controller = new AbortController();
+  const { signal } = navRuntime.controller;
+
+  let isMenuOpen = false;
+  let isProjectsDropdownOpen = false;
+  let themeClientPromise: Promise<void> | null = navRuntime.themeClientPromise ?? null;
+
+  const getMenuButton = () => document.getElementById('menu-button');
+  const getMobileMenu = () => document.getElementById('mobile-menu');
+  const getProjectsToggle = () => document.getElementById('projects-toggle');
+  const getProjectsDropdown = () => document.getElementById('projects-dropdown');
+
+  const loadThemeClient = () => {
+    if (!themeClientPromise) {
+      themeClientPromise = import('../scripts/theme-client.js')
+        .then(() => undefined)
+        .catch((error) => {
+          themeClientPromise = null;
+          navRuntime.themeClientPromise = null;
+          throw error;
+        });
+      navRuntime.themeClientPromise = themeClientPromise;
+    }
+    return themeClientPromise;
+  };
+
+  function closeMenu() {
+    if (!isMenuOpen) return;
+    isMenuOpen = false;
+    const menu = getMobileMenu();
+    const menuBtn = getMenuButton();
+    menu?.classList.add('hidden');
+    menuBtn?.classList.remove('bg-orange-50', 'dark:bg-zinc-800', 'menu-active');
+    if (menuBtn) {
+      menuBtn.blur();
+    }
+  }
+
+  function openMenu() {
+    const menu = getMobileMenu();
+    const menuBtn = getMenuButton();
+    if (!menu || !menuBtn) return;
+    isMenuOpen = true;
+    menu.classList.remove('hidden');
+    menuBtn.classList.add('bg-orange-50', 'dark:bg-zinc-800', 'menu-active');
+  }
+
+  function closeProjectsDropdown() {
+    if (!isProjectsDropdownOpen) return;
+    isProjectsDropdownOpen = false;
+    const projectsDropdown = getProjectsDropdown();
+    if (projectsDropdown) {
+      projectsDropdown.classList.add('hidden');
+      projectsDropdown.style.top = '';
+      projectsDropdown.style.right = '';
+    }
+  }
+
+  function openProjectsDropdown() {
+    const projectsToggle = getProjectsToggle();
+    const projectsDropdown = getProjectsDropdown();
+    if (!projectsToggle || !projectsDropdown) return;
+
+    const rect = projectsToggle.getBoundingClientRect();
+    projectsDropdown.style.top = `${rect.bottom + 8}px`;
+    projectsDropdown.style.right = `${window.innerWidth - rect.right}px`;
+    isProjectsDropdownOpen = true;
+    projectsDropdown.classList.remove('hidden');
+  }
+
+  function closeAllDropdowns() {
+    closeMenu();
+    closeProjectsDropdown();
+    (window as any).themeUtils?.closeThemeDropdown?.();
+  }
+
+  function resetNavStateForPage() {
+    isMenuOpen = false;
+    isProjectsDropdownOpen = false;
+    getMobileMenu()?.classList.add('hidden');
+    getProjectsDropdown()?.classList.add('hidden');
+  }
+
+  async function handleDocumentClick(e: MouseEvent) {
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+
+    if (target.closest('#menu-button')) {
+      e.preventDefault();
+      closeProjectsDropdown();
+      (window as any).themeUtils?.closeThemeDropdown?.();
+      if (isMenuOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+      return;
+    }
+
+    if (target.closest('#projects-toggle')) {
+      e.preventDefault();
+      closeMenu();
+      (window as any).themeUtils?.closeThemeDropdown?.();
+      if (isProjectsDropdownOpen) {
+        closeProjectsDropdown();
+      } else {
+        openProjectsDropdown();
+      }
+      return;
+    }
+
+    if (target.closest('#theme-toggle')) {
+      e.preventDefault();
+      closeMenu();
+      closeProjectsDropdown();
+      await loadThemeClient();
+      (window as any).themeUtils?.toggleThemeDropdown?.();
+      return;
+    }
+
+    if (target.closest('nav a[href], #mobile-menu a[href], #projects-dropdown a[href]')) {
+      closeAllDropdowns();
+      return;
+    }
+
+    const menu = getMobileMenu();
+    const menuBtn = getMenuButton();
+    if (isMenuOpen && !menu?.contains(target) && !menuBtn?.contains(target)) {
+      closeMenu();
+    }
+
+    const projectsDropdown = getProjectsDropdown();
+    const projectsToggle = getProjectsToggle();
+    if (isProjectsDropdownOpen && !projectsDropdown?.contains(target) && !projectsToggle?.contains(target)) {
+      closeProjectsDropdown();
+    }
+  }
+
+  document.addEventListener('click', (e) => {
+    void handleDocumentClick(e);
+  }, { signal });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeAllDropdowns();
+    }
+  }, { signal });
+
+  window.addEventListener('scroll', closeAllDropdowns, { signal });
+  window.addEventListener('resize', closeAllDropdowns, { signal });
+  document.addEventListener('site:close-popovers', () => {
+    closeMenu();
+    closeProjectsDropdown();
+  }, { signal });
+  document.addEventListener('astro:page-load', resetNavStateForPage, { signal });
+  document.addEventListener('pointerover', (e) => {
+    if ((e.target as HTMLElement | null)?.closest('#theme-toggle')) {
+      void loadThemeClient();
+    }
+  }, { signal });
+  document.addEventListener('focusin', (e) => {
+    if ((e.target as HTMLElement | null)?.closest('#theme-toggle')) {
+      void loadThemeClient();
+    }
+  }, { signal });
+
+  resetNavStateForPage();
+</script>
+
+<style>
+  /* Ensure no focus states persist on the menu button */
+  #menu-button:focus,
+  #menu-button:focus-visible,
+  #menu-button:active {
+    outline: none !important;
+  }
+  
+  /* Only show background when explicitly marked as active */
+  #menu-button:not(.menu-active):focus,
+  #menu-button:not(.menu-active):focus-visible,
+  #menu-button:not(.menu-active):active {
+    background-color: transparent !important;
+  }
+</style>

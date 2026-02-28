@@ -1,0 +1,94 @@
+---
+import Head from "../components/Head.astro";
+import Container from "../components/Container.astro";
+import Navigation from "../components/Navigation.astro";
+import Search from "../components/Search.astro";
+
+// Get any head-related props that might be passed in
+const { title, description, heroImage, type } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth touch-manipulation">
+	<head>
+		<Head 
+			title={title}
+			description={description}
+			heroImage={heroImage}
+			type={type}
+		/>
+	</head>
+	<body class="bg-orange-100 dark:bg-neutral-900 text-zinc-900 dark:text-zinc-100">
+		<Navigation />
+		<Search />
+		<Container>
+			<main>
+				<slot />
+			</main>
+		</Container>
+	</body>
+</html>
+
+<style is:global>
+	:root {
+		--paper-bg: #fdf9ee;
+		--paper-surface: #f6f0df;
+		--paper-hover: #eee8d5;
+		--paper-border: #e5dcbd;
+		--paper-text: #323239;
+		--paper-text-strong: #1d1d22;
+		--paper-text-muted: #4e4e55;
+		--paper-text-faint: #6f6f76;
+	}
+
+	html:not(.dark) body {
+		background-color: var(--paper-bg) !important;
+		color: var(--paper-text) !important;
+	}
+
+	html:not(.dark) .bg-orange-100 {
+		background-color: var(--paper-bg) !important;
+	}
+
+	html:not(.dark) .bg-orange-100\/80 {
+		background-color: rgb(253 249 238 / 0.9) !important;
+	}
+
+	html:not(.dark) .bg-orange-50 {
+		background-color: var(--paper-surface) !important;
+	}
+
+	html:not(.dark) .hover\:bg-orange-50:hover,
+	html:not(.dark) .active\:bg-orange-50:active {
+		background-color: var(--paper-hover) !important;
+	}
+
+	html:not(.dark) .border-zinc-200 {
+		border-color: var(--paper-border) !important;
+	}
+
+	html:not(.dark) .text-zinc-900 {
+		color: var(--paper-text-strong) !important;
+	}
+
+	html:not(.dark) .text-zinc-700 {
+		color: var(--paper-text) !important;
+	}
+
+	html:not(.dark) .text-zinc-600 {
+		color: var(--paper-text-muted) !important;
+	}
+
+	html:not(.dark) .text-zinc-500,
+	html:not(.dark) .text-zinc-400 {
+		color: var(--paper-text-faint) !important;
+	}
+
+	html:not(.dark) .placeholder-zinc-600::placeholder {
+		color: var(--paper-text-muted) !important;
+	}
+
+	html:not(.dark) .decoration-zinc-400 {
+		text-decoration-color: var(--paper-border) !important;
+	}
+</style>

@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+import { formatMonthYear } from '../utils';
+import socialLinks from '../../public/social.json';
+
+const latestPosts = (await getCollection('blog', ({ data }) => {
+  const includeDraft = import.meta.env.PROD ? !data.draft : true;
+  return (data.type === 'article' || data.type === 'note') && includeDraft;
+}))
+  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
+  .slice(0, 6);
+---
+
+<Layout>
+  <!-- Hero Section -->
+  <section class="py-12 md:py-16">
+    <div class="flex items-center gap-6 mb-6">
+      <h1 class="text-4xl md:text-5xl font-bold">
+        Hi, I'm <a href="/about" class="underline decoration-zinc-400 hover:decoration-zinc-700 dark:decoration-zinc-300 dark:hover:decoration-white decoration-2 ">Erdal</a>!
+      </h1>
+    </div>
+    <div class="flex flex-wrap gap-2 mb-6">
+      {socialLinks.map((link) => (
+        <a
+          href={link.url}
+          target={link.url.startsWith('/') ? undefined : '_blank'}
+          rel={link.url.startsWith('/') ? undefined : 'noopener noreferrer'}
+          title={link.name}
+          class="text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100 transition-colors"
+        >
+          <Icon name={link.icon} class="w-5 h-5" />
+        </a>
+      ))}
+    </div>
+    <p class="text-xl md:text-2xl text-zinc-700 dark:text-zinc-300 max-w-2xl">
+      I'm a software engineer passionate about AI, decentralization, privacy and open source.
+      On this site, I share my thoughts, projects, and experiments.
+    </p>
+  </section>
+
+  <!-- Latest Blog -->
+  <section class="py-8">
+    <h2 class="text-2xl md:text-3xl font-semibold mb-2 flex items-center justify-between">
+      <a href="/blog" class="underline md:no-underline md:hover:underline decoration-zinc-400 hover:decoration-zinc-700 dark:decoration-zinc-300 dark:hover:decoration-white decoration-2">Blog</a>
+      <a href="/blog" class="text-zinc-400 hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300 ">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m9 18 6-6-6-6"/>
+        </svg>
+      </a>
+    </h2>
+    <ul class="mx-[-1rem]">
+      {latestPosts.map(post => (
+        <li>
+          <a 
+            href={`/blog/${post.slug}`}
+            class="group flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 px-4 text-inherit no-underline hover:bg-orange-50 hover:dark:bg-zinc-800 rounded-lg"
+          >
+            <span class="text-zinc-900 dark:text-zinc-100 mb-2 sm:mb-0 sm:max-w-[75%]">{post.data.title}</span>
+            <div class="flex flex-row items-center gap-3 text-zinc-600 dark:text-zinc-400">
+              <time class="text-sm">
+                {formatMonthYear(post.data.pubDate)}
+              </time>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Layout>

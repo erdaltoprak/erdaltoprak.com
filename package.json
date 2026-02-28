@@ -1,0 +1,46 @@
+{
+  "name": "erdal",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "tsx src/scripts/generate-og.ts && tsx src/scripts/generate-llms.ts && tsx src/scripts/generate-search-index.ts && astro build && npm run check:links",
+    "check:astro": "astro check",
+    "check:links": "tsx src/scripts/check-internal-links.ts",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.6",
+    "@astrojs/rss": "^4.0.15",
+    "@astrojs/sitemap": "^3.7.0",
+    "@astrojs/tailwind": "^6.0.2",
+    "@expressive-code/plugin-line-numbers": "^0.38.3",
+    "@iconify-json/qlementine-icons": "^1.2.7",
+    "astro": "^5.18.0",
+    "astro-expressive-code": "^0.38.3",
+    "astro-icon": "^1.1.4",
+    "glob": "^11.0.0",
+    "gray-matter": "^4.0.3",
+    "markdown-it": "^14.1.0",
+    "minisearch": "^7.2.0",
+    "sanitize-html": "^2.13.1",
+    "sharp": "^0.33.5",
+    "tailwindcss": "^3.4.16"
+  },
+  "devDependencies": {
+    "@fontsource/roboto": "^5.1.1",
+    "@iconify-json/hugeicons": "^1.0.0",
+    "@iconify-json/lineicons": "^1.2.6",
+    "@iconify-json/mdi": "^1.2.1",
+    "@iconify-json/meteor-icons": "^1.2.0",
+    "@iconify-json/ri": "^1.2.1",
+    "@iconify-json/simple-icons": "^1.2.1",
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/markdown-it": "^14.1.2",
+    "@types/sanitize-html": "^2.13.0",
+    "satori": "^0.12.1",
+    "satori-html": "^0.3.2",
+    "tsx": "^4.19.2"
+  }
+}

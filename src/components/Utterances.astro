@@ -1,0 +1,34 @@
+<div id="utterances-container" class="mt-10"></div>
+
+<script>
+  function loadUtterances() {
+    const container = document.querySelector('#utterances-container');
+    if (!container) return;
+
+    if (container.querySelector('script[data-utterances-loader], iframe.utterances-frame')) {
+      return;
+    }
+
+    const script = document.createElement('script');
+    Object.entries({
+      src: 'https://utteranc.es/client.js',
+      repo: 'erdaltoprak/erdaltoprak-com-comments',
+      'issue-term': 'pathname',
+      label: 'post comments',
+      theme: 'photon-dark',
+      crossorigin: 'anonymous',
+    }).forEach(([key, value]) => {
+      script.setAttribute(key, value);
+    });
+    script.dataset.utterancesLoader = 'true';
+
+    container.appendChild(script);
+  }
+
+  if (!window.__utterancesPageLoadBound) {
+    document.addEventListener('astro:page-load', loadUtterances);
+    window.__utterancesPageLoadBound = true;
+  }
+
+  loadUtterances();
+</script>

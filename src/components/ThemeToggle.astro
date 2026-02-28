@@ -1,0 +1,18 @@
+---
+import { Icon } from 'astro-icon/components'
+---
+
+<!-- Theme Toggle Button -->
+<button 
+  id="theme-toggle" 
+  type="button" 
+  aria-label="Toggle theme" 
+  class="text-orange-900 dark:text-zinc-100 p-1.5 rounded-lg sm:hover:bg-orange-50 sm:dark:hover:bg-zinc-800 active:bg-orange-50 active:dark:bg-zinc-800"
+>
+  <!-- System Theme (CMD icon) -->
+  <Icon name="qlementine-icons:key-cmd-16" class="w-5 h-5 theme-icon" id="system-icon" />
+  <!-- Light Theme (Sun icon) -->
+  <Icon name="meteor-icons:sun" class="w-5 h-5 theme-icon hidden" id="light-icon" />
+  <!-- Dark Theme (Moon icon) -->
+  <Icon name="meteor-icons:moon" class="w-5 h-5 theme-icon hidden" id="dark-icon" />
+</button> 

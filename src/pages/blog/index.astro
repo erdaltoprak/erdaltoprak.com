@@ -1,0 +1,11 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import BlogArchive from '../../components/BlogArchive.astro';
+import { getBlogListPosts } from '../../utils/blog';
+
+const posts = await getBlogListPosts();
+---
+
+<Layout>
+  <BlogArchive posts={posts} activeFilter="all" />
+</Layout>

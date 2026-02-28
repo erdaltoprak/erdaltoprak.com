@@ -1,0 +1,32 @@
+# ErdalToprak.com
+
+> This website is Erdal Toprak's personal website. It is built with Astro and deployed on a VPS.
+
+## Pages
+
+- [Home](https://erdaltoprak.com)
+- [Blog](https://erdaltoprak.com/blog)
+- [About](https://erdaltoprak.com/about)
+
+## Articles
+
+- [Setting up a local reverse proxy on Proxmox with Traefik and Cloudflare](https://erdaltoprak.com/blog/setting-up-a-local-reverse-proxy-on-proxmox-with-traefik-and-cloudflare)
+- [Using venv, pyvenv, autoenv on macOS](https://erdaltoprak.com/blog/using-venv-pyvenv-autoenv-on-macOS)
+- [AI Homelab - A guide into hardware to software considerations](https://erdaltoprak.com/blog/ai-homelab-a-guide-into-hardware-to-software-considerations)
+- [Abstracting local development environments through containers](https://erdaltoprak.com/blog/abstracting-local-development-environments-through-containers)
+- [Setting up macOS for development](https://erdaltoprak.com/blog/setting-up-macos-for-development)
+- [Setting up Cloudflare Argo and Access on a Raspberry Pi](https://erdaltoprak.com/blog/setting-up-cloudflare-argo-access-on-a-raspberry-pi)
+- [iCloud custom domain guide](https://erdaltoprak.com/blog/icloud-custom-domain-guide)
+- [Hello World](https://erdaltoprak.com/blog/hello-world)
+
+## Notes
+
+- [Website redesign v2](https://erdaltoprak.com/blog/website-redesign-v2)
+- [365 days, 3 rings and a journey with the Apple Watch](https://erdaltoprak.com/blog/365-days-3-rings-and-a-journey-with-the-apple-watch)
+- [Graduating with an AI/ML degree - a ChatGPT story](https://erdaltoprak.com/blog/graduating-with-ai-ml-degree-a-chatgpt-story)
+- [Apple Music is the last library focused music service](https://erdaltoprak.com/blog/apple-music-is-the-last-library-focused-music-service)
+
+## Links
+
+- [GitHub](https://github.com/erdaltoprak): Open source projects and source code.
+- [Hugging Face](https://huggingface.co/erdal): Machine learning models and datasets.

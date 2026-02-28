@@ -1,0 +1,529 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<div 
+  id="search-overlay"
+  class="fixed inset-0 bg-black/20 backdrop-blur-sm hidden z-50"
+>
+  <div class="max-w-2xl mx-auto mt-20 p-4">
+    <div class="bg-orange-100/80 dark:bg-neutral-900/80 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-xl">
+      <!-- Search Header -->
+      <div class="relative flex items-center p-3 border-b border-zinc-200 dark:border-zinc-700">
+        <Icon name="meteor-icons:search" class="absolute left-3 w-5 h-5 text-zinc-400 pointer-events-none" />
+        <input
+          type="text"
+          id="search-input"
+          class="w-full pl-10 pr-3 py-1 bg-transparent border-none outline-none focus:ring-0 text-zinc-900 dark:text-zinc-100 placeholder-zinc-600 dark:placeholder-zinc-400"
+          placeholder="Search posts..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+
+      <!-- Search Results -->
+      <div 
+        id="search-results"
+        class="p-2 max-h-[60vh] overflow-y-auto"
+      >
+        <!-- Results will be populated here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const searchRuntime = ((window as any).__erdalSearchRuntime ??= {});
+searchRuntime.controller?.abort?.();
+searchRuntime.controller = new AbortController();
+const { signal } = searchRuntime.controller;
+
+const getOverlay = () => document.getElementById('search-overlay');
+const getInput = () => document.getElementById('search-input') as HTMLInputElement | null;
+const getResultsContainer = () => document.getElementById('search-results');
+
+let selectedIndex = -1;
+let searchResults: any[] = [];
+let currentView = 'quickActions'; // 'quickActions', 'results', 'themeSwitcher'
+let miniSearchIndex: any | null = null;
+let searchInitPromise: Promise<void> | null = null;
+let themeInitPromise: Promise<void> | null = null;
+let latestSearchRequest = 0;
+let searchErrorMessage = '';
+
+function escapeHtml(value: unknown) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+async function ensureSearchReady() {
+  if (miniSearchIndex) return;
+  if (!searchInitPromise) {
+    searchInitPromise = (async () => {
+      const miniSearchModule = await import('minisearch');
+      const MiniSearch = (miniSearchModule as any).default ?? miniSearchModule;
+      const response = await fetch('/$collection-search/minisearch-index.json');
+      if (!response.ok) {
+        throw new Error(`Failed to load search index (${response.status})`);
+      }
+
+      const indexData = await response.json();
+      miniSearchIndex = MiniSearch.loadJS(indexData.index, {
+        fields: indexData.fields,
+        storeFields: indexData.storeFields,
+      });
+    })().catch((error) => {
+      searchInitPromise = null;
+      throw error;
+    });
+  }
+  await searchInitPromise;
+}
+
+async function ensureThemeUtils() {
+  if ((window as any).themeUtils) return;
+  if (!themeInitPromise) {
+    themeInitPromise = import('../scripts/theme-client.js')
+      .then(() => undefined)
+      .catch((error) => {
+        themeInitPromise = null;
+        throw error;
+      });
+  }
+  await themeInitPromise;
+}
+
+async function applySelectedTheme(selectedTheme: string | undefined) {
+  if (!selectedTheme) return;
+  await ensureThemeUtils();
+  const themeUtils = (window as any).themeUtils;
+  if (!themeUtils) return;
+
+  themeUtils.setCookie('theme', selectedTheme);
+  themeUtils.applyTheme(selectedTheme);
+  themeUtils.updateThemeIcon(selectedTheme);
+}
+
+const quickActions = [
+  {
+    id: 'share',
+    name: 'Share this page',
+    action: 'share',
+  },
+  {
+    id: 'theme',
+    name: 'Switch theme',
+    action: 'theme',
+  },
+];
+
+function showNotification(message: string) {
+  const toast = document.createElement('div');
+  toast.className = 'fixed bottom-4 right-4 text-neutral-900 dark:text-zinc-100 bg-orange-50 dark:bg-zinc-700 px-4 py-2 rounded-lg shadow-lg transform transition-all duration-300 z-50';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+async function sharePage() {
+  const cleanUrl = window.location.href.split('#')[0];
+  const shareData = {
+    title: document.querySelector('meta[property="og:title"]')?.getAttribute('content') || document.title,
+    url: cleanUrl,
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+      return;
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(cleanUrl);
+      showNotification('URL copied to clipboard!');
+      return;
+    }
+
+    const textArea = document.createElement('textarea');
+    textArea.value = cleanUrl;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+      document.execCommand('copy');
+      showNotification('URL copied to clipboard!');
+    } catch (err) {
+      console.error('Fallback clipboard copy failed:', err);
+      showNotification('Failed to copy URL. Please copy it manually.');
+    } finally {
+      textArea.remove();
+    }
+  } catch (err) {
+    console.error('Error sharing:', err);
+    showNotification('Failed to share page');
+  }
+}
+
+function createQuickActionItem(action: typeof quickActions[number], index: number) {
+  return `
+    <button
+      data-action="${action.id}"
+      class="search-overlay-item w-full flex items-center justify-between p-3 rounded-lg hover:bg-orange-50 dark:hover:bg-zinc-700 ${index === selectedIndex ? 'search-overlay-item-selected' : ''}"
+    >
+      <div class="flex items-center gap-3 min-w-0 flex-1">
+        <span class="text-neutral-900 dark:text-zinc-100 truncate">${escapeHtml(action.name)}</span>
+      </div>
+    </button>
+  `;
+}
+
+function showOverlay() {
+  document.dispatchEvent(new CustomEvent('site:close-popovers'));
+  getOverlay()?.classList.remove('hidden');
+  getInput()?.focus();
+  document.body.style.overflow = 'hidden';
+  currentView = 'quickActions';
+  selectedIndex = -1;
+  searchErrorMessage = '';
+  render();
+  void ensureSearchReady().catch(() => undefined);
+}
+
+function renderQuickActions() {
+  const resultsContainer = getResultsContainer();
+  if (!resultsContainer) return;
+
+  resultsContainer.innerHTML = quickActions
+    .map((action, index) => createQuickActionItem(action, index))
+    .join('');
+}
+
+function renderThemeSwitcher() {
+  const resultsContainer = getResultsContainer();
+  if (!resultsContainer) return;
+
+  const currentTheme = (window as any).themeUtils?.getCookie('theme') || 'system';
+  const themes = [
+    { id: 'system', name: 'System' },
+    { id: 'light', name: 'Light' },
+    { id: 'dark', name: 'Dark' },
+  ];
+
+  resultsContainer.innerHTML = themes.map((theme, index) => `
+    <button
+      data-theme="${theme.id}"
+      class="search-overlay-item w-full flex items-center gap-3 p-3 rounded-lg hover:bg-orange-50 dark:hover:bg-zinc-700 text-neutral-900 dark:text-zinc-100 ${index === selectedIndex ? 'search-overlay-item-selected' : ''}"
+    >
+      <span>${escapeHtml(theme.name)}</span>
+      ${currentTheme === theme.id ? '<span class="ml-auto">✓</span>' : ''}
+    </button>
+  `).join('');
+}
+
+async function handleSearch() {
+  const requestId = ++latestSearchRequest;
+  const query = getInput()?.value.trim() ?? '';
+
+  if (!query) {
+    searchResults = [];
+    selectedIndex = -1;
+    currentView = 'quickActions';
+    searchErrorMessage = '';
+    render();
+    return;
+  }
+
+  currentView = 'results';
+  selectedIndex = -1;
+  searchErrorMessage = '';
+
+  try {
+    await ensureSearchReady();
+    const results = miniSearchIndex.search(query, { fuzzy: 0.3, prefix: true });
+    if (requestId !== latestSearchRequest) return;
+    searchResults = results;
+  } catch (error) {
+    if (requestId !== latestSearchRequest) return;
+    console.error('Search failed:', error);
+    searchResults = [];
+    searchErrorMessage = 'Search is temporarily unavailable.';
+  }
+
+  if (requestId !== latestSearchRequest) return;
+  render();
+}
+
+function renderResults() {
+  const resultsContainer = getResultsContainer();
+  if (!resultsContainer) return;
+
+  if (searchErrorMessage) {
+    resultsContainer.innerHTML = `
+      <div class="p-3 text-center text-zinc-500 dark:text-zinc-400">
+        ${escapeHtml(searchErrorMessage)}
+      </div>
+    `;
+    return;
+  }
+
+  if (!searchResults.length) {
+    resultsContainer.innerHTML = `
+      <div class="p-3 text-center text-zinc-500 dark:text-zinc-400">
+        No results found
+      </div>
+    `;
+    return;
+  }
+
+  resultsContainer.innerHTML = searchResults
+    .map((result, index) => createResultItem(result, index))
+    .join('');
+}
+
+function render() {
+  switch (currentView) {
+    case 'quickActions':
+      renderQuickActions();
+      break;
+    case 'themeSwitcher':
+      renderThemeSwitcher();
+      break;
+    case 'results':
+      renderResults();
+      break;
+  }
+}
+
+function getPostUrl(result: any) {
+  const slug = result.file.replace(/\/index\.mdx?$/, '').replace(/\.mdx?$/, '');
+  return `/blog/${slug}`;
+}
+
+function createResultItem(result: any, index: number) {
+  const title = escapeHtml(result.frontmatter.title || 'Untitled');
+  const description = escapeHtml(result.frontmatter.description || 'No description');
+  const href = escapeHtml(getPostUrl(result));
+
+  return `
+    <a
+      href="${href}"
+      class="search-overlay-item block p-3 rounded-lg hover:bg-orange-50 dark:hover:bg-zinc-700 ${index === selectedIndex ? 'search-overlay-item-selected' : ''}"
+    >
+      <h3 class="font-medium text-zinc-900 dark:text-zinc-100">
+        ${title}
+      </h3>
+      <p class="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2">
+        ${description}
+      </p>
+    </a>
+  `;
+}
+
+function activateSearchResult(index: number) {
+  const resultLinks = getResultsContainer()?.querySelectorAll<HTMLAnchorElement>('a[href]');
+  const resultLink = resultLinks?.[index];
+
+  if (!resultLink) return false;
+
+  resultLink.click();
+  return true;
+}
+
+function hideOverlay() {
+  latestSearchRequest += 1;
+  getOverlay()?.classList.add('hidden');
+  const input = getInput();
+  if (input) input.value = '';
+  const resultsContainer = getResultsContainer();
+  if (resultsContainer) resultsContainer.innerHTML = '';
+  document.body.style.overflow = '';
+  selectedIndex = -1;
+  searchResults = [];
+  searchErrorMessage = '';
+  currentView = 'quickActions';
+}
+
+async function handleKeyboard(e: KeyboardEvent) {
+  if (getOverlay()?.classList.contains('hidden')) return;
+
+  const totalItems = currentView === 'results'
+    ? searchResults.length
+    : currentView === 'themeSwitcher'
+      ? 3
+      : quickActions.length;
+
+  switch (e.key) {
+    case 'ArrowDown':
+      e.preventDefault();
+      selectedIndex = Math.min(selectedIndex + 1, totalItems - 1);
+      render();
+      break;
+    case 'ArrowUp':
+      e.preventDefault();
+      selectedIndex = Math.max(selectedIndex - 1, -1);
+      render();
+      break;
+    case 'Enter': {
+      e.preventDefault();
+      const effectiveIndex = selectedIndex === -1 ? 0 : selectedIndex;
+
+      if (currentView === 'quickActions') {
+        const action = quickActions[effectiveIndex];
+        if (!action) return;
+
+        if (action.id === 'share') {
+          sharePage();
+          hideOverlay();
+        } else if (action.id === 'theme') {
+          await ensureThemeUtils();
+          currentView = 'themeSwitcher';
+          selectedIndex = -1;
+          render();
+        }
+      } else if (currentView === 'themeSwitcher') {
+        const themes = ['system', 'light', 'dark'];
+        await applySelectedTheme(themes[effectiveIndex]);
+        hideOverlay();
+      } else if (currentView === 'results' && searchResults[effectiveIndex]) {
+        if (!activateSearchResult(effectiveIndex)) {
+          window.location.href = getPostUrl(searchResults[effectiveIndex]);
+        }
+      }
+      break;
+    }
+    case 'Escape':
+      e.preventDefault();
+      if (currentView === 'themeSwitcher') {
+        currentView = 'quickActions';
+        selectedIndex = -1;
+        render();
+      } else {
+        hideOverlay();
+      }
+      break;
+  }
+}
+
+async function handleDocumentClick(e: MouseEvent) {
+  const target = e.target as HTMLElement | null;
+  if (!target) return;
+
+  if (target.closest('#search-button')) {
+    e.preventDefault();
+    showOverlay();
+    return;
+  }
+
+  const overlay = getOverlay();
+  if (!overlay || overlay.classList.contains('hidden')) return;
+
+  if (target === overlay) {
+    hideOverlay();
+    return;
+  }
+
+  const quickAction = target.closest<HTMLButtonElement>('button[data-action]');
+  if (quickAction) {
+    const action = quickAction.dataset.action;
+    if (action === 'share') {
+      sharePage();
+      hideOverlay();
+    } else if (action === 'theme') {
+      await ensureThemeUtils();
+      currentView = 'themeSwitcher';
+      selectedIndex = -1;
+      render();
+    }
+    return;
+  }
+
+  const themeAction = target.closest<HTMLButtonElement>('button[data-theme]');
+  if (themeAction) {
+    await applySelectedTheme(themeAction.dataset.theme);
+    hideOverlay();
+    return;
+  }
+
+  if (target.closest('#search-results a[href]')) {
+    hideOverlay();
+  }
+}
+
+function handleDocumentInput(e: Event) {
+  const target = e.target as HTMLElement | null;
+  if (target?.id === 'search-input') {
+    void handleSearch();
+  }
+}
+
+function handleSearchInputKeydown(e: KeyboardEvent) {
+  const target = e.target as HTMLElement | null;
+  if (target?.id !== 'search-input') return;
+
+  if (e.key === 'Enter' || e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Escape') {
+    e.preventDefault();
+    e.stopPropagation();
+    void handleKeyboard(e);
+  }
+}
+
+function handleDocumentKeydown(e: KeyboardEvent) {
+  const isShortcutKey = e.key.toLowerCase() === 'k';
+  const hasSupportedModifier = (e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey;
+
+  if (isShortcutKey && hasSupportedModifier) {
+    const target = e.target as HTMLElement | null;
+    const isEditableTarget = !!target && (
+      target.tagName === 'INPUT' ||
+      target.tagName === 'TEXTAREA' ||
+      target.isContentEditable
+    );
+    const isOverlayOpen = !getOverlay()?.classList.contains('hidden');
+
+    if (isOverlayOpen || !isEditableTarget) {
+      e.preventDefault();
+      if (isOverlayOpen) {
+        hideOverlay();
+      } else {
+        showOverlay();
+      }
+    }
+  }
+
+  void handleKeyboard(e);
+}
+
+document.addEventListener('click', (e) => {
+  void handleDocumentClick(e);
+}, { signal });
+document.addEventListener('input', handleDocumentInput, { signal });
+document.addEventListener('keydown', handleSearchInputKeydown, { signal, capture: true });
+document.addEventListener('keydown', handleDocumentKeydown, { signal });
+document.addEventListener('astro:page-load', hideOverlay, { signal });
+</script>
+
+<style is:global>
+  #search-results .search-overlay-item {
+    transition: background-color 120ms ease;
+  }
+
+  html:not(.dark) #search-results .search-overlay-item.search-overlay-item-selected {
+    background-color: var(--paper-hover);
+  }
+
+  html.dark #search-results .search-overlay-item.search-overlay-item-selected {
+    background-color: rgb(63 63 70 / 1);
+  }
+</style>

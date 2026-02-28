@@ -1,0 +1,3 @@
+[submodule "src/content"]
+	path = src/content
+	url = git@github.com:erdaltoprak/erdaltoprak-com-content.git

@@ -1,0 +1,66 @@
+---
+import type { BlogFilter, ListPost } from '../utils/blog';
+
+interface Props {
+  posts: ListPost[];
+  activeFilter: BlogFilter;
+}
+
+const { posts, activeFilter } = Astro.props;
+
+const filters: Array<{ href: string; label: string; value: BlogFilter }> = [
+  { href: '/blog', label: 'All', value: 'all' },
+  { href: '/blog/articles', label: 'Articles', value: 'article' },
+  { href: '/blog/notes', label: 'Notes', value: 'note' },
+];
+---
+
+<section class="not-prose px-4 max-w-7xl mx-auto">
+  <h1 class="mb-6 text-3xl md:text-4xl font-semibold tracking-tight mt-12">Blog</h1>
+  <p class="text-xl text-zinc-700 dark:text-zinc-300 mb-8">Articles and notes in one place.</p>
+
+  <nav class="flex gap-2 mb-8" aria-label="Blog filters">
+    {filters.map((filter) => {
+      const isActive = filter.value === activeFilter;
+
+      return (
+        <a
+          href={filter.href}
+          aria-current={isActive ? 'page' : undefined}
+          class:list={[
+            'px-3 py-1.5 text-sm rounded-lg transition-colors',
+            isActive
+              ? 'bg-zinc-900 text-zinc-100 dark:bg-zinc-100 dark:text-zinc-900'
+              : 'text-zinc-600 dark:text-zinc-400 hover:bg-orange-50 dark:hover:bg-zinc-800',
+          ]}
+        >
+          {filter.label}
+        </a>
+      );
+    })}
+  </nav>
+
+  <ul class="space-y-2 mx-[-0.7rem]">
+    {posts.map((post) => (
+      <li>
+        <a
+          href={post.url}
+          class="group block py-2 px-3 text-inherit no-underline hover:bg-orange-50 hover:dark:bg-zinc-800 rounded-lg"
+        >
+          <div class="sm:hidden">
+            <span class="block text-zinc-900 dark:text-zinc-100 mb-2">{post.title}</span>
+            <div class="flex items-center gap-2">
+              <time class="text-sm text-zinc-600 dark:text-zinc-400" datetime={post.isoDate}>{post.monthYearDate}</time>
+              <span class="text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{post.type}</span>
+            </div>
+          </div>
+          <div class="hidden sm:grid sm:grid-cols-[120px_1fr_auto] sm:gap-4 sm:items-center">
+            <time class="text-sm text-zinc-600 dark:text-zinc-400" datetime={post.isoDate}>{post.monthYearDate}</time>
+            <span class="text-zinc-900 dark:text-zinc-100">{post.title}</span>
+            <span class="text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{post.type}</span>
+          </div>
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>

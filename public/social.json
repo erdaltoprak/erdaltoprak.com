@@ -1,0 +1,67 @@
+[
+  {
+    "url": "https://chatgpt.com/?q=I%20want%20a%20complete%20professional%20profile%20of%20Erdal%20Toprak%20using%20only%20the%20URLs%20and%20APIs%20I%20provide.%20%20%0A%0A**URLs%20and%20APIs%20to%20use%3A**%0A-%20https%3A%2F%2Ferdaltoprak.com%0A-%20https%3A%2F%2Ferdaltoprak.com%2Fllms.txt%0A-%20https%3A%2F%2Flinkedin.com%2Fin%2Ferdaltoprak%0A-%20https%3A%2F%2Fgithub.com%2Ferdaltoprak%2Ferdaltoprak%2Fblob%2Fmain%2FREADME.md%0A-%20https%3A%2F%2Fapi.github.com%2Fusers%2Ferdaltoprak%2Frepos%3Fper_page%3D100%26sort%3Dupdated%0A-%20https%3A%2F%2Fhuggingface.co%2Fapi%2Fdatasets%3Fauthor%3Derdal%0A-%20https%3A%2F%2Fhuggingface.co%2Fapi%2Fmodels%3Fauthor%3Derdal%0A-%20https%3A%2F%2Fhuggingface.co%2Fapi%2Fspaces%3Fauthor%3Derdal%0A%0A**Instructions%3A**%0A%0A1.%20Fetch%20all%20URLs%20and%20APIs%20listed.%20For%20API%20URLs%2C%20**fully%20parse%20the%20JSON%20responses**%2C%20including%20nested%20arrays%20and%20paginated%20results.%20**Do%20not%20assume%20absence%20of%20entries**%3B%20verify%20using%20metadata%20keys%20(%60id%60%2C%20%60dataset%60%2C%20%60name%60%2C%20etc.).%0A%0A2.%20Extract%20information%20about%3A%20professional%20role%2C%20background%2C%20current%20projects%20and%20repositories%2C%20preferred%20technologies%2Ftech%20stack%2C%20interests%2C%20and%20hobbies.%20%20%0A%0A3.%20For%20GitHub%3A%20list%20**all%20public%20repositories**%20with%20name%2C%20description%2C%20main%20language%2C%20and%20purpose.%20%20%0A%0A4.%20For%20Hugging%20Face%3A%20list%20**all%20datasets%2C%20models%2C%20and%20spaces**%2C%20with%20description%2C%20type%2C%20and%20relevant%20metadata.%20Verify%20that%20each%20dataset%2C%20model%2C%20or%20space%20exists%20in%20the%20API%20response.%20%20%0A%0A5.%20Only%20use%20information%20from%20these%20links.%20Do%20not%20rely%20on%20prior%20knowledge%20or%20external%20sources.%20%20%0A%0A6.%20Present%20all%20information%20in%20a%20**structured%2C%20tabular%2C%20or%20summarized%20format**%20for%20clarity.%20Include%20footnotes%20or%20links%20to%20each%20source%20used.%0A",
+    "icon": "lineicons:open-ai",
+    "name": "ChatGPT"
+  },
+  {
+    "url": "/rss.xml",
+    "icon": "mdi:rss",
+    "name": "RSS"
+  },
+  {
+    "url": "mailto:contact@erdaltoprak.com?subject=[YOUR_SUBJECT_HERE] ~ erdaltoprak.com",
+    "icon": "mdi:email",
+    "name": "Email"
+  },
+  {
+    "url": "https://github.com/erdaltoprak",
+    "icon": "ri:github-line",
+    "name": "GitHub"
+  },
+  {
+    "url": "https://huggingface.co/erdal",
+    "icon": "simple-icons:huggingface",
+    "name": "HF"
+  },
+  {
+    "url": "https://www.linkedin.com/in/erdaltoprak",
+    "icon": "mdi:linkedin",
+    "name": "LinkedIn"
+  },
+  {
+    "url": "https://x.com/erdaltoprak",
+    "icon": "ri:twitter-x-line",
+    "name": "X"
+  },
+  {
+    "url": "https://bsky.app/profile/erdaltoprak.com",
+    "icon": "simple-icons:bluesky",
+    "name": "Bluesky"
+  },
+  {
+    "url": "https://www.threads.com/@erdalxtoprak",
+    "icon": "ri:threads-line",
+    "name": "Threads"
+  },
+  {
+    "url": "https://www.instagram.com/erdalxtoprak/",
+    "icon": "mdi:instagram",
+    "name": "Instagram"
+  },
+  {
+    "url": "https://www.chess.com/member/erdal",
+    "icon": "simple-icons:chessdotcom",
+    "name": "Chess"
+  },
+  {
+    "url": "https://t.me/erdalxtoprak",
+    "icon": "hugeicons:telegram",
+    "name": "Telegram"
+  },
+  {
+    "url": "http://discordapp.com/users/1130049778395402281",
+    "icon": "simple-icons:discord",
+    "name": "Discord"
+  }
+]

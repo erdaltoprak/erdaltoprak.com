@@ -1,0 +1,55 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import BlogPost from '../../layouts/LayoutBlog.astro';
+import { formatDate } from '../../utils';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => {
+    const includeDraft = import.meta.env.PROD ? !data.draft : true;
+    return includeDraft && (data.type === 'article' || data.type === 'note');
+  });
+
+  return posts.map((post) => ({
+    params: { slug: post.slug.replace(/\/index$/, '') },
+    props: post,
+  }));
+}
+
+type Props = CollectionEntry<'blog'>;
+const post = Astro.props as Props;
+const { Content } = await post.render();
+
+const heroImage = post.data.heroImage;
+const pubDate = post.data.pubDate instanceof Date ? post.data.pubDate : new Date(post.data.pubDate);
+---
+
+<BlogPost {...post.data} heroImage={heroImage} type="blog">
+  <h1>{post.data.title}</h1>
+  {pubDate && (
+    <time class="text-sm text-zinc-600 dark:text-zinc-400 block -mt-4 mb-8">
+      {formatDate(pubDate)}
+    </time>
+  )}
+
+  <Content />
+</BlogPost>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('article a').forEach((link) => {
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+
+      const href = link.getAttribute('href');
+      if (!href) return;
+
+      const migratedPath = href
+        .replace(/^\/(?:articles|notes)\//, '/blog/')
+        .replace(/^https:\/\/erdaltoprak\.com\/(?:articles|notes)\//, 'https://erdaltoprak.com/blog/');
+
+      if (migratedPath !== href) {
+        link.setAttribute('href', migratedPath);
+      }
+    });
+  });
+</script>
