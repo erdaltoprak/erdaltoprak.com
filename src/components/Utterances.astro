@@ -1,6 +1,12 @@
 <div id="utterances-container" class="mt-10"></div>
 
 <script>
+  declare global {
+    interface Window {
+      __utterancesPageLoadBound?: boolean;
+    }
+  }
+
   function loadUtterances() {
     const container = document.querySelector('#utterances-container');
     if (!container) return;

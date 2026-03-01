@@ -19,6 +19,9 @@ const {
 } = Astro.props;
 
 const metaTitle = title === SITE_TITLE ? title : `${SITE_TITLE} | ${title}`;
+const imageAlt = title === SITE_TITLE
+  ? `Open Graph preview image for ${SITE_TITLE}`
+  : `Open Graph preview image for "${title}" on ${SITE_TITLE}`;
 
 const ogImage = type === 'blog' 
   ? new URL(`/og/${Astro.params.slug?.toLowerCase()}.png`, SITE_URL).toString()
@@ -55,6 +58,7 @@ const ogImage = type === 'blog'
 <meta property="og:title" content={metaTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={ogImage} />
+<meta property="og:image:alt" content={imageAlt} />
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
@@ -62,6 +66,7 @@ const ogImage = type === 'blog'
 <meta name="twitter:title" content={metaTitle} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImage} />
+<meta name="twitter:image:alt" content={imageAlt} />
 <meta name="twitter:creator" content="@erdalxtoprak" />
 
 <!-- RSS Discovery -->
