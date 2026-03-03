@@ -84,6 +84,10 @@ function applySelectedTheme(theme) {
   applyTheme(theme);
   updateThemeIcon(theme);
   closeThemeDropdown();
+  window.__erdalTrackEvent?.('theme_changed', {
+    theme,
+    source_area: 'nav',
+  });
 }
 
 function syncThemeUiForPage() {

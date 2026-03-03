@@ -56,6 +56,12 @@ jobs:
           context: .
           file: ${{ env.DOCKERFILE_PATH }}
           push: true
+          build-args: |
+            PUBLIC_TOPRAK_PROJECT_ID=${{ secrets.PUBLIC_TOPRAK_PROJECT_ID }}
+            PUBLIC_TOPRAK_WRITE_KEY=${{ secrets.PUBLIC_TOPRAK_WRITE_KEY }}
+            PUBLIC_TOPRAK_API_URL=${{ secrets.PUBLIC_TOPRAK_API_URL }}
+            PUBLIC_TOPRAK_COOKIE_DOMAIN=${{ secrets.PUBLIC_TOPRAK_COOKIE_DOMAIN }}
+            PUBLIC_TOPRAK_SCRIPT_URL=${{ secrets.PUBLIC_TOPRAK_SCRIPT_URL }}
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}

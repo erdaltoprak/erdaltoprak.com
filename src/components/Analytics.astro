@@ -1,0 +1,341 @@
+---
+const projectId = import.meta.env.PUBLIC_TOPRAK_PROJECT_ID;
+const writeKey = import.meta.env.PUBLIC_TOPRAK_WRITE_KEY;
+const apiUrl = import.meta.env.PUBLIC_TOPRAK_API_URL;
+const cookieDomain = import.meta.env.PUBLIC_TOPRAK_COOKIE_DOMAIN;
+const scriptUrl = import.meta.env.PUBLIC_TOPRAK_SCRIPT_URL || 'https://a.toprak.cloud/js/script.js';
+const analyticsEnabled = Boolean(projectId && writeKey);
+---
+
+<script is:inline define:vars={{ analyticsEnabled }}>
+  window.__erdalAnalyticsEnabled = Boolean(analyticsEnabled);
+  window.toprakAnalytics =
+    window.toprakAnalytics ||
+    function () {
+      (window.toprakAnalytics.q = window.toprakAnalytics.q || []).push(arguments);
+    };
+</script>
+
+{analyticsEnabled && (
+  <script
+    defer
+    src={scriptUrl}
+    data-project-id={projectId}
+    data-write-key={writeKey}
+    data-api-url={apiUrl || undefined}
+    data-cookie-domain={cookieDomain || undefined}
+    data-domain={cookieDomain || undefined}
+  />
+)}
+
+<script is:inline>
+  (() => {
+    const runtime = (window.__erdalAnalyticsRuntime = window.__erdalAnalyticsRuntime || {});
+    if (runtime.controller?.abort) {
+      runtime.controller.abort();
+    }
+    runtime.controller = new AbortController();
+    const signal = runtime.controller.signal;
+
+    const enabled = Boolean(window.__erdalAnalyticsEnabled);
+
+    function track(kind, name, properties = {}) {
+      if (!enabled || !name) return;
+
+      const payload = {
+        ...properties,
+        current_path: window.location.pathname,
+      };
+
+      const tracker = window.toprakAnalytics;
+      if (typeof tracker === 'function') {
+        tracker(kind, name, payload);
+        return;
+      }
+
+      if (tracker && typeof tracker[kind] === 'function') {
+        tracker[kind](name, payload);
+      }
+    }
+
+    function trackEvent(name, properties = {}) {
+      track('event', name, properties);
+    }
+
+    function trackGoal(name, properties = {}) {
+      track('goal', name, properties);
+    }
+
+    window.__erdalTrackEvent = trackEvent;
+    window.__erdalTrackGoal = trackGoal;
+
+    function normalizePath(pathname) {
+      if (!pathname || pathname === '/') return '/';
+      return pathname.replace(/\/+$/, '') || '/';
+    }
+
+    function getBlogSlugFromPath(pathname = window.location.pathname) {
+      const normalized = normalizePath(pathname);
+      if (!normalized.startsWith('/blog/')) return '';
+      const slug = normalized.slice('/blog/'.length);
+      return slug || '';
+    }
+
+    function safeGetSession(key) {
+      try {
+        return window.sessionStorage.getItem(key);
+      } catch {
+        return null;
+      }
+    }
+
+    function safeSetSession(key, value) {
+      try {
+        window.sessionStorage.setItem(key, value);
+      } catch {
+        // ignored
+      }
+    }
+
+    function safeGetJson(key, fallback) {
+      const raw = safeGetSession(key);
+      if (!raw) return fallback;
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return fallback;
+      }
+    }
+
+    function safeSetJson(key, value) {
+      safeSetSession(key, JSON.stringify(value));
+    }
+
+    function getPostMetadata() {
+      const article = document.querySelector('article[data-post-slug]');
+      return {
+        postSlug: article?.getAttribute('data-post-slug') || getBlogSlugFromPath(),
+        postType: article?.getAttribute('data-post-type') || undefined,
+      };
+    }
+
+    function setupReadGoals() {
+      if (runtime.engagedTimer) {
+        clearTimeout(runtime.engagedTimer);
+        runtime.engagedTimer = null;
+      }
+
+      if (runtime.engagedScrollHandler) {
+        window.removeEventListener('scroll', runtime.engagedScrollHandler);
+        runtime.engagedScrollHandler = null;
+      }
+
+      const { postSlug, postType } = getPostMetadata();
+      if (!postSlug) return;
+
+      const startedKey = `erdal.analytics.goal.article_read_started.${postSlug}`;
+      if (!safeGetSession(startedKey)) {
+        trackGoal('article_read_started', {
+          post_slug: postSlug,
+          content_type: postType,
+          source_area: 'post',
+        });
+        safeSetSession(startedKey, '1');
+      }
+
+      const postsKey = 'erdal.analytics.session.post_slugs';
+      const readSlugs = safeGetJson(postsKey, []);
+      if (!readSlugs.includes(postSlug)) {
+        readSlugs.push(postSlug);
+        safeSetJson(postsKey, readSlugs);
+      }
+
+      const multiPostKey = 'erdal.analytics.goal.multi_post_session';
+      if (readSlugs.length >= 2 && !safeGetSession(multiPostKey)) {
+        trackGoal('multi_post_session', {
+          post_slug: postSlug,
+          distinct_post_count: readSlugs.length,
+          content_type: postType,
+        });
+        safeSetSession(multiPostKey, '1');
+      }
+
+      const engagedKey = `erdal.analytics.goal.article_read_engaged.${postSlug}`;
+      if (safeGetSession(engagedKey)) return;
+
+      let engagedSent = false;
+      const sendEngaged = (trigger) => {
+        if (engagedSent) return;
+        engagedSent = true;
+
+        trackGoal('article_read_engaged', {
+          post_slug: postSlug,
+          content_type: postType,
+          trigger,
+        });
+        safeSetSession(engagedKey, '1');
+
+        if (runtime.engagedScrollHandler) {
+          window.removeEventListener('scroll', runtime.engagedScrollHandler);
+          runtime.engagedScrollHandler = null;
+        }
+
+        if (runtime.engagedTimer) {
+          clearTimeout(runtime.engagedTimer);
+          runtime.engagedTimer = null;
+        }
+      };
+
+      runtime.engagedScrollHandler = () => {
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        if (scrollable <= 0) return;
+        const progress = (window.scrollY / scrollable) * 100;
+        if (progress >= 50) {
+          sendEngaged('scroll_50');
+        }
+      };
+
+      window.addEventListener('scroll', runtime.engagedScrollHandler, { passive: true });
+      runtime.engagedTimer = window.setTimeout(() => {
+        sendEngaged('time_45s');
+      }, 45_000);
+    }
+
+    function getSourceArea() {
+      const normalized = normalizePath(window.location.pathname);
+      if (normalized === '/') return 'home';
+      if (normalized === '/about') return 'about';
+      if (normalized.startsWith('/blog/')) return 'post';
+      if (normalized === '/blog' || normalized === '/blog/articles' || normalized === '/blog/notes') return 'archive';
+      return 'site';
+    }
+
+    document.addEventListener(
+      'click',
+      (event) => {
+        const target = event.target;
+        if (!target) return;
+
+        const button = target.closest('button');
+        if (button?.id === 'projects-toggle') {
+          const willOpen = document.getElementById('projects-dropdown')?.classList.contains('hidden');
+          if (willOpen) {
+            trackEvent('projects_menu_open', { source_area: 'nav' });
+          }
+        }
+
+        if (button?.id === 'theme-toggle') {
+          const willOpen = document.getElementById('theme-dropdown')?.classList.contains('hidden');
+          if (willOpen) {
+            trackEvent('theme_toggle_open', { source_area: 'nav' });
+          }
+        }
+
+        const anchor = target.closest('a[href]');
+        if (!anchor) return;
+
+        let parsed;
+        try {
+          parsed = new URL(anchor.href, window.location.origin);
+        } catch {
+          return;
+        }
+
+        const pathname = normalizePath(parsed.pathname);
+        const isInternal = parsed.origin === window.location.origin;
+        const sourceArea = getSourceArea();
+
+        if (anchor.dataset.navLink === 'blog') {
+          trackEvent('nav_blog_click', { source_area: 'nav' });
+        } else if (anchor.dataset.navLink === 'about') {
+          trackEvent('nav_about_click', { source_area: 'nav' });
+        }
+
+        if (anchor.dataset.projectLink === 'github') {
+          trackEvent('project_github_click', {
+            source_area: 'projects_menu',
+            destination: parsed.href,
+          });
+          trackGoal('profile_github_click', {
+            source_area: 'projects_menu',
+            destination: parsed.href,
+          });
+        } else if (anchor.dataset.projectLink === 'huggingface') {
+          trackEvent('project_huggingface_click', {
+            source_area: 'projects_menu',
+            destination: parsed.href,
+          });
+          trackGoal('profile_huggingface_click', {
+            source_area: 'projects_menu',
+            destination: parsed.href,
+          });
+        }
+
+        if (anchor.dataset.socialLink) {
+          trackEvent('social_link_click', {
+            source_area: sourceArea,
+            social_name: anchor.dataset.socialLink.toLowerCase(),
+            destination: parsed.href,
+          });
+        }
+
+        if (anchor.id === 'mapLink') {
+          trackEvent('map_click', {
+            source_area: 'about',
+            destination: parsed.href,
+          });
+        }
+
+        if (isInternal && pathname === '/rss.xml') {
+          trackGoal('rss_click', {
+            source_area: sourceArea,
+          });
+        }
+
+        if (parsed.protocol === 'mailto:') {
+          trackGoal('contact_email_click', {
+            source_area: sourceArea,
+            destination: parsed.href,
+          });
+        }
+
+        if (parsed.hostname.includes('linkedin.com')) {
+          trackGoal('profile_linkedin_click', {
+            source_area: sourceArea,
+            destination: parsed.href,
+          });
+        }
+
+        if (parsed.hostname === 'github.com' && /^\/erdaltoprak(?:\/|$)/.test(parsed.pathname)) {
+          trackGoal('profile_github_click', {
+            source_area: sourceArea,
+            destination: parsed.href,
+          });
+        }
+
+        if (parsed.hostname === 'huggingface.co' && /^\/erdal(?:\/|$)/.test(parsed.pathname)) {
+          trackGoal('profile_huggingface_click', {
+            source_area: sourceArea,
+            destination: parsed.href,
+          });
+        }
+
+        if (anchor.closest('article')) {
+          const fromSlug = getBlogSlugFromPath();
+          const toSlug = isInternal ? getBlogSlugFromPath(pathname) : '';
+          if (fromSlug && toSlug && fromSlug !== toSlug) {
+            trackEvent('post_internal_link_click', {
+              source_area: 'post_body',
+              from_post_slug: fromSlug,
+              to_post_slug: toSlug,
+            });
+          }
+        }
+      },
+      { signal, capture: true },
+    );
+
+    document.addEventListener('astro:page-load', setupReadGoals, { signal });
+    setupReadGoals();
+  })();
+</script>

@@ -2,7 +2,7 @@
 import Layout from './Layout.astro';
 import Utterances from '../components/Utterances.astro';
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, postSlug, postType } = Astro.props;
 ---
 
 <Layout
@@ -12,7 +12,10 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 	type="blog"
 >
 	<div class="relative">
-		<article class="prose sm:prose-lg text-zinc-900 dark:text-zinc-100 
+		<article
+			data-post-slug={postSlug}
+			data-post-type={postType}
+			class="prose sm:prose-lg text-zinc-900 dark:text-zinc-100 
 			prose-a:text-blue-400 
 			[&_a]:border-b-[1px]
 			[&_a]:!border-blue-400/50
@@ -40,7 +43,8 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			[&_:not(pre)>code]:bg-zinc-100 
 			[&_:not(pre)>code]:dark:bg-zinc-800 
 			[&_:not(pre)>code]:rounded-md
-			[&_:not(pre)>code]:px-1.5">
+			[&_:not(pre)>code]:px-1.5"
+		>
 			<slot />
 			<Utterances />
 		</article>

@@ -23,7 +23,13 @@ const heroImage = post.data.heroImage;
 const pubDate = post.data.pubDate instanceof Date ? post.data.pubDate : new Date(post.data.pubDate);
 ---
 
-<BlogPost {...post.data} heroImage={heroImage} type="blog">
+<BlogPost
+  {...post.data}
+  heroImage={heroImage}
+  type="blog"
+  postSlug={post.slug}
+  postType={post.data.type}
+>
   <h1>{post.data.title}</h1>
   {pubDate && (
     <time class="text-sm text-zinc-600 dark:text-zinc-400 block -mt-4 mb-8">
@@ -35,7 +41,12 @@ const pubDate = post.data.pubDate instanceof Date ? post.data.pubDate : new Date
 </BlogPost>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  const blogPostRuntime = ((window as any).__erdalBlogPostRuntime ??= {});
+  blogPostRuntime.controller?.abort?.();
+  blogPostRuntime.controller = new AbortController();
+  const { signal } = blogPostRuntime.controller;
+
+  function normalizeBlogLinks() {
     document.querySelectorAll('article a').forEach((link) => {
       link.setAttribute('target', '_blank');
       link.setAttribute('rel', 'noopener noreferrer');
@@ -51,5 +62,8 @@ const pubDate = post.data.pubDate instanceof Date ? post.data.pubDate : new Date
         link.setAttribute('href', migratedPath);
       }
     });
-  });
+  }
+
+  document.addEventListener('astro:page-load', normalizeBlogLinks, { signal });
+  normalizeBlogLinks();
 </script>

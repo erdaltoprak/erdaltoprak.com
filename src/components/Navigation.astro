@@ -17,6 +17,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
             {NAVBAR_ITEMS.map((item) => (
                 <a 
                     href={item.href}
+                    data-nav-link={item.href === '/blog' ? 'blog' : item.href === '/about' ? 'about' : undefined}
                     class={`px-3 py-1.5 rounded-lg ${
                         currentPath === item.href.replace(/\/$/, '') 
                             ? 'bg-orange-50 dark:bg-neutral-900' 
@@ -48,7 +49,11 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
 <div id="mobile-menu" class="hidden fixed top-14 right-4 w-44 bg-orange-100/80 dark:bg-neutral-900/80 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800 shadow-xl rounded-lg z-50 sm:hidden">
   <div class="flex flex-col py-2">
     {NAVBAR_ITEMS.map((item) => (
-      <a href={item.href} class="px-4 py-2 hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded">
+      <a
+        href={item.href}
+        data-nav-link={item.href === '/blog' ? 'blog' : item.href === '/about' ? 'about' : undefined}
+        class="px-4 py-2 hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded"
+      >
         {item.name}
       </a>
     ))}
@@ -90,6 +95,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
   <div class="flex flex-col py-2">
     <a
       href="https://github.com/erdaltoprak"
+      data-project-link="github"
       target="_blank"
       rel="noopener noreferrer"
       class="flex items-center gap-3 px-4 py-2 hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded"
@@ -99,6 +105,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
     </a>
     <a
       href="https://huggingface.co/erdal"
+      data-project-link="huggingface"
       target="_blank"
       rel="noopener noreferrer"
       class="flex items-center gap-3 px-4 py-2 hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded"

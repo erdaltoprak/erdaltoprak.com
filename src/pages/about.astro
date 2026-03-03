@@ -81,6 +81,7 @@ const podcastAppearance = [
         {socialLinks.map((link) => (
           <a
             href={link.url}
+            data-social-link={link.name}
             target="_blank"
             rel="noopener noreferrer"
             title={link.name}

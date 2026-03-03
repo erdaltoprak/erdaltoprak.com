@@ -25,6 +25,7 @@ const latestPosts = (await getCollection('blog', ({ data }) => {
       {socialLinks.map((link) => (
         <a
           href={link.url}
+          data-social-link={link.name}
           target={link.url.startsWith('/') ? undefined : '_blank'}
           rel={link.url.startsWith('/') ? undefined : 'noopener noreferrer'}
           title={link.name}

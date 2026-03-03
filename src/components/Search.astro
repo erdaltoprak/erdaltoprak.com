@@ -50,6 +50,11 @@ let searchInitPromise: Promise<void> | null = null;
 let themeInitPromise: Promise<void> | null = null;
 let latestSearchRequest = 0;
 let searchErrorMessage = '';
+let lastNoResultsQuery = '';
+
+function trackEvent(name: string, properties: Record<string, unknown> = {}) {
+  (window as any).__erdalTrackEvent?.(name, properties);
+}
 
 function escapeHtml(value: unknown) {
   return String(value ?? '')
@@ -106,6 +111,10 @@ async function applySelectedTheme(selectedTheme: string | undefined) {
   themeUtils.setCookie('theme', selectedTheme);
   themeUtils.applyTheme(selectedTheme);
   themeUtils.updateThemeIcon(selectedTheme);
+  trackEvent('theme_changed', {
+    theme: selectedTheme,
+    source_area: 'search',
+  });
 }
 
 const quickActions = [
@@ -189,7 +198,7 @@ function createQuickActionItem(action: typeof quickActions[number], index: numbe
   `;
 }
 
-function showOverlay() {
+function showOverlay(trigger: 'search_button' | 'keyboard_shortcut') {
   document.dispatchEvent(new CustomEvent('site:close-popovers'));
   getOverlay()?.classList.remove('hidden');
   getInput()?.focus();
@@ -197,6 +206,10 @@ function showOverlay() {
   currentView = 'quickActions';
   selectedIndex = -1;
   searchErrorMessage = '';
+  trackEvent('search_open', {
+    trigger,
+    source_area: 'search',
+  });
   render();
   void ensureSearchReady().catch(() => undefined);
 }
@@ -241,6 +254,7 @@ async function handleSearch() {
     selectedIndex = -1;
     currentView = 'quickActions';
     searchErrorMessage = '';
+    lastNoResultsQuery = '';
     render();
     return;
   }
@@ -254,6 +268,19 @@ async function handleSearch() {
     const results = miniSearchIndex.search(query, { fuzzy: 0.3, prefix: true });
     if (requestId !== latestSearchRequest) return;
     searchResults = results;
+    if (!results.length) {
+      const normalizedQuery = query.toLowerCase();
+      if (lastNoResultsQuery !== normalizedQuery) {
+        lastNoResultsQuery = normalizedQuery;
+        trackEvent('search_no_results', {
+          query_length: query.length,
+          result_count: 0,
+          source_area: 'search',
+        });
+      }
+    } else {
+      lastNoResultsQuery = '';
+    }
   } catch (error) {
     if (requestId !== latestSearchRequest) return;
     console.error('Search failed:', error);
@@ -422,7 +449,7 @@ async function handleDocumentClick(e: MouseEvent) {
 
   if (target.closest('#search-button')) {
     e.preventDefault();
-    showOverlay();
+    showOverlay('search_button');
     return;
   }
 
@@ -456,7 +483,14 @@ async function handleDocumentClick(e: MouseEvent) {
     return;
   }
 
-  if (target.closest('#search-results a[href]')) {
+  const searchResultLink = target.closest<HTMLAnchorElement>('#search-results a[href]');
+  if (searchResultLink) {
+    const href = searchResultLink.getAttribute('href') ?? '';
+    const postSlug = href.replace(/^\/blog\//, '').replace(/\/$/, '');
+    trackEvent('search_result_click', {
+      post_slug: postSlug || undefined,
+      source_area: 'search',
+    });
     hideOverlay();
   }
 }
@@ -492,14 +526,14 @@ function handleDocumentKeydown(e: KeyboardEvent) {
     );
     const isOverlayOpen = !getOverlay()?.classList.contains('hidden');
 
-    if (isOverlayOpen || !isEditableTarget) {
-      e.preventDefault();
-      if (isOverlayOpen) {
-        hideOverlay();
-      } else {
-        showOverlay();
+      if (isOverlayOpen || !isEditableTarget) {
+        e.preventDefault();
+        if (isOverlayOpen) {
+          hideOverlay();
+        } else {
+          showOverlay('keyboard_shortcut');
+        }
       }
-    }
   }
 
   void handleKeyboard(e);
