@@ -286,6 +286,17 @@ const analyticsEnabled = Boolean(projectId && writeKey);
           });
         }
 
+        if (anchor.dataset.heroLink === 'name-about' && isInternal && pathname === '/about') {
+          trackEvent('hero_name_about_click', {
+            source_area: 'home',
+            hint: 'underline_name',
+          });
+          trackGoal('hero_name_about_click', {
+            source_area: 'home',
+            hint: 'underline_name',
+          });
+        }
+
         if (isInternal && pathname === '/rss.xml') {
           trackGoal('rss_click', {
             source_area: sourceArea,
