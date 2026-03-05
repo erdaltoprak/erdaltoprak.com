@@ -1,10 +1,14 @@
 ---
-const projectId = import.meta.env.PUBLIC_TOPRAK_PROJECT_ID;
+const projectSlug = import.meta.env.PUBLIC_TOPRAK_PROJECT_SLUG;
 const writeKey = import.meta.env.PUBLIC_TOPRAK_WRITE_KEY;
-const apiUrl = import.meta.env.PUBLIC_TOPRAK_API_URL;
-const cookieDomain = import.meta.env.PUBLIC_TOPRAK_COOKIE_DOMAIN;
-const scriptUrl = import.meta.env.PUBLIC_TOPRAK_SCRIPT_URL || 'https://a.toprak.cloud/js/script.js';
-const analyticsEnabled = Boolean(projectId && writeKey);
+const scriptUrl = "https://a.toprak.cloud/js/script.js";
+const analyticsEnabled = Boolean(projectSlug && writeKey);
+
+if (import.meta.env.PROD && !analyticsEnabled) {
+  throw new Error(
+    "Missing required analytics env vars: PUBLIC_TOPRAK_PROJECT_SLUG and/or PUBLIC_TOPRAK_WRITE_KEY"
+  );
+}
 ---
 
 <script is:inline define:vars={{ analyticsEnabled }}>
@@ -20,11 +24,9 @@ const analyticsEnabled = Boolean(projectId && writeKey);
   <script
     defer
     src={scriptUrl}
-    data-project-id={projectId}
+    data-project-id={projectSlug}
     data-write-key={writeKey}
-    data-api-url={apiUrl || undefined}
-    data-cookie-domain={cookieDomain || undefined}
-    data-domain={cookieDomain || undefined}
+    data-domain="erdaltoprak.com"
   />
 )}
 
@@ -50,11 +52,6 @@ const analyticsEnabled = Boolean(projectId && writeKey);
       const tracker = window.toprakAnalytics;
       if (typeof tracker === 'function') {
         tracker(kind, name, payload);
-        return;
-      }
-
-      if (tracker && typeof tracker[kind] === 'function') {
-        tracker[kind](name, payload);
       }
     }
 
