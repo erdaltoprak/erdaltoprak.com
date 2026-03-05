@@ -57,7 +57,7 @@ jobs:
           file: ${{ env.DOCKERFILE_PATH }}
           push: true
           build-args: |
-            PUBLIC_TOPRAK_PROJECT_SLUG=${{ secrets.PUBLIC_TOPRAK_PROJECT_SLUG }}
+            PUBLIC_TOPRAK_PROJECT_SLUG=${{ secrets.PUBLIC_TOPRAK_PROJECT_SLUG || 'erdaltoprak' }}
             PUBLIC_TOPRAK_WRITE_KEY=${{ secrets.PUBLIC_TOPRAK_WRITE_KEY }}
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
