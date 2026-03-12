@@ -8,6 +8,7 @@ interface Props {
   canonicalURL?: string;
   type?: 'website' | 'blog';
   heroImage?: string;
+  robots?: string;
 }
 
 const {
@@ -15,7 +16,8 @@ const {
   description = SITE_DESCRIPTION,
   canonicalURL = Astro.url,
   type = 'website',
-  heroImage
+  heroImage,
+  robots
 } = Astro.props;
 
 const metaTitle = title === SITE_TITLE ? title : `${SITE_TITLE} | ${title}`;
@@ -48,6 +50,7 @@ const ogImage = type === 'blog'
 <title>{metaTitle}</title>
 <meta name="title" content={metaTitle} />
 <meta name="description" content={description} />
+{robots && <meta name="robots" content={robots} />}
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />

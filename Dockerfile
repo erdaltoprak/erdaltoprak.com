@@ -27,9 +27,14 @@ server {
 
   root /usr/share/nginx/html;
   index index.html;
+  error_page 404 /404.html;
+
+  location = /404.html {
+    internal;
+  }
 
   location / {
-    try_files $uri $uri/index.html $uri.html /index.html;
+    try_files $uri $uri/index.html $uri.html =404;
   }
 }
 EOF
