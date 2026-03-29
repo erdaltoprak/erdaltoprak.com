@@ -1,5 +1,5 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content';
+import { type CollectionEntry, getCollection, render } from 'astro:content';
 import BlogPost from '../../layouts/LayoutBlog.astro';
 import { formatDate } from '../../utils';
 
@@ -10,14 +10,14 @@ export async function getStaticPaths() {
   });
 
   return posts.map((post) => ({
-    params: { slug: post.slug.replace(/\/index$/, '') },
+    params: { slug: post.id },
     props: post,
   }));
 }
 
 type Props = CollectionEntry<'blog'>;
 const post = Astro.props as Props;
-const { Content } = await post.render();
+const { Content } = await render(post);
 
 const heroImage = post.data.heroImage;
 const pubDate = post.data.pubDate instanceof Date ? post.data.pubDate : new Date(post.data.pubDate);
@@ -27,7 +27,7 @@ const pubDate = post.data.pubDate instanceof Date ? post.data.pubDate : new Date
   {...post.data}
   heroImage={heroImage}
   type="blog"
-  postSlug={post.slug}
+  postSlug={post.id}
   postType={post.data.type}
 >
   <h1>{post.data.title}</h1>

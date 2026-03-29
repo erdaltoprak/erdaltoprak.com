@@ -22,8 +22,8 @@ export async function GET(context: Context) {
     items: posts.map((post) => ({
       ...post.data,
       author: 'rss@erdaltoprak.com',
-      link: `/blog/${post.slug}`,
-      content: renderRssContent(post.body, siteUrl, '/blog', post.slug),
+      link: `/blog/${post.id}`,
+      content: renderRssContent(post.body ?? '', siteUrl, '/blog', post.id),
       pubDate: post.data.pubDate,
     })),
     customData: `<atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml" xmlns:atom="http://www.w3.org/2005/Atom"/>`,

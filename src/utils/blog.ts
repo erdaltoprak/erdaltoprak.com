@@ -29,10 +29,10 @@ export async function getBlogListPosts(filter: BlogFilter = 'all'): Promise<List
       const type = post.data.type as PostType;
 
       return {
-        slug: post.slug,
+        slug: post.id,
         title: post.data.title,
         type,
-        url: `/blog/${post.slug}`,
+        url: `/blog/${post.id}`,
         isoDate: pubDate.toISOString(),
         monthYearDate: formatMonthYear(pubDate),
         timestamp: pubDate.getTime(),
