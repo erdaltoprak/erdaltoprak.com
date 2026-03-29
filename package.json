@@ -2,6 +2,9 @@
   "name": "erdal",
   "type": "module",
   "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "tsx src/scripts/generate-og.ts && tsx src/scripts/generate-llms.ts && tsx src/scripts/generate-search-index.ts && astro build && npm run check:links",
@@ -11,12 +14,12 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "0.9.6",
-    "@astrojs/rss": "4.0.15",
-    "@astrojs/sitemap": "3.7.0",
+    "@astrojs/check": "0.9.8",
+    "@astrojs/rss": "4.0.18",
+    "@astrojs/sitemap": "3.7.2",
     "@expressive-code/plugin-line-numbers": "0.41.7",
     "@iconify-json/qlementine-icons": "1.2.14",
-    "astro": "5.18.0",
+    "astro": "6.1.1",
     "astro-expressive-code": "0.41.7",
     "astro-icon": "1.1.5",
     "glob": "13.0.6",

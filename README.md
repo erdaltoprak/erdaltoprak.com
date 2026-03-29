@@ -9,7 +9,7 @@ Personal website of [Erdal Toprak](https://erdaltoprak.com), built with [Astro](
 
 This repository contains the application code for the site:
 
-- Astro 5 static site with view transitions
+- Astro 6 static site with view transitions
 - unified blog archive with articles and notes under `/blog`
 - client-side full-text search powered by MiniSearch
 - generated Open Graph images for blog posts
@@ -20,7 +20,7 @@ This repository contains the application code for the site:
 
 | Layer | Tools |
 | --- | --- |
-| Framework | Astro 5 + TypeScript |
+| Framework | Astro 6 + TypeScript |
 | Styling | Tailwind CSS |
 | Search | MiniSearch |
 | Icons | `astro-icon` + Iconify sets |
@@ -32,7 +32,7 @@ This repository contains the application code for the site:
 
 ### Requirements
 
-- Node.js 20+
+- Node.js 22.12.0+
 - npm
 - Docker and Docker Compose for the containerized preview
 - Git submodules enabled

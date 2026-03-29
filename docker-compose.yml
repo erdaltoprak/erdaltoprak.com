@@ -3,6 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        PUBLIC_TOPRAK_PROJECT_SLUG: ${PUBLIC_TOPRAK_PROJECT_SLUG:-erdaltoprak}
+        PUBLIC_TOPRAK_WRITE_KEY: ${PUBLIC_TOPRAK_WRITE_KEY:-ta_wk_replace_me}
     container_name: erdaltoprak-site
     ports:
       - "8080:80"
