@@ -5,7 +5,7 @@ import { z } from 'astro/zod';
 const blog = defineCollection({
   loader: glob({
     pattern: '**/index.{md,mdx}',
-    base: './src/content/blog',
+    base: './src/content',
     generateId: ({ entry }) =>
       entry
         .replace(/\\/g, '/')

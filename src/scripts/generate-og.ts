@@ -7,7 +7,7 @@ import { Resvg } from '@resvg/resvg-js';
 import { glob } from 'glob';
 import sharp from 'sharp';
 
-const CONTENT_DIR = 'src/content/blog';
+const CONTENT_DIR = 'src/content';
 const OUTPUT_DIR = 'public/og';
 
 async function fileExists(path: string): Promise<boolean> {

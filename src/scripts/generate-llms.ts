@@ -4,7 +4,7 @@ import { glob } from 'glob';
 import matter from 'gray-matter';
 
 const SITE_URL = 'https://erdaltoprak.com';
-const CONTENT_DIR = 'src/content/blog';
+const CONTENT_DIR = 'src/content';
 const OUTPUT_FILE = 'public/llms.txt';
 
 type PostType = 'article' | 'note';

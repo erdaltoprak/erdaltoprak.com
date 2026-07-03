@@ -17,7 +17,6 @@
 - [Setting up macOS for development](https://erdaltoprak.com/blog/setting-up-macos-for-development)
 - [Setting up Cloudflare Argo and Access on a Raspberry Pi](https://erdaltoprak.com/blog/setting-up-cloudflare-argo-access-on-a-raspberry-pi)
 - [iCloud custom domain guide](https://erdaltoprak.com/blog/icloud-custom-domain-guide)
-- [Hello World](https://erdaltoprak.com/blog/hello-world)
 
 ## Notes
 
@@ -25,6 +24,7 @@
 - [365 days, 3 rings and a journey with the Apple Watch](https://erdaltoprak.com/blog/365-days-3-rings-and-a-journey-with-the-apple-watch)
 - [Graduating with an AI/ML degree - a ChatGPT story](https://erdaltoprak.com/blog/graduating-with-ai-ml-degree-a-chatgpt-story)
 - [Apple Music is the last library focused music service](https://erdaltoprak.com/blog/apple-music-is-the-last-library-focused-music-service)
+- [Hello World](https://erdaltoprak.com/blog/hello-world)
 
 ## Links
 

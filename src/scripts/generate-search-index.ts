@@ -4,7 +4,7 @@ import { glob } from 'glob';
 import matter from 'gray-matter';
 import MiniSearch from 'minisearch';
 
-const CONTENT_DIR = 'src/content/blog';
+const CONTENT_DIR = 'src/content';
 const OUTPUT_DIR = 'public/$collection-search';
 const INDEX_PATH = join(OUTPUT_DIR, 'minisearch-index.json');
 const WORKER_PATH = join(OUTPUT_DIR, 'minisearch-worker.mjs');
@@ -55,7 +55,7 @@ async function main() {
   const docs = await readSearchDocs();
 
   if (docs.length === 0) {
-    throw new Error('No blog posts found in src/content/blog. Refusing to build an empty search index.');
+    throw new Error('No blog posts found in src/content. Refusing to build an empty search index.');
   }
 
   const index = new MiniSearch<SearchDoc>({
