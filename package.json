@@ -5,9 +5,10 @@
   "engines": {
     "node": ">=22.12.0"
   },
+  "packageManager": "pnpm@9.15.2",
   "scripts": {
     "dev": "astro dev",
-    "build": "tsx src/scripts/generate-og.ts && tsx src/scripts/generate-llms.ts && tsx src/scripts/generate-search-index.ts && astro build && npm run check:links",
+    "build": "tsx src/scripts/generate-og.ts && tsx src/scripts/generate-llms.ts && tsx src/scripts/generate-search-index.ts && astro build && pnpm run check:links",
     "check:astro": "astro check",
     "check:links": "tsx src/scripts/check-internal-links.ts",
     "preview": "astro preview",

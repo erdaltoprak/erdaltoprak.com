@@ -3,8 +3,8 @@
 FROM node:22.12.0-bookworm-slim AS build
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && pnpm install --frozen-lockfile
 
 COPY . .
 
@@ -14,7 +14,7 @@ ARG PUBLIC_TOPRAK_WRITE_KEY=""
 ENV PUBLIC_TOPRAK_PROJECT_SLUG=$PUBLIC_TOPRAK_PROJECT_SLUG
 ENV PUBLIC_TOPRAK_WRITE_KEY=$PUBLIC_TOPRAK_WRITE_KEY
 
-RUN npm run build
+RUN pnpm run build
 
 FROM nginx:1.27-alpine AS runtime
 COPY --from=build /app/dist /usr/share/nginx/html
