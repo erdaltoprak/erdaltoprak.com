@@ -31,9 +31,6 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
 
         <!-- Icon cluster -->
         <div class="flex items-center space-x-3 ml-auto sm:ml-0">
-            <button id="projects-toggle" aria-label="Projects" class="p-2 rounded hover:bg-orange-50 dark:hover:bg-zinc-800 focus:outline-none focus-visible:outline-none">
-                <Icon name="mdi:code-braces" class="w-5 h-5" />
-            </button>
             <div class="relative">
                 <ThemeToggle />
             </div>
@@ -90,32 +87,6 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
   </div>
 </div>
 
-<!-- Projects Dropdown -->
-<div id="projects-dropdown" class="hidden fixed w-44 bg-orange-100/80 dark:bg-neutral-900/80 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800 shadow-xl rounded-lg z-50">
-  <div class="flex flex-col py-2">
-    <a
-      href="https://github.com/erdaltoprak"
-      data-project-link="github"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="flex items-center gap-3 px-4 py-2 hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded"
-    >
-      <Icon name="mdi:github" class="w-4 h-4" />
-      <span>GitHub</span>
-    </a>
-    <a
-      href="https://huggingface.co/erdal"
-      data-project-link="huggingface"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="flex items-center gap-3 px-4 py-2 hover:bg-orange-50 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded"
-    >
-      <Icon name="simple-icons:huggingface" class="w-4 h-4" />
-      <span>Hugging Face</span>
-    </a>
-  </div>
-</div>
-
 <script>
   const navRuntime = ((window as any).__erdalNavRuntime ??= {});
   navRuntime.controller?.abort?.();
@@ -123,13 +94,10 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
   const { signal } = navRuntime.controller;
 
   let isMenuOpen = false;
-  let isProjectsDropdownOpen = false;
   let themeClientPromise: Promise<void> | null = navRuntime.themeClientPromise ?? null;
 
   const getMenuButton = () => document.getElementById('menu-button');
   const getMobileMenu = () => document.getElementById('mobile-menu');
-  const getProjectsToggle = () => document.getElementById('projects-toggle');
-  const getProjectsDropdown = () => document.getElementById('projects-dropdown');
 
   const loadThemeClient = () => {
     if (!themeClientPromise) {
@@ -166,40 +134,14 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
     menuBtn.classList.add('bg-orange-50', 'dark:bg-zinc-800', 'menu-active');
   }
 
-  function closeProjectsDropdown() {
-    if (!isProjectsDropdownOpen) return;
-    isProjectsDropdownOpen = false;
-    const projectsDropdown = getProjectsDropdown();
-    if (projectsDropdown) {
-      projectsDropdown.classList.add('hidden');
-      projectsDropdown.style.top = '';
-      projectsDropdown.style.right = '';
-    }
-  }
-
-  function openProjectsDropdown() {
-    const projectsToggle = getProjectsToggle();
-    const projectsDropdown = getProjectsDropdown();
-    if (!projectsToggle || !projectsDropdown) return;
-
-    const rect = projectsToggle.getBoundingClientRect();
-    projectsDropdown.style.top = `${rect.bottom + 8}px`;
-    projectsDropdown.style.right = `${window.innerWidth - rect.right}px`;
-    isProjectsDropdownOpen = true;
-    projectsDropdown.classList.remove('hidden');
-  }
-
   function closeAllDropdowns() {
     closeMenu();
-    closeProjectsDropdown();
     (window as any).themeUtils?.closeThemeDropdown?.();
   }
 
   function resetNavStateForPage() {
     isMenuOpen = false;
-    isProjectsDropdownOpen = false;
     getMobileMenu()?.classList.add('hidden');
-    getProjectsDropdown()?.classList.add('hidden');
   }
 
   async function handleDocumentClick(e: MouseEvent) {
@@ -208,7 +150,6 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
 
     if (target.closest('#menu-button')) {
       e.preventDefault();
-      closeProjectsDropdown();
       (window as any).themeUtils?.closeThemeDropdown?.();
       if (isMenuOpen) {
         closeMenu();
@@ -218,28 +159,15 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
       return;
     }
 
-    if (target.closest('#projects-toggle')) {
-      e.preventDefault();
-      closeMenu();
-      (window as any).themeUtils?.closeThemeDropdown?.();
-      if (isProjectsDropdownOpen) {
-        closeProjectsDropdown();
-      } else {
-        openProjectsDropdown();
-      }
-      return;
-    }
-
     if (target.closest('#theme-toggle')) {
       e.preventDefault();
       closeMenu();
-      closeProjectsDropdown();
       await loadThemeClient();
       (window as any).themeUtils?.toggleThemeDropdown?.();
       return;
     }
 
-    if (target.closest('nav a[href], #mobile-menu a[href], #projects-dropdown a[href]')) {
+    if (target.closest('nav a[href], #mobile-menu a[href]')) {
       closeAllDropdowns();
       return;
     }
@@ -248,12 +176,6 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
     const menuBtn = getMenuButton();
     if (isMenuOpen && !menu?.contains(target) && !menuBtn?.contains(target)) {
       closeMenu();
-    }
-
-    const projectsDropdown = getProjectsDropdown();
-    const projectsToggle = getProjectsToggle();
-    if (isProjectsDropdownOpen && !projectsDropdown?.contains(target) && !projectsToggle?.contains(target)) {
-      closeProjectsDropdown();
     }
   }
 
@@ -271,7 +193,6 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
   window.addEventListener('resize', closeAllDropdowns, { signal });
   document.addEventListener('site:close-popovers', () => {
     closeMenu();
-    closeProjectsDropdown();
   }, { signal });
   document.addEventListener('astro:page-load', resetNavStateForPage, { signal });
   document.addEventListener('pointerover', (e) => {

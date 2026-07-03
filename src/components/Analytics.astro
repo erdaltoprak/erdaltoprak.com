@@ -214,13 +214,6 @@ if (import.meta.env.PROD && !analyticsEnabled) {
         if (!target) return;
 
         const button = target.closest('button');
-        if (button?.id === 'projects-toggle') {
-          const willOpen = document.getElementById('projects-dropdown')?.classList.contains('hidden');
-          if (willOpen) {
-            trackEvent('projects_menu_open', { source_area: 'nav' });
-          }
-        }
-
         if (button?.id === 'theme-toggle') {
           const willOpen = document.getElementById('theme-dropdown')?.classList.contains('hidden');
           if (willOpen) {
@@ -246,26 +239,6 @@ if (import.meta.env.PROD && !analyticsEnabled) {
           trackEvent('nav_blog_click', { source_area: 'nav' });
         } else if (anchor.dataset.navLink === 'about') {
           trackEvent('nav_about_click', { source_area: 'nav' });
-        }
-
-        if (anchor.dataset.projectLink === 'github') {
-          trackEvent('project_github_click', {
-            source_area: 'projects_menu',
-            destination: parsed.href,
-          });
-          trackGoal('profile_github_click', {
-            source_area: 'projects_menu',
-            destination: parsed.href,
-          });
-        } else if (anchor.dataset.projectLink === 'huggingface') {
-          trackEvent('project_huggingface_click', {
-            source_area: 'projects_menu',
-            destination: parsed.href,
-          });
-          trackGoal('profile_huggingface_click', {
-            source_area: 'projects_menu',
-            destination: parsed.href,
-          });
         }
 
         if (anchor.dataset.socialLink) {
